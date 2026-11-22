@@ -1,493 +1,425 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#06111d">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050d18">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>JARVIS | Stark Systems</title>
+<title>JARVIS | Personal Intelligence System</title>
 
 <style>
 :root {
-  color-scheme:dark;
-  --bg:#040b13;
-  --accent:#54d8ff;
-  --accent2:#b9f1ff;
-  --glow:rgba(45,190,255,.5);
-  --line:rgba(100,210,255,.3);
-  --glass:rgba(5,27,43,.76);
-  --text:#eafaff;
-  --muted:#83a8bd;
-  --danger:#ff617e;
-  --gold:#ffc66e;
+  color-scheme: dark;
+  --bg: #050d18;
+  --panel: rgba(9, 25, 43, .88);
+  --line: rgba(104, 202, 255, .25);
+  --text: #eaf7ff;
+  --muted: #8ba9c0;
+  --accent: #68caff;
+  --accent2: #c3edff;
+  --glow: rgba(70, 183, 255, .45);
 }
 
-*{box-sizing:border-box}
+* { box-sizing: border-box; }
 
-html,body{
-  margin:0;
-  min-height:100%;
-  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  background:var(--bg);
-  color:var(--text);
-}
-
-body{
-  min-height:100svh;
-  overflow-x:hidden;
-  background:radial-gradient(ellipse at 50% 45%,#0d2d43 0,#071827 35%,#030912 78%);
-  transition:background .7s;
-}
-
-body.edith{
-  --accent:#ff526e;
-  --accent2:#ffc0ca;
-  --glow:rgba(255,40,80,.48);
-  --line:rgba(255,90,120,.32);
-}
-
-body.friday{
-  --accent:#ffc16b;
-  --accent2:#fff0c9;
-  --glow:rgba(255,174,75,.45);
-  --line:rgba(255,190,110,.3);
-}
-
-body:before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:0;
-  opacity:.19;
-  background-image:
-    linear-gradient(rgba(100,200,255,.07) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(100,200,255,.07) 1px,transparent 1px);
-  background-size:42px 42px;
-  mask-image:radial-gradient(ellipse at center,#000,transparent 78%);
-}
-
-body:after{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:10;
-  opacity:.11;
-  background:repeating-linear-gradient(
-    0deg,transparent 0,transparent 3px,rgba(120,220,255,.16) 4px
-  );
-}
-
-button,input,textarea,select{font:inherit}
-button{cursor:pointer;color:inherit}
-
-#app{
-  min-height:100svh;
-  position:relative;
-  z-index:1;
-  display:flex;
-  flex-direction:column;
-  padding:env(safe-area-inset-top) 22px env(safe-area-inset-bottom);
-}
-
-.topbar{
-  width:100%;
-  max-width:1200px;
-  height:70px;
-  margin:auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:relative;
-  z-index:3;
-}
-
-.brand{font-size:12px;letter-spacing:.34em;font-weight:650}
-.brand span{color:var(--accent)}
-
-.status{
-  display:flex;
-  align-items:center;
-  gap:9px;
-  color:var(--muted);
-  font-size:10px;
-  letter-spacing:.15em;
-}
-
-.dot{
-  width:7px;height:7px;border-radius:50%;
-  background:#6de7b2;
-  box-shadow:0 0 13px #6de7b2;
-}
-
-.stage{
-  flex:1;
-  min-height:570px;
-  display:grid;
-  place-items:center;
-  position:relative;
-  isolation:isolate;
-}
-
-.holo-readout{
-  position:absolute;
-  width:190px;
-  padding:13px;
-  border-left:1px solid var(--line);
-  border-top:1px solid var(--line);
-  background:linear-gradient(135deg,rgba(20,80,110,.15),transparent);
-  color:var(--muted);
-  font-size:9px;
-  letter-spacing:.14em;
-  line-height:1.9;
-  pointer-events:none;
-  text-shadow:0 0 12px var(--glow);
-}
-
-.holo-readout strong{
-  color:var(--accent2);
-  font-size:12px;
-  font-weight:500;
-}
-
-.readout-left{left:2%;top:17%}
-.readout-right{
-  right:2%;top:17%;text-align:right;
-  border-left:0;border-right:1px solid var(--line);
-}
-.readout-bottom{
-  right:5%;bottom:12%;
-  border-top:0;border-bottom:1px solid var(--line);
-}
-
-.core-wrap{
-  width:min(100%,580px);
-  display:flex;
-  align-items:center;
-  flex-direction:column;
-  position:relative;
-  z-index:2;
-  transform:translateY(-5px);
-}
-
-.core-shell{
-  width:min(76vw,390px);
-  aspect-ratio:1;
-  position:relative;
-  display:grid;
-  place-items:center;
-  cursor:pointer;
-  filter:drop-shadow(0 0 24px var(--glow));
-  -webkit-tap-highlight-color:transparent;
-}
-
-.core-shell:focus-visible{
-  outline:2px solid var(--accent);
-  outline-offset:10px;
-  border-radius:50%;
-}
-
-.core-shell:before,.core-shell:after{
-  content:"";
-  position:absolute;
-  border-radius:50%;
-  pointer-events:none;
-}
-
-.core-shell:before{
-  inset:1%;
-  border:1px solid var(--line);
-  border-left-color:transparent;
-  border-bottom-color:transparent;
-  animation:spin 18s linear infinite;
-  box-shadow:0 0 24px var(--glow);
-}
-
-.core-shell:after{
-  inset:8%;
-  border:1px dashed var(--line);
-  border-right-color:transparent;
-  animation:spin 30s linear infinite reverse;
-}
-
-.orbit{
-  position:absolute;
-  inset:15%;
-  border:1px solid var(--line);
-  border-radius:50%;
-  transform:rotateX(68deg) rotateZ(15deg);
-  box-shadow:0 0 20px var(--glow);
-  animation:orbit 9s linear infinite;
-}
-
-.orbit.two{
-  inset:21%;
-  transform:rotateX(70deg) rotateZ(-35deg);
-  animation-duration:13s;
-  animation-direction:reverse;
-}
-
-.orbit.three{
-  inset:4%;
-  transform:rotateY(68deg) rotateZ(20deg);
-  animation-duration:22s;
-}
-
-.orbit-dot{
-  position:absolute;
-  width:7px;height:7px;border-radius:50%;
-  background:var(--accent2);
-  box-shadow:0 0 16px var(--accent);
-  top:50%;left:-4px;
-}
-
-.core-grid{
-  position:absolute;
-  inset:24%;
-  border-radius:50%;
-  border:1px solid var(--line);
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: var(--text);
+  font-family: Inter, system-ui, sans-serif;
   background:
-    repeating-linear-gradient(0deg,transparent 0 11px,rgba(110,220,255,.08) 12px),
-    repeating-linear-gradient(90deg,transparent 0 11px,rgba(110,220,255,.08) 12px),
-    radial-gradient(circle,rgba(50,180,230,.15),rgba(0,10,25,.3));
-  box-shadow:inset 0 0 35px var(--glow),0 0 35px var(--glow);
-  overflow:hidden;
+    radial-gradient(ellipse at 50% 42%, #12334e 0%, #091827 35%, #030811 80%);
 }
 
-.core-grid:before{
-  content:"";
-  position:absolute;
-  inset:-50%;
-  background:conic-gradient(transparent 0deg,transparent 220deg,var(--accent) 280deg,transparent 320deg);
-  opacity:.5;
-  animation:spin 7s linear infinite;
+body.edith {
+  --accent: #ff536f;
+  --accent2: #ffd1d9;
+  --line: rgba(255, 83, 111, .3);
+  --glow: rgba(255, 50, 85, .4);
 }
 
-.core-grid:after{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:50%;
-  background:radial-gradient(circle,transparent 35%,rgba(0,0,0,.35));
+body.friday {
+  --accent: #ffbd57;
+  --accent2: #ffe5b4;
+  --line: rgba(255, 189, 87, .3);
+  --glow: rgba(255, 175, 65, .4);
 }
 
-.core-energy{
-  position:absolute;
-  inset:32%;
-  border-radius:50%;
-  background:radial-gradient(circle at 35% 30%,#fff 0,#a8edff 8%,var(--accent) 28%,#145a80 58%,#03101c 78%);
-  box-shadow:0 0 20px var(--accent),0 0 50px var(--glow),0 0 100px var(--glow),inset 0 0 25px rgba(255,255,255,.6);
-  animation:energy 4s ease-in-out infinite;
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .17;
+  background-image:
+    linear-gradient(rgba(120,200,255,.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120,200,255,.07) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse at center, black, transparent 78%);
 }
 
-.core-energy:after{
-  content:"";
-  position:absolute;
-  inset:-22%;
-  border-radius:50%;
-  border:1px solid var(--accent);
-  opacity:.45;
-  animation:energyRing 3s ease-out infinite;
+button, input, textarea, select {
+  font: inherit;
 }
 
-.core-letter{
-  position:absolute;
-  z-index:2;
-  font-size:27px;
-  font-weight:300;
-  letter-spacing:.2em;
-  color:#fff;
-  text-shadow:0 0 14px var(--accent),0 0 30px var(--accent);
+button {
+  color: inherit;
+  cursor: pointer;
 }
 
-.core-shell.listening .core-energy{animation:listenPulse .65s ease-in-out infinite alternate}
-.core-shell.processing .orbit{animation-duration:2s}
-.core-shell.speaking .core-energy{animation:energy .55s ease-in-out infinite}
-
-.particle{
-  position:absolute;
-  width:3px;height:3px;border-radius:50%;
-  background:var(--accent2);
-  box-shadow:0 0 12px var(--accent);
-  opacity:.7;
-  animation:float 6s ease-in-out infinite alternate;
+#app {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
 }
 
-.p1{top:13%;left:27%}
-.p2{top:25%;right:8%;animation-delay:1s}
-.p3{bottom:16%;left:13%;animation-delay:2s}
-.p4{bottom:24%;right:14%;animation-delay:3s}
-.p5{top:49%;left:4%;animation-delay:1.5s}
-
-.core-label{text-align:center;margin-top:12px}
-.core-label h1{
-  font-size:16px;letter-spacing:.42em;font-weight:400;
-  margin:0 0 10px;text-shadow:0 0 16px var(--glow);
-}
-.core-label p{
-  font-size:10px;letter-spacing:.23em;color:var(--muted);margin:0;
+.topbar {
+  width: min(1200px, 100%);
+  height: 70px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.voice-state{
-  margin-top:18px;min-height:15px;color:var(--accent2);
-  font-size:9px;letter-spacing:.2em;text-align:center;text-transform:uppercase;
+.brand {
+  font-size: 12px;
+  letter-spacing: .32em;
+  font-weight: 700;
 }
 
-.transcript{
-  max-width:min(90vw,440px);min-height:18px;margin-top:12px;
-  text-align:center;color:#b8d9e8;font-size:12px;line-height:1.5;
+.brand span { color: var(--accent); }
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 10px;
+  letter-spacing: .12em;
+  color: var(--muted);
 }
 
-.corner{
-  position:absolute;width:35px;height:35px;opacity:.55;pointer-events:none;
-}
-.corner:before,.corner:after{
-  content:"";position:absolute;background:var(--accent);box-shadow:0 0 12px var(--glow);
-}
-.corner:before{width:35px;height:1px}
-.corner:after{width:1px;height:35px}
-.c1{top:5%;left:5%}
-.c2{top:5%;right:5%;transform:rotate(90deg)}
-.c3{bottom:5%;left:5%;transform:rotate(-90deg)}
-.c4{bottom:5%;right:5%;transform:rotate(180deg)}
-
-.panel{
-  position:fixed;
-  z-index:20;
-  top:78px;right:18px;bottom:18px;
-  width:min(450px,calc(100vw - 36px));
-  padding:22px;
-  overflow:auto;
-  border:1px solid var(--line);
-  border-radius:23px;
-  background:linear-gradient(145deg,rgba(7,35,54,.96),rgba(3,13,24,.97));
-  backdrop-filter:blur(28px);
-  -webkit-backdrop-filter:blur(28px);
-  box-shadow:0 25px 90px rgba(0,0,0,.6),0 0 35px var(--glow);
-  transform:translateX(calc(100% + 30px));
-  opacity:0;
-  visibility:hidden;
-  transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s,visibility .25s;
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #6be2b0;
+  box-shadow: 0 0 12px #6be2b0;
 }
 
-.panel.open{
-  transform:translateX(0);
-  opacity:1;
-  visibility:visible;
+.stage {
+  min-height: 620px;
+  flex: 1;
+  display: grid;
+  place-items: center;
+  position: relative;
 }
 
-.panel-head{
-  display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;
-}
-.panel-head h2{font-size:13px;letter-spacing:.2em;font-weight:550;margin:0}
-
-.close{
-  width:36px;height:36px;border-radius:50%;
-  border:1px solid var(--line);background:rgba(255,255,255,.05);font-size:19px;
+.core-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
 }
 
-.field{display:flex;flex-direction:column;gap:7px;margin:13px 0}
-.field label,.section-label{
-  font-size:10px;color:var(--muted);letter-spacing:.13em;text-transform:uppercase;
+.core {
+  width: min(68vw, 330px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  position: relative;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle, rgba(54,160,220,.15), transparent 68%);
+  border: 1px solid var(--line);
+  box-shadow: 0 0 55px var(--glow), inset 0 0 50px rgba(100,200,255,.1);
+  animation: corePulse 5s ease-in-out infinite;
 }
 
-.field input,.field textarea,.field select{
-  width:100%;border:1px solid var(--line);border-radius:12px;
-  background:rgba(1,10,18,.75);color:var(--text);padding:12px;outline:none;
+.core::before,
+.core::after {
+  content: "";
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  border-left-color: transparent;
+  border-bottom-color: transparent;
+  animation: rotate 18s linear infinite;
 }
 
-.field textarea{min-height:85px;resize:vertical}
-.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent)}
-
-.glass-btn{
-  border:1px solid var(--line);
-  background:linear-gradient(145deg,rgba(130,210,255,.13),rgba(15,50,75,.3));
-  backdrop-filter:blur(15px);
-  border-radius:999px;
-  padding:12px 18px;
-  font-size:11px;
-  letter-spacing:.08em;
-  transition:.2s;
+.core::after {
+  inset: 19%;
+  animation-duration: 12s;
+  animation-direction: reverse;
+  opacity: .6;
 }
 
-.glass-btn:hover,.glass-btn:focus-visible{
-  border-color:var(--accent);box-shadow:0 0 22px var(--glow);outline:none;
+.core-inner {
+  width: 39%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff 0%, var(--accent2) 8%, var(--accent) 30%, #07304d 75%);
+  box-shadow: 0 0 25px var(--accent), 0 0 90px var(--glow);
 }
 
-.glass-btn.primary{background:linear-gradient(135deg,var(--glow),rgba(15,60,85,.35));border-color:var(--accent)}
-
-.section-note{color:var(--muted);font-size:12px;line-height:1.6}
-.item{
-  padding:13px;border:1px solid var(--line);border-radius:13px;
-  background:rgba(255,255,255,.035);margin:9px 0;
-}
-.item strong{font-size:13px;font-weight:550}
-.item small{display:block;color:var(--muted);font-size:11px;margin-top:5px}
-.item-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
-.mini{
-  font-size:10px;padding:8px 11px;border-radius:9px;
-  border:1px solid var(--line);background:rgba(255,255,255,.05);
+.core-label {
+  text-align: center;
 }
 
-.chatlog{display:flex;flex-direction:column;gap:10px;max-height:45vh;overflow:auto;margin-bottom:14px}
-.bubble{
-  max-width:88%;padding:11px 13px;border-radius:14px;
-  font-size:12px;line-height:1.5;background:rgba(120,190,235,.1);border:1px solid var(--line);
-}
-.bubble.user{align-self:flex-end;background:rgba(63,150,205,.2)}
-.bubble.assistant{align-self:flex-start}
-
-.range-line{
-  display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:12px;
-}
-.field input[type=range]{padding:0;accent-color:var(--accent)}
-
-.toast{
-  position:fixed;z-index:40;bottom:25px;left:50%;
-  transform:translate(-50%,20px);opacity:0;pointer-events:none;
-  background:rgba(4,25,40,.96);border:1px solid var(--line);
-  padding:12px 17px;border-radius:999px;font-size:11px;transition:.25s;
-}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes orbit{to{transform:rotateX(68deg) rotateZ(375deg)}}
-@keyframes energy{
-  0%,100%{transform:scale(.94);filter:brightness(.9)}
-  50%{transform:scale(1.07);filter:brightness(1.35)}
-}
-@keyframes energyRing{
-  from{transform:scale(.75);opacity:.65}
-  to{transform:scale(1.45);opacity:0}
-}
-@keyframes listenPulse{
-  from{transform:scale(.9);filter:brightness(1)}
-  to{transform:scale(1.13);filter:brightness(1.6)}
-}
-@keyframes float{
-  from{transform:translateY(-8px);opacity:.25}
-  to{transform:translateY(9px);opacity:.9}
+.core-label h1 {
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: .42em;
+  margin: 0 0 8px;
 }
 
-@media(max-width:700px){
-  #app{padding-left:14px;padding-right:14px}
-  .topbar{height:58px}
-  .stage{min-height:calc(100svh - 90px)}
-  .core-shell{width:min(82vw,340px)}
-  .holo-readout{width:115px;font-size:8px;opacity:.7}
-  .readout-left{left:-2%;top:7%}
-  .readout-right{right:-2%;top:7%}
-  .readout-bottom{right:0;bottom:6%}
-  .panel{
-    top:auto;left:8px;right:8px;bottom:8px;
-    width:auto;max-height:83svh;border-radius:20px;
+.core-label p {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .18em;
+  margin: 0;
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.glass-btn {
+  padding: 12px 18px;
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  background: rgba(120,190,235,.08);
+  backdrop-filter: blur(16px);
+  font-size: 11px;
+  letter-spacing: .08em;
+  transition: .2s;
+}
+
+.glass-btn:hover,
+.glass-btn:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 20px var(--glow);
+  outline: none;
+}
+
+.primary {
+  background: rgba(70,160,220,.22);
+  border-color: var(--accent);
+}
+
+.quickbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  max-width: 620px;
+}
+
+.quickbar button {
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  padding: 9px;
+  font-size: 10px;
+  letter-spacing: .12em;
+}
+
+.quickbar button:hover { color: var(--accent2); }
+
+.footer {
+  width: min(1200px, 100%);
+  margin: 0 auto 15px;
+  display: flex;
+  justify-content: space-between;
+  color: #6e8aa1;
+  font-size: 9px;
+  letter-spacing: .13em;
+}
+
+.panel {
+  position: fixed;
+  z-index: 10;
+  top: 78px;
+  right: 18px;
+  bottom: 18px;
+  width: min(470px, calc(100vw - 36px));
+  padding: 23px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: var(--panel);
+  backdrop-filter: blur(28px);
+  box-shadow: 0 25px 90px rgba(0,0,0,.55);
+  transform: translateX(calc(100% + 35px));
+  opacity: 0;
+  transition: .3s ease;
+}
+
+.panel.open {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.panel-head h2 {
+  font-size: 13px;
+  letter-spacing: .2em;
+  font-weight: 550;
+}
+
+.close {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: transparent;
+  font-size: 18px;
+}
+
+.note {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 13px 0;
+}
+
+.field label {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: rgba(0,0,0,.3);
+  color: var(--text);
+}
+
+.field textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.item {
+  padding: 13px;
+  margin: 9px 0;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: rgba(255,255,255,.035);
+}
+
+.item strong { font-size: 12px; }
+
+.item small {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.item button {
+  margin-top: 9px;
+}
+
+.mini {
+  padding: 7px 10px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.05);
+  font-size: 10px;
+}
+
+.bubble {
+  max-width: 90%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: rgba(80,160,220,.1);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.bubble.user { margin-left: auto; }
+
+.empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.toast {
+  position: fixed;
+  z-index: 30;
+  left: 50%;
+  bottom: 25px;
+  transform: translate(-50%, 15px);
+  opacity: 0;
+  pointer-events: none;
+  padding: 12px 18px;
+  border: 1px solid var(--line);
+  border-radius: 30px;
+  background: #0b2034;
+  font-size: 11px;
+  transition: .2s;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@keyframes rotate { to { transform: rotate(360deg); } }
+@keyframes corePulse {
+  0%,100% { filter: brightness(.9); }
+  50% { filter: brightness(1.25); }
+}
+
+@media(max-width:600px) {
+  .stage { min-height: calc(100vh - 130px); }
+  .core { width: 230px; }
+  .panel {
+    top: auto;
+    left: 9px;
+    right: 9px;
+    bottom: 9px;
+    width: auto;
+    max-height: 84vh;
   }
 }
 
-@media(prefers-reduced-motion:reduce){
-  *,*:before,*:after{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 </style>
 </head>
@@ -496,54 +428,18 @@ button{cursor:pointer;color:inherit}
 <div id="app">
 
 <header class="topbar">
-  <div class="brand">STARK <span>//</span> SYSTEMS</div>
+  <div class="brand">T<span>.</span> STARK SYSTEMS</div>
   <div class="status">
-    <span class="dot" id="statusDot"></span>
+    <span class="dot"></span>
     <span id="systemStatus">LOCAL SYSTEM READY</span>
   </div>
 </header>
 
 <main class="stage">
-
-  <div class="holo-readout readout-left">
-    LOCAL TIME<br>
-    <strong id="holoClock">--:--:--</strong><br>
-    DATE<br>
-    <strong id="holoDate">--</strong>
-  </div>
-
-  <div class="holo-readout readout-right">
-    SYSTEM STATUS<br>
-    <strong id="systemReadout">NOMINAL</strong><br>
-    ACTIVE SYSTEM<br>
-    <strong id="observerReadout">4 ACTIVE</strong>
-  </div>
-
-  <div class="holo-readout readout-bottom">
-    INTERFACE MODE<br>
-    <strong id="modeReadout">STANDBY</strong><br>
-    VOICE ENGINE<br>
-    <strong id="voiceReadout">AVAILABLE</strong>
-  </div>
-
-  <div class="corner c1"></div>
-  <div class="corner c2"></div>
-  <div class="corner c3"></div>
-  <div class="corner c4"></div>
-
   <div class="core-wrap">
-    <div class="core-shell" id="core" role="button" tabindex="0" aria-label="Activate voice recognition">
-      <div class="orbit"><span class="orbit-dot"></span></div>
-      <div class="orbit two"><span class="orbit-dot"></span></div>
-      <div class="orbit three"><span class="orbit-dot"></span></div>
-      <div class="core-grid"></div>
-      <div class="core-energy"></div>
-      <div class="core-letter" id="coreLetter">J</div>
-      <span class="particle p1"></span>
-      <span class="particle p2"></span>
-      <span class="particle p3"></span>
-      <span class="particle p4"></span>
-      <span class="particle p5"></span>
+
+    <div class="core" aria-label="JARVIS holographic core">
+      <div class="core-inner"></div>
     </div>
 
     <div class="core-label">
@@ -551,148 +447,260 @@ button{cursor:pointer;color:inherit}
       <p id="coreMessage">AT YOUR SERVICE</p>
     </div>
 
-    <div class="voice-state" id="voiceState">SYSTEM STANDBY</div>
-    <div class="transcript" id="transcript"></div>
+    <div class="controls">
+      <button class="glass-btn primary" id="activateBtn">◉ ACTIVATE VOICE</button>
+      <button class="glass-btn" data-panel="chat">OPEN CONSOLE</button>
+    </div>
+
+    <div class="quickbar">
+      <button data-panel="school">SCHOOL HUB</button>
+      <button data-panel="tasks">TASKS</button>
+      <button data-panel="memory">MEMORY</button>
+      <button data-panel="connections">AI CONNECTIONS</button>
+      <button data-panel="settings">SETTINGS</button>
+      <button data-panel="security">EDITH SECURITY</button>
+    </div>
+
   </div>
 </main>
+
+<footer class="footer">
+  <span>PERSONAL INTELLIGENCE SYSTEM</span>
+  <span id="clock">--:--</span>
+</footer>
 </div>
 
-<!-- JARVIS COMMAND CONSOLE -->
+<!-- COMMAND CONSOLE -->
 <aside class="panel" id="panel-chat">
-  <div class="panel-head"><h2>JARVIS // COMMAND CONSOLE</h2><button class="close">×</button></div>
-  <p class="section-note">Local command processing is active. A full AI reasoning backend is not connected yet.</p>
-  <div class="chatlog" id="chatlog"><div class="bubble assistant">Systems online. Awaiting instruction.</div></div>
-  <form id="chatForm">
-    <div class="field"><label for="chatInput">Message</label><textarea id="chatInput" placeholder="Enter a command..." required></textarea></div>
-    <button class="glass-btn primary">SEND MESSAGE</button>
-  </form>
-</aside>
-
-<!-- SCHOOL MODE -->
-<aside class="panel" id="panel-school">
-  <div class="panel-head"><h2>JARVIS // SCHOOL MODE</h2><button class="close">×</button></div>
-  <p class="section-note">Assignment tracking and school notes are stored locally on this device.</p>
-  <form id="schoolForm">
-    <div class="field"><label for="schoolClass">Class</label><input id="schoolClass" placeholder="Biology" required></div>
-    <div class="field"><label for="schoolAssignment">Assignment</label><input id="schoolAssignment" placeholder="Chapter review" required></div>
-    <div class="field"><label for="schoolDue">Due date</label><input id="schoolDue" type="date"></div>
-    <button class="glass-btn primary">REGISTER ASSIGNMENT</button>
-  </form>
-  <div id="schoolList"></div>
-</aside>
-
-<!-- BAND MODE -->
-<aside class="panel" id="panel-band">
-  <div class="panel-head"><h2>JARVIS // BAND MODE</h2><button class="close">×</button></div>
-  <p class="section-note">Rehearsals, music, show notes, and practice goals.</p>
-  <form id="bandForm">
-    <div class="field"><label for="bandCategory">Entry type</label>
-      <select id="bandCategory"><option>Rehearsal</option><option>Performance</option><option>Music / Measure</option><option>Practice goal</option><option>Section note</option></select>
+  <div class="panel-head">
+    <h2>COMMAND CONSOLE</h2>
+    <button class="close">×</button>
+  </div>
+  <p class="note" id="aiStatus">
+    Local command system active. Connect a secure AI backend to enable full reasoning.
+  </p>
+  <div id="chatlog">
+    <div class="bubble">
+      Good evening. Local systems are ready. Awaiting your instructions.
     </div>
-    <div class="field"><label for="bandTitle">Title</label><input id="bandTitle" placeholder="Ballad measures 114–115" required></div>
-    <div class="field"><label for="bandDate">Date</label><input id="bandDate" type="date"></div>
-    <div class="field"><label for="bandDetails">Details</label><textarea id="bandDetails" placeholder="What should be remembered?"></textarea></div>
-    <button class="glass-btn primary">SAVE BAND ENTRY</button>
+  </div>
+  <form id="chatForm">
+    <div class="field">
+      <label for="chatInput">Message</label>
+      <textarea id="chatInput" required placeholder="Speak or type a command..."></textarea>
+    </div>
+    <button class="glass-btn primary">SEND</button>
   </form>
-  <div id="bandList"></div>
+</aside>
+
+<!-- SCHOOL HUB -->
+<aside class="panel" id="panel-school">
+  <div class="panel-head">
+    <h2>JARVIS // SCHOOL HUB</h2>
+    <button class="close">×</button>
+  </div>
+
+  <p class="note">
+    Organize classes, assignments, due dates, and study materials.
+    Direct school-account integrations require backend authorization.
+  </p>
+
+  <form id="classForm">
+    <div class="field">
+      <label for="className">Class name</label>
+      <input id="className" required placeholder="Biology">
+    </div>
+    <button class="glass-btn primary">ADD CLASS</button>
+  </form>
+
+  <div id="classList"></div>
+
+  <hr style="border-color:var(--line);margin:22px 0">
+
+  <h3 style="font-size:12px;letter-spacing:.15em">ASSIGNMENTS</h3>
+
+  <form id="assignmentForm">
+    <div class="field">
+      <label for="assignmentTitle">Assignment</label>
+      <input id="assignmentTitle" required placeholder="Chapter 4 review">
+    </div>
+    <div class="field">
+      <label for="assignmentClass">Class</label>
+      <select id="assignmentClass"></select>
+    </div>
+    <div class="field">
+      <label for="assignmentDue">Due date</label>
+      <input id="assignmentDue" type="date">
+    </div>
+    <button class="glass-btn primary">ADD ASSIGNMENT</button>
+  </form>
+
+  <div id="assignmentList"></div>
+
+  <hr style="border-color:var(--line);margin:22px 0">
+
+  <h3 style="font-size:12px;letter-spacing:.15em">SCHOOL CONNECTIONS</h3>
+  <div id="schoolConnections"></div>
 </aside>
 
 <!-- TASKS -->
 <aside class="panel" id="panel-tasks">
-  <div class="panel-head"><h2>JARVIS // TASK REGISTER</h2><button class="close">×</button></div>
-  <p class="section-note">General tasks saved locally in this browser.</p>
+  <div class="panel-head">
+    <h2>TASK REGISTER</h2>
+    <button class="close">×</button>
+  </div>
+
   <form id="taskForm">
-    <div class="field"><label for="taskTitle">Task</label><input id="taskTitle" placeholder="Finish biology notes" required></div>
-    <div class="field"><label for="taskDue">Due date</label><input id="taskDue" type="date"></div>
+    <div class="field">
+      <label for="taskTitle">Task</label>
+      <input id="taskTitle" required placeholder="Finish biology notes">
+    </div>
+    <div class="field">
+      <label for="taskDue">Due date</label>
+      <input id="taskDue" type="date">
+    </div>
     <button class="glass-btn primary">ADD TASK</button>
   </form>
   <div id="taskList"></div>
 </aside>
 
-<!-- VEHICLE INTELLIGENCE -->
-<aside class="panel" id="panel-vehicle">
-  <div class="panel-head"><h2>EDITH // VEHICLE INTELLIGENCE</h2><button class="close">×</button></div>
-  <p class="section-note">A vehicle record and maintenance log. This is not a live diagnostic connection.</p>
-  <div class="item"><strong>2009 Toyota Camry XLE V6</strong><small>Saved vehicle profile. Verify exact specifications against the vehicle's VIN and owner's manual.</small></div>
-  <form id="vehicleForm">
-    <div class="field"><label for="vehicleEntry">Maintenance / repair record</label><input id="vehicleEntry" placeholder="Front CV axle inspection" required></div>
-    <div class="field"><label for="vehicleDate">Date</label><input id="vehicleDate" type="date"></div>
-    <div class="field"><label for="vehicleMileage">Mileage (optional)</label><input id="vehicleMileage" type="number" min="0" placeholder="Mileage"></div>
-    <button class="glass-btn primary">SAVE VEHICLE RECORD</button>
-  </form>
-  <div id="vehicleList"></div>
-  <div class="item"><strong>Diagnostic connection</strong><small>No OBD-II adapter or live vehicle connection is configured.</small></div>
-</aside>
-
-<!-- FRIDAY PERSONAL MEMORY -->
+<!-- MEMORY -->
 <aside class="panel" id="panel-memory">
-  <div class="panel-head"><h2>FRIDAY // MEMORY ARCHIVE</h2><button class="close">×</button></div>
-  <p class="section-note">Personal notes saved locally. They are not encrypted or synced.</p>
+  <div class="panel-head">
+    <h2>MEMORY ARCHIVE</h2>
+    <button class="close">×</button>
+  </div>
+
+  <p class="note">
+    Notes are currently saved locally. Cloud memory will activate after Supabase is configured.
+  </p>
+
   <form id="memoryForm">
-    <div class="field"><label for="memoryCategory">Category</label>
-      <select id="memoryCategory"><option>Personal</option><option>Preferences</option><option>People</option><option>Ideas</option><option>Other</option></select>
+    <div class="field">
+      <label for="memoryText">Memory / note</label>
+      <textarea id="memoryText" required placeholder="Remember this..."></textarea>
     </div>
-    <div class="field"><label for="memoryText">Memory / note</label><textarea id="memoryText" placeholder="Save a useful note..." required></textarea></div>
     <button class="glass-btn primary">SAVE MEMORY</button>
   </form>
   <div id="memoryList"></div>
 </aside>
 
-<!-- ENTERTAINMENT -->
-<aside class="panel" id="panel-entertainment">
-  <div class="panel-head"><h2>FRIDAY // ENTERTAINMENT</h2><button class="close">×</button></div>
-  <p class="section-note">Your personal watchlist and listening ideas. Streaming accounts are not connected.</p>
-  <form id="entertainmentForm">
-    <div class="field"><label for="entType">Type</label><select id="entType"><option>Movie</option><option>TV show</option><option>Album</option><option>Playlist</option><option>Other</option></select></div>
-    <div class="field"><label for="entTitle">Title</label><input id="entTitle" placeholder="Movie, show, or album" required></div>
-    <div class="field"><label for="entNotes">Notes</label><input id="entNotes" placeholder="Where you left off, who recommended it..."></div>
-    <button class="glass-btn primary">ADD TO COLLECTION</button>
-  </form>
-  <div id="entertainmentList"></div>
-  <div class="item"><strong>Music services</strong><small>Spotify, Amazon Music, and Apple Music are not connected yet. No playback controls are active.</small></div>
-</aside>
+<!-- AI CONNECTIONS -->
+<aside class="panel" id="panel-connections">
+  <div class="panel-head">
+    <h2>AI CONNECTIONS</h2>
+    <button class="close">×</button>
+  </div>
 
-<!-- DAILY BRIEFING -->
-<aside class="panel" id="panel-overview">
-  <div class="panel-head"><h2>JARVIS // DAILY BRIEFING</h2><button class="close">×</button></div>
-  <p class="section-note" id="overviewDate"></p>
-  <div id="overviewContent"></div>
-  <button class="glass-btn primary" id="speakBriefing">READ BRIEFING ALOUD</button>
+  <p class="note">
+    Bring Your Own Key configuration. Each user's provider connection must be
+    stored and used through a secure backend. This screen does not store API keys.
+  </p>
+
+  <form id="providerForm">
+    <div class="field">
+      <label for="provider">AI provider</label>
+      <select id="provider">
+        <option value="openai">OpenAI</option>
+        <option value="anthropic">Anthropic</option>
+        <option value="google">Google Gemini</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="model">Preferred model</label>
+      <input id="model" placeholder="Enter provider model name">
+    </div>
+
+    <div class="field">
+      <label for="apiKey">API key</label>
+      <input id="apiKey" type="password" autocomplete="off"
+        placeholder="Backend connection required">
+    </div>
+
+    <button class="glass-btn primary" type="submit">SAVE CONNECTION</button>
+  </form>
+
+  <div class="item">
+    <strong>Security status</strong>
+    <small id="providerStatus">
+      Backend not configured. No API key has been saved.
+    </small>
+  </div>
+
+  <p class="note">
+    Never put API keys in public JavaScript, localStorage, or GitHub Pages.
+    The final connection will send credentials directly to an authenticated
+    server function over HTTPS.
+  </p>
 </aside>
 
 <!-- SETTINGS -->
 <aside class="panel" id="panel-settings">
-  <div class="panel-head"><h2>JARVIS // SYSTEM SETTINGS</h2><button class="close">×</button></div>
-  <p class="section-note">Choose a browser voice and speaking style for each personality.</p>
-  <div id="voiceSettings"></div>
-  <div class="field"><label>Voice preview</label><button class="glass-btn" id="previewCurrent">PREVIEW ACTIVE PERSONALITY</button></div>
-  <p class="section-note">Voice recognition depends on browser support and microphone permission. This page cannot listen continuously in the background.</p>
+  <div class="panel-head">
+    <h2>SYSTEM SETTINGS</h2>
+    <button class="close">×</button>
+  </div>
+
+  <div class="field">
+    <label for="interjectionFrequency">Personality interjections</label>
+    <select id="interjectionFrequency">
+      <option value="minimal">Minimal</option>
+      <option value="balanced" selected>Balanced</option>
+      <option value="frequent">Frequent</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="activeVoice">Voice personality</label>
+    <select id="activeVoice">
+      <option>JARVIS</option>
+      <option>EDITH</option>
+      <option>FRIDAY</option>
+    </select>
+  </div>
+
+  <button class="glass-btn" id="previewVoice">PREVIEW VOICE</button>
+
+  <p class="note">
+    Browser voice availability varies by device. Neural voice engines
+    require a separately configured service.
+  </p>
+
   <button class="glass-btn" id="clearData">CLEAR LOCAL DATA</button>
 </aside>
 
 <!-- EDITH SECURITY -->
 <aside class="panel" id="panel-security">
-  <div class="panel-head"><h2>EDITH // SECURITY</h2><button class="close">×</button></div>
-  <p class="section-note">Security preview only. This does not lock down your device or protect your account.</p>
-  <div class="item"><strong>Local storage</strong><small>Browser storage available. Not encrypted.</small></div>
-  <div class="item"><strong>External integrations</strong><small>Not connected.</small></div>
-  <div class="item"><strong>Background monitoring</strong><small>Not enabled.</small></div>
-  <div class="item"><strong>Authentication</strong><small>Not configured.</small></div>
-  <div class="item"><strong>Observer status</strong><small id="securityObserverStatus">Local checks active.</small></div>
-  <button class="glass-btn" id="lockdownPreview">INITIATE LOCAL LOCKDOWN PREVIEW</button>
-</aside>
+  <div class="panel-head">
+    <h2>EDITH // SECURITY</h2>
+    <button class="close">×</button>
+  </div>
 
-<!-- SELF DEVELOPMENT -->
-<aside class="panel" id="panel-development">
-  <div class="panel-head"><h2>EDITH // DEVELOPMENT REVIEW</h2><button class="close">×</button></div>
-  <p class="section-note">A safe planning workspace. It does not modify repository files or deploy code.</p>
-  <form id="developmentForm">
-    <div class="field"><label for="devTitle">Proposed change</label><input id="devTitle" placeholder="Improve voice command recognition" required></div>
-    <div class="field"><label for="devDetails">What should change?</label><textarea id="devDetails" placeholder="Describe the requested improvement..." required></textarea></div>
-    <button class="glass-btn primary">SUBMIT FOR REVIEW</button>
-  </form>
-  <div id="developmentList"></div>
-  <p class="section-note">Future development workflow: inspect → propose → test separately → show changes → request approval → apply. No automatic deployment.</p>
+  <p class="note">
+    Security status and permission overview. This is a local preview, not
+    device lockdown or active monitoring.
+  </p>
+
+  <div class="item">
+    <strong>Account protection</strong>
+    <small>Requires configured authentication backend.</small>
+  </div>
+
+  <div class="item">
+    <strong>API credential protection</strong>
+    <small>Server-side secret storage not configured.</small>
+  </div>
+
+  <div class="item">
+    <strong>Device monitoring</strong>
+    <small>No background device monitoring is active.</small>
+  </div>
+
+  <div class="item">
+    <strong>Lockdown protocol</strong>
+    <small>Preview only. No external systems are controlled.</small>
+  </div>
 </aside>
 
 <div class="toast" id="toast" role="status"></div>
@@ -702,943 +710,574 @@ button{cursor:pointer;color:inherit}
 
 const $ = id => document.getElementById(id);
 
-function read(key,fallback){
-  try{
-    const value=JSON.parse(localStorage.getItem(key));
-    return value ?? fallback;
-  }catch{return fallback}
-}
-
-function save(key,value){
-  try{localStorage.setItem(key,JSON.stringify(value))}
-  catch{toast("Local storage unavailable.")}
-}
-
-let tasks=read("jarvisTasks",[]);
-let memories=read("jarvisMemories",[]);
-let school=read("jarvisSchool",[]);
-let band=read("jarvisBand",[]);
-let vehicle=read("jarvisVehicle",[]);
-let entertainment=read("jarvisEntertainment",[]);
-let development=read("jarvisDevelopment",[]);
-let personality=localStorage.getItem("jarvisPersona")||"JARVIS";
-let voices=[];
-let recognition=null;
-let recognitionTimer=null;
-let lastFinalTranscript="";
-let briefingText="";
-
-const profiles={
-  JARVIS:{
-    sample:"Good evening. All systems are standing by.",
-    rate:.94,pitch:.88,letter:"J"
-  },
-  EDITH:{
-    sample:"Security systems are standing by. Awaiting your instruction.",
-    rate:.91,pitch:.82,letter:"E"
-  },
-  FRIDAY:{
-    sample:"Hey. I'm here whenever you need me.",
-    rate:1.02,pitch:1.08,letter:"F"
+const read = (key, fallback) => {
+  try {
+    return JSON.parse(localStorage.getItem(key)) ?? fallback;
+  } catch {
+    return fallback;
   }
 };
 
-/* INTERFACE */
+const save = (key, value) => {
+  localStorage.setItem(key, JSON.stringify(value));
+};
 
-function setState(state,message){
-  const core=$("core");
-  core.classList.remove("listening","processing","speaking");
-  if(state!=="standby")core.classList.add(state);
+let tasks = read("jarvisTasks", []);
+let memories = read("jarvisMemories", []);
+let classes = read("jarvisClasses", []);
+let assignments = read("jarvisAssignments", []);
 
-  const labels={
-    standby:"SYSTEM STANDBY",
-    listening:"LISTENING FOR COMMAND",
-    processing:"PROCESSING INPUT",
-    speaking:"RESPONDING",
-    error:"VOICE SYSTEM ERROR"
-  };
+let personality = localStorage.getItem("jarvisPersona") || "JARVIS";
+let voices = [];
 
-  $("voiceState").textContent=message||labels[state]||"SYSTEM STANDBY";
-  $("modeReadout").textContent=state.toUpperCase();
-  $("systemStatus").textContent=
-    state==="error"?"VOICE SYSTEM ISSUE":
-    state==="listening"?"MICROPHONE ACTIVE":
-    state==="processing"?"PROCESSING":
-    "LOCAL SYSTEM READY";
-}
+const profiles = {
+  JARVIS: {
+    sample: "Good evening. All systems are standing by.",
+    rate: .94,
+    pitch: .9
+  },
+  EDITH: {
+    sample: "Security systems are standing by. Awaiting your instruction.",
+    rate: .91,
+    pitch: .82
+  },
+  FRIDAY: {
+    sample: "Hey. I'm here whenever you need me.",
+    rate: 1.02,
+    pitch: 1.08
+  }
+};
 
-function toast(message){
-  $("toast").textContent=message;
+function toast(message) {
+  $("toast").textContent = message;
   $("toast").classList.add("show");
-  clearTimeout(toast.timer);
-  toast.timer=setTimeout(()=>$("toast").classList.remove("show"),2600);
+  setTimeout(() => $("toast").classList.remove("show"), 2400);
 }
 
-function openPanel(name){
-  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("open"));
-  const panel=$("panel-"+name);
-  if(panel)panel.classList.add("open");
+function openPanel(name) {
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("open"));
+  const panel = $("panel-" + name);
+  if (panel) panel.classList.add("open");
 
-  const renderers={
-    tasks:renderTasks,
-    school:renderSchool,
-    band:renderBand,
-    vehicle:renderVehicle,
-    memory:renderMemories,
-    entertainment:renderEntertainment,
-    development:renderDevelopment,
-    overview:renderOverview,
-    settings:renderVoiceSettings
-  };
-
-  if(renderers[name])renderers[name]();
+  if (name === "school") renderSchool();
+  if (name === "tasks") renderTasks();
+  if (name === "memory") renderMemories();
 }
 
-function closePanels(){
-  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("open"));
+function closePanels() {
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("open"));
 }
 
-document.querySelectorAll(".close").forEach(button=>{
-  button.addEventListener("click",closePanels);
+document.querySelectorAll("[data-panel]").forEach(button => {
+  button.addEventListener("click", () => openPanel(button.dataset.panel));
 });
 
-document.addEventListener("keydown",event=>{
-  if(event.key==="Escape")closePanels();
+document.querySelectorAll(".close").forEach(button => {
+  button.addEventListener("click", closePanels);
 });
 
-/* PERSONALITIES: VOICE SWITCHING ONLY */
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") closePanels();
+});
 
-function setPersonality(name){
-  if(!profiles[name])return;
+function setPersonality(name) {
+  if (!profiles[name]) return;
 
-  personality=name;
-  localStorage.setItem("jarvisPersona",name);
+  personality = name;
+  localStorage.setItem("jarvisPersona", name);
 
-  document.body.classList.toggle("edith",name==="EDITH");
-  document.body.classList.toggle("friday",name==="FRIDAY");
+  document.body.classList.toggle("edith", name === "EDITH");
+  document.body.classList.toggle("friday", name === "FRIDAY");
 
-  $("personaTitle").textContent=name==="JARVIS"?"J.A.R.V.I.S.":name;
-  $("coreMessage").textContent={
-    JARVIS:"AT YOUR SERVICE",
-    EDITH:"SECURITY SYSTEM READY",
-    FRIDAY:"READY WHEN YOU ARE"
+  $("personaTitle").textContent =
+    name === "JARVIS" ? "J.A.R.V.I.S." : name;
+
+  $("coreMessage").textContent = {
+    JARVIS: "AT YOUR SERVICE",
+    EDITH: "SECURITY SYSTEM READY",
+    FRIDAY: "READY WHEN YOU ARE"
   }[name];
 
-  $("coreLetter").textContent=profiles[name].letter;
+  $("activeVoice").value = name;
 }
 
-/* GENERAL RENDER HELPERS */
+function renderList(container, entries, emptyText, makeItem) {
+  const box = $(container);
+  box.replaceChildren();
 
-function makeItem(container,title,detail,removeAction){
-  const item=document.createElement("div");
-  item.className="item";
-
-  const strong=document.createElement("strong");
-  strong.textContent=title;
-
-  const small=document.createElement("small");
-  small.textContent=detail||"";
-
-  item.append(strong,small);
-
-  if(removeAction){
-    const button=document.createElement("button");
-    button.className="mini";
-    button.textContent="DELETE";
-    button.style.marginTop="10px";
-    button.addEventListener("click",removeAction);
-    item.append(button);
-  }
-
-  container.append(item);
-}
-
-function emptyMessage(container,message){
-  if(!container.children.length){
-    const item=document.createElement("div");
-    item.className="item";
-    item.textContent=message;
-    container.append(item);
-  }
-}
-
-/* TASKS */
-
-function renderTasks(){
-  const box=$("taskList");
-  box.innerHTML="";
-
-  tasks.forEach((task,index)=>{
-    makeItem(box,task.title,
-      (task.due?"Due "+task.due+" · ":"")+(task.done?"Completed":"Open"),
-      ()=>{
-        tasks.splice(index,1);
-        save("jarvisTasks",tasks);
-        renderTasks();
-        renderOverview();
-      });
-  });
-
-  emptyMessage(box,"No tasks registered.");
-}
-
-$("taskForm").addEventListener("submit",event=>{
-  event.preventDefault();
-  tasks.push({
-    title:$("taskTitle").value.trim(),
-    due:$("taskDue").value,
-    done:false
-  });
-  save("jarvisTasks",tasks);
-  $("taskForm").reset();
-  renderTasks();
-  renderOverview();
-  toast("Task registered.");
-});
-
-/* SCHOOL MODE */
-
-function renderSchool(){
-  const box=$("schoolList");
-  box.innerHTML="";
-
-  school.forEach((entry,index)=>{
-    makeItem(box,entry.assignment+" · "+entry.className,
-      (entry.due?"Due "+entry.due+" · ":"")+(entry.done?"Completed":"Open"),
-      ()=>{
-        school.splice(index,1);
-        save("jarvisSchool",school);
-        renderSchool();
-        renderOverview();
-      });
-
-    const item=box.lastElementChild;
-    const button=document.createElement("button");
-    button.className="mini";
-    button.textContent=entry.done?"REOPEN":"COMPLETE";
-    button.style.marginTop="9px";
-    button.onclick=()=>{
-      entry.done=!entry.done;
-      save("jarvisSchool",school);
-      renderSchool();
-      renderOverview();
-    };
-    item.append(button);
-  });
-
-  emptyMessage(box,"No school assignments registered.");
-}
-
-$("schoolForm").addEventListener("submit",event=>{
-  event.preventDefault();
-  school.push({
-    className:$("schoolClass").value.trim(),
-    assignment:$("schoolAssignment").value.trim(),
-    due:$("schoolDue").value,
-    done:false
-  });
-  save("jarvisSchool",school);
-  $("schoolForm").reset();
-  renderSchool();
-  renderOverview();
-  toast("School assignment saved.");
-});
-
-/* BAND MODE */
-
-function renderBand(){
-  const box=$("bandList");
-  box.innerHTML="";
-
-  band.forEach((entry,index)=>{
-    makeItem(box,entry.category+" · "+entry.title,
-      (entry.date?entry.date+" · ":"")+entry.details,
-      ()=>{
-        band.splice(index,1);
-        save("jarvisBand",band);
-        renderBand();
-        renderOverview();
-      });
-  });
-
-  emptyMessage(box,"No band entries saved.");
-}
-
-$("bandForm").addEventListener("submit",event=>{
-  event.preventDefault();
-  band.unshift({
-    category:$("bandCategory").value,
-    title:$("bandTitle").value.trim(),
-    date:$("bandDate").value,
-    details:$("bandDetails").value.trim()
-  });
-  save("jarvisBand",band);
-  $("bandForm").reset();
-  renderBand();
-  renderOverview();
-  toast("Band entry saved.");
-});
-
-/* VEHICLE INTELLIGENCE */
-
-function renderVehicle(){
-  const box=$("vehicleList");
-  box.innerHTML="";
-
-  vehicle.forEach((entry,index)=>{
-    makeItem(box,entry.title,
-      [entry.date,entry.mileage?entry.mileage+" miles":""].filter(Boolean).join(" · "),
-      ()=>{
-        vehicle.splice(index,1);
-        save("jarvisVehicle",vehicle);
-        renderVehicle();
-      });
-  });
-
-  emptyMessage(box,"No maintenance records yet.");
-}
-
-$("vehicleForm").addEventListener("submit",event=>{
-  event.preventDefault();
-  vehicle.unshift({
-    title:$("vehicleEntry").value.trim(),
-    date:$("vehicleDate").value,
-    mileage:$("vehicleMileage").value
-  });
-  save("jarvisVehicle",vehicle);
-  $("vehicleForm").reset();
-  renderVehicle();
-  toast("Vehicle record saved.");
-});
-
-/* FRIDAY MEMORY */
-
-function renderMemories(){
-  const box=$("memoryList");
-  box.innerHTML="";
-
-  memories.forEach((entry,index)=>{
-    makeItem(box,entry.category,entry.text,
-      ()=>{
-        memories.splice(index,1);
-        save("jarvisMemories",memories);
-        renderMemories();
-        renderOverview();
-      });
-  });
-
-  emptyMessage(box,"No saved memories.");
-}
-
-$("memoryForm").addEventListener("submit",event=>{
-  event.preventDefault();
-  memories.unshift({
-    category:$("memoryCategory").value,
-    text:$("memoryText").value.trim()
-  });
-  save("jarvisMemories",memories);
-  $("memoryForm").reset();
-  renderMemories();
-  renderOverview();
-  toast("Memory saved locally.");
-});
-
-/* FRIDAY ENTERTAINMENT */
-
-function renderEntertainment(){
-  const box=$("entertainmentList");
-  box.innerHTML="";
-
-  entertainment.forEach((entry,index)=>{
-    makeItem(box,entry.type+" · "+entry.title,entry.notes,
-      ()=>{
-        entertainment.splice(index,1);
-        save("jarvisEntertainment",entertainment);
-        renderEntertainment();
-      });
-  });
-
-  emptyMessage(box,"Your collection is empty.");
-}
-
-$("entertainmentForm").addEventListener("submit",event=>{
-  event.preventDefault();
-  entertainment.unshift({
-    type:$("entType").value,
-    title:$("entTitle").value.trim(),
-    notes:$("entNotes").value.trim()
-  });
-  save("jarvisEntertainment",entertainment);
-  $("entertainmentForm").reset();
-  renderEntertainment();
-  toast("Added to your collection.");
-});
-
-/* EDITH DEVELOPMENT REVIEW */
-
-function renderDevelopment(){
-  const box=$("developmentList");
-  box.innerHTML="";
-
-  development.forEach((entry,index)=>{
-    makeItem(box,entry.title,
-      entry.details+" · Status: "+entry.status,
-      ()=>{
-        development.splice(index,1);
-        save("jarvisDevelopment",development);
-        renderDevelopment();
-      });
-
-    const item=box.lastElementChild;
-    const status=document.createElement("button");
-    status.className="mini";
-    status.textContent="MARK REVIEWED";
-    status.style.marginTop="9px";
-    status.onclick=()=>{
-      entry.status="Reviewed by user";
-      save("jarvisDevelopment",development);
-      renderDevelopment();
-    };
-    item.append(status);
-  });
-
-  emptyMessage(box,"No proposed changes.");
-}
-
-$("developmentForm").addEventListener("submit",event=>{
-  event.preventDefault();
-  development.unshift({
-    title:$("devTitle").value.trim(),
-    details:$("devDetails").value.trim(),
-    status:"Awaiting review"
-  });
-  save("jarvisDevelopment",development);
-  $("developmentForm").reset();
-  renderDevelopment();
-  toast("Change submitted for review.");
-});
-
-/* DAILY BRIEFING */
-
-function renderOverview(){
-  const now=new Date();
-
-  $("overviewDate").textContent=now.toLocaleDateString(undefined,{
-    weekday:"long",year:"numeric",month:"long",day:"numeric"
-  });
-
-  const box=$("overviewContent");
-  box.innerHTML="";
-
-  const openTasks=tasks.filter(t=>!t.done);
-  const openSchool=school.filter(s=>!s.done);
-
-  makeItem(box,"General tasks",openTasks.length+" open");
-  makeItem(box,"School assignments",openSchool.length+" open");
-  makeItem(box,"Band entries",band.length+" saved");
-  makeItem(box,"Vehicle records",vehicle.length+" saved");
-  makeItem(box,"Personal memories",memories.length+" saved");
-  makeItem(box,"Entertainment collection",entertainment.length+" saved");
-
-  const today=now.toISOString().slice(0,10);
-  const dueToday=[
-    ...openTasks.filter(t=>t.due===today).map(t=>"Task: "+t.title),
-    ...openSchool.filter(s=>s.due===today).map(s=>"School: "+s.assignment)
-  ];
-
-  if(dueToday.length){
-    makeItem(box,"Due today",dueToday.join(" · "));
-  }
-
-  briefingText=
-    "Daily briefing. You have "+openTasks.length+" open general tasks, "+
-    openSchool.length+" open school assignments, "+
-    band.length+" band entries, and "+
-    vehicle.length+" vehicle records.";
-
-  if(dueToday.length){
-    briefingText+=" Items due today: "+dueToday.join(". ")+".";
-  }
-
-  briefingText+=" That concludes your current local briefing.";
-}
-
-$("speakBriefing").addEventListener("click",()=>{
-  renderOverview();
-  speak(briefingText,"JARVIS");
-});
-
-/* VOICE OUTPUT */
-
-function loadVoices(){
-  if(!("speechSynthesis" in window))return;
-  voices=speechSynthesis.getVoices();
-  $("voiceReadout").textContent=voices.length?"AVAILABLE":"LOADING";
-  if($("voiceSettings").children.length)renderVoiceSettings();
-}
-
-function renderVoiceSettings(){
-  const box=$("voiceSettings");
-  box.innerHTML="";
-
-  if(!("speechSynthesis" in window)){
-    box.textContent="Speech synthesis is not supported.";
+  if (!entries.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = emptyText;
+    box.append(empty);
     return;
   }
 
-  if(!voices.length)loadVoices();
-
-  ["JARVIS","EDITH","FRIDAY"].forEach(name=>{
-    const wrap=document.createElement("div");
-    wrap.className="item";
-
-    const title=document.createElement("strong");
-    title.textContent=name+" VOICE";
-
-    const select=document.createElement("select");
-    select.style.width="100%";
-    select.style.marginTop="10px";
-    select.style.padding="10px";
-    select.style.background="#071a28";
-    select.style.color="white";
-    select.style.border="1px solid var(--line)";
-    select.style.borderRadius="10px";
-
-    const english=voices.filter(v=>v.lang.toLowerCase().startsWith("en"));
-    (english.length?english:voices).forEach(voice=>{
-      const option=document.createElement("option");
-      option.value=voice.voiceURI;
-      option.textContent=voice.name+" ("+voice.lang+")";
-      select.append(option);
-    });
-
-    select.value=localStorage.getItem("voice-"+name)||"";
-    select.onchange=()=>localStorage.setItem("voice-"+name,select.value);
-
-    const rateLabel=document.createElement("div");
-    rateLabel.className="range-line";
-    rateLabel.innerHTML="<span>Speaking speed</span><span></span>";
-
-    const rate=document.createElement("input");
-    rate.type="range";rate.min=".7";rate.max="1.3";rate.step=".05";
-    rate.value=localStorage.getItem("rate-"+name)||profiles[name].rate;
-    rateLabel.lastElementChild.textContent=Number(rate.value).toFixed(2);
-
-    rate.oninput=()=>{
-      localStorage.setItem("rate-"+name,rate.value);
-      rateLabel.lastElementChild.textContent=Number(rate.value).toFixed(2);
-    };
-
-    const pitchLabel=document.createElement("div");
-    pitchLabel.className="range-line";
-    pitchLabel.innerHTML="<span>Pitch</span><span></span>";
-
-    const pitch=document.createElement("input");
-    pitch.type="range";pitch.min=".6";pitch.max="1.4";pitch.step=".05";
-    pitch.value=localStorage.getItem("pitch-"+name)||profiles[name].pitch;
-    pitchLabel.lastElementChild.textContent=Number(pitch.value).toFixed(2);
-
-    pitch.oninput=()=>{
-      localStorage.setItem("pitch-"+name,pitch.value);
-      pitchLabel.lastElementChild.textContent=Number(pitch.value).toFixed(2);
-    };
-
-    const preview=document.createElement("button");
-    preview.className="mini";
-    preview.textContent="PREVIEW "+name;
-    preview.style.marginTop="12px";
-    preview.onclick=()=>speak(profiles[name].sample,name);
-
-    wrap.append(title,select,rateLabel,rate,pitchLabel,pitch,preview);
-    box.append(wrap);
+  entries.forEach((entry, index) => {
+    box.append(makeItem(entry, index));
   });
 }
 
-function speak(text,who=personality){
-  if(!("speechSynthesis" in window)){
-    toast("Speech output unavailable.");
+function renderTasks() {
+  renderList("taskList", tasks, "No tasks registered.", (task, index) => {
+    const el = document.createElement("div");
+    el.className = "item";
+
+    const title = document.createElement("strong");
+    title.textContent = task.title;
+
+    const due = document.createElement("small");
+    due.textContent = task.due ? "Due " + task.due : "No due date";
+
+    const done = document.createElement("button");
+    done.className = "mini";
+    done.textContent = task.done ? "REOPEN" : "COMPLETE";
+    done.onclick = () => {
+      tasks[index].done = !tasks[index].done;
+      save("jarvisTasks", tasks);
+      renderTasks();
+    };
+
+    const remove = document.createElement("button");
+    remove.className = "mini";
+    remove.textContent = "DELETE";
+    remove.onclick = () => {
+      tasks.splice(index, 1);
+      save("jarvisTasks", tasks);
+      renderTasks();
+    };
+
+    el.append(title, due, done, remove);
+    return el;
+  });
+}
+
+$("taskForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  tasks.push({
+    title: $("taskTitle").value.trim(),
+    due: $("taskDue").value,
+    done: false
+  });
+
+  save("jarvisTasks", tasks);
+  event.target.reset();
+  renderTasks();
+  toast("Task saved locally.");
+});
+
+function renderMemories() {
+  renderList("memoryList", memories, "No saved memories.", (memory, index) => {
+    const el = document.createElement("div");
+    el.className = "item";
+
+    const content = document.createElement("div");
+    content.textContent = memory;
+
+    const remove = document.createElement("button");
+    remove.className = "mini";
+    remove.textContent = "DELETE";
+    remove.onclick = () => {
+      memories.splice(index, 1);
+      save("jarvisMemories", memories);
+      renderMemories();
+    };
+
+    el.append(content, remove);
+    return el;
+  });
+}
+
+$("memoryForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  memories.unshift($("memoryText").value.trim());
+  save("jarvisMemories", memories);
+
+  event.target.reset();
+  renderMemories();
+  toast("Memory saved locally.");
+});
+
+/* SCHOOL HUB */
+
+$("classForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const name = $("className").value.trim();
+  if (!name) return;
+
+  classes.push({ id: crypto.randomUUID(), name });
+  save("jarvisClasses", classes);
+
+  event.target.reset();
+  renderSchool();
+  toast("Class added.");
+});
+
+$("assignmentForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const title = $("assignmentTitle").value.trim();
+  if (!title) return;
+
+  assignments.push({
+    id: crypto.randomUUID(),
+    title,
+    classId: $("assignmentClass").value,
+    due: $("assignmentDue").value,
+    done: false
+  });
+
+  save("jarvisAssignments", assignments);
+
+  event.target.reset();
+  renderSchool();
+  toast("Assignment saved.");
+});
+
+function renderSchool() {
+  const select = $("assignmentClass");
+  select.replaceChildren();
+
+  classes.forEach(c => {
+    const option = document.createElement("option");
+    option.value = c.id;
+    option.textContent = c.name;
+    select.append(option);
+  });
+
+  renderList("classList", classes, "No classes added yet.", (c, index) => {
+    const el = document.createElement("div");
+    el.className = "item";
+
+    const title = document.createElement("strong");
+    title.textContent = c.name;
+
+    const remove = document.createElement("button");
+    remove.className = "mini";
+    remove.textContent = "REMOVE";
+    remove.onclick = () => {
+      classes.splice(index, 1);
+      assignments = assignments.filter(a => a.classId !== c.id);
+      save("jarvisClasses", classes);
+      save("jarvisAssignments", assignments);
+      renderSchool();
+    };
+
+    el.append(title, remove);
+    return el;
+  });
+
+  renderList("assignmentList", assignments, "No assignments registered.", (a, index) => {
+    const el = document.createElement("div");
+    el.className = "item";
+
+    const title = document.createElement("strong");
+    title.textContent = a.title;
+
+    const c = classes.find(x => x.id === a.classId);
+    const info = document.createElement("small");
+    info.textContent =
+      (c ? c.name : "Unassigned class") +
+      (a.due ? " · Due " + a.due : "");
+
+    const done = document.createElement("button");
+    done.className = "mini";
+    done.textContent = a.done ? "REOPEN" : "COMPLETE";
+    done.onclick = () => {
+      assignments[index].done = !assignments[index].done;
+      save("jarvisAssignments", assignments);
+      renderSchool();
+    };
+
+    const remove = document.createElement("button");
+    remove.className = "mini";
+    remove.textContent = "DELETE";
+    remove.onclick = () => {
+      assignments.splice(index, 1);
+      save("jarvisAssignments", assignments);
+      renderSchool();
+    };
+
+    el.append(title, info, done, remove);
+    return el;
+  });
+
+  const integrations = [
+    "Google Classroom",
+    "DeltaMath",
+    "Edmentum",
+    "SchooLinks",
+    "Google Drive"
+  ];
+
+  const box = $("schoolConnections");
+  box.replaceChildren();
+
+  integrations.forEach(name => {
+    const el = document.createElement("div");
+    el.className = "item";
+
+    const title = document.createElement("strong");
+    title.textContent = name;
+
+    const info = document.createElement("small");
+    info.textContent = "Not connected · Integration setup required";
+
+    const button = document.createElement("button");
+    button.className = "mini";
+    button.textContent = "CONNECTION DETAILS";
+    button.onclick = () => toast(name + " integration is not configured yet.");
+
+    el.append(title, info, button);
+    box.append(el);
+  });
+}
+
+/* VOICE */
+
+function loadVoices() {
+  if (!("speechSynthesis" in window)) return;
+  voices = speechSynthesis.getVoices();
+}
+
+function speak(text, who = personality) {
+  if (!("speechSynthesis" in window)) {
+    toast("Speech is not supported in this browser.");
     return;
   }
 
   speechSynthesis.cancel();
-  setState("speaking","VOICE OUTPUT ACTIVE");
 
-  const utterance=new SpeechSynthesisUtterance(text);
-  const selected=localStorage.getItem("voice-"+who);
+  const utterance = new SpeechSynthesisUtterance(text);
+  const voice = voices.find(v => v.lang.toLowerCase().startsWith("en"));
 
-  utterance.voice=
-    voices.find(v=>v.voiceURI===selected)||
-    voices.find(v=>v.lang.toLowerCase().startsWith("en"))||
-    null;
+  if (voice) utterance.voice = voice;
 
-  utterance.rate=Number(localStorage.getItem("rate-"+who)||profiles[who].rate);
-  utterance.pitch=Number(localStorage.getItem("pitch-"+who)||profiles[who].pitch);
-  utterance.onend=()=>setState("standby");
-  utterance.onerror=()=>setState("standby");
+  utterance.rate = profiles[who].rate;
+  utterance.pitch = profiles[who].pitch;
 
   speechSynthesis.speak(utterance);
 }
 
-$("previewCurrent").addEventListener("click",()=>{
+$("activeVoice").addEventListener("change", event => {
+  setPersonality(event.target.value);
+});
+
+$("previewVoice").addEventListener("click", () => {
   speak(profiles[personality].sample);
 });
 
-/* CLEAR LOCAL DATA */
-
-$("clearData").addEventListener("click",()=>{
-  if(!confirm("Delete all locally saved JARVIS data?"))return;
-
-  tasks=[];memories=[];school=[];band=[];vehicle=[];entertainment=[];development=[];
-
-  [
-    ["jarvisTasks",tasks],
-    ["jarvisMemories",memories],
-    ["jarvisSchool",school],
-    ["jarvisBand",band],
-    ["jarvisVehicle",vehicle],
-    ["jarvisEntertainment",entertainment],
-    ["jarvisDevelopment",development]
-  ].forEach(([key,value])=>save(key,value));
-
-  renderTasks();renderMemories();renderSchool();renderBand();
-  renderVehicle();renderEntertainment();renderDevelopment();renderOverview();
-  toast("Local data cleared.");
-});
-
-/* EDITH OBSERVERS */
-
-const observers={
-  primary:{active:true,failures:0},
-  security:{active:true,failures:0},
-  communication:{active:true,failures:0},
-  recovery:{active:true,failures:0}
-};
-
-function updateObservers(){
-  const active=Object.values(observers).filter(o=>o.active).length;
-  $("observerReadout").textContent=active+" ACTIVE";
-  $("securityObserverStatus").textContent=active+" local checks active.";
+if ("speechSynthesis" in window) {
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
 }
 
-function observerCheck(){
-  try{
-    if(!profiles[personality])throw new Error("Personality error");
-    if(!Array.isArray(tasks)||!Array.isArray(memories))throw new Error("Storage error");
+/* LOCAL COMMAND ROUTER */
 
-    observers.primary.active=true;
-    observers.primary.failures=0;
-    $("systemReadout").textContent="NOMINAL";
-  }catch{
-    observers.primary.failures++;
-    observers.primary.active=false;
-    observers.recovery.active=true;
-    $("systemReadout").textContent="BACKUP MODE";
-  }
-  updateObservers();
-}
-
-/* COMMAND PROCESSING */
-
-function addBubble(text,who){
-  const bubble=document.createElement("div");
-  bubble.className="bubble "+who;
-  bubble.textContent=text;
+function addBubble(text, type) {
+  const bubble = document.createElement("div");
+  bubble.className = "bubble " + type;
+  bubble.textContent = text;
   $("chatlog").append(bubble);
-  $("chatlog").scrollTop=$("chatlog").scrollHeight;
+  $("chatlog").scrollTop = $("chatlog").scrollHeight;
 }
 
-function normalizeCommand(text){
-  return text.toLowerCase()
-    .replace(/[.,!?]/g," ")
-    .replace(/\s+/g," ")
-    .trim();
-}
+function handleCommand(text) {
+  const lower = text.toLowerCase().trim();
 
-function handleCommand(original){
-  const raw=original.toLowerCase();
-  const text=normalizeCommand(original)
-    .replace(/\bjarvis\b/g,"")
-    .replace(/\bedith\b/g,"")
-    .replace(/\bfriday\b/g,"")
-    .trim();
-
-  let reply="I can manage your local school, band, task, memory, vehicle, and entertainment records. Full AI reasoning is not connected yet.";
-
-  /* PERSONALITY SWITCHING */
-
-  if(/\b(switch to|activate|become)\s+jarvis\b/.test(raw)){
-    setPersonality("JARVIS");
-    return "JARVIS active.";
-  }
-
-  if(/\b(switch to|activate|become)\s+edith\b/.test(raw)){
+  if (lower.includes("switch to edith")) {
     setPersonality("EDITH");
-    return "EDITH active.";
+    return "EDITH is now active.";
   }
 
-  if(/\b(switch to|activate|become)\s+friday\b/.test(raw)){
+  if (lower.includes("switch to friday")) {
     setPersonality("FRIDAY");
-    return "FRIDAY active.";
+    return "FRIDAY is now active.";
   }
 
-  /* PERSONALITY RESPONSIBILITIES */
-
-  if(/\b(school mode|school assignments|schoolwork)\b/.test(text)){
-    setPersonality("JARVIS");openPanel("school");
-    return "School Mode is ready. Your assignments are available.";
+  if (lower.includes("switch to jarvis")) {
+    setPersonality("JARVIS");
+    return "JARVIS is now active.";
   }
 
-  if(/\b(band mode|band schedule|rehearsal notes)\b/.test(text)){
-    setPersonality("JARVIS");openPanel("band");
-    return "Band Mode is ready.";
+  if (lower.includes("school")) {
+    openPanel("school");
+    return "Opening the School Hub.";
   }
 
-  if(/\b(vehicle intelligence|my car|camry|vehicle records)\b/.test(text)){
-    setPersonality("EDITH");openPanel("vehicle");
-    return "Vehicle Intelligence opened. Your saved Camry profile is available.";
+  if (lower.includes("show") && lower.includes("task")) {
+    openPanel("tasks");
+    return "Opening your task register.";
   }
 
-  if(/\b(security|security console|lockdown)\b/.test(text)){
-    setPersonality("EDITH");openPanel("security");
-    return "EDITH security console opened.";
+  if (lower.includes("memory")) {
+    openPanel("memory");
+    return "Opening the memory archive.";
   }
 
-  if(/\b(development mode|self development|code review|proposed changes)\b/.test(text)){
-    setPersonality("EDITH");openPanel("development");
-    return "Development review workspace opened. Changes require your approval.";
+  if (lower.includes("security") || lower.includes("edith")) {
+    openPanel("security");
+    return "Opening EDITH's security console.";
   }
 
-  if(/\b(entertainment|watchlist|movie list|music collection)\b/.test(text)){
-    setPersonality("FRIDAY");openPanel("entertainment");
-    return "Your entertainment collection is ready.";
+  if (lower.includes("connection") || lower.includes("api")) {
+    openPanel("connections");
+    return "Opening AI connections.";
   }
 
-  if(/\b(memory archive|memories|personal memory|saved notes)\b/.test(text)){
-    setPersonality("FRIDAY");openPanel("memory");
-    return "Opening your memory archive.";
+  if (lower.includes("settings")) {
+    openPanel("settings");
+    return "Opening system settings.";
   }
 
-  /* OTHER PANELS */
-
-  if(/\b(open|show|display)\b.*\btasks\b/.test(text)||text==="tasks"){
-    openPanel("tasks");return "Opening your task register.";
+  if (lower.includes("close") || lower.includes("dismiss")) {
+    closePanels();
+    return "Panels closed.";
   }
 
-  if(/\b(daily briefing|daily overview|today's overview|overview)\b/.test(text)){
-    openPanel("overview");return "Preparing your daily briefing.";
+  if (lower.startsWith("add task ")) {
+    tasks.push({
+      title: text.slice(9).trim(),
+      due: "",
+      done: false
+    });
+    save("jarvisTasks", tasks);
+    renderTasks();
+    return "Task saved.";
   }
 
-  if(/\b(settings|voice settings)\b/.test(text)){
-    openPanel("settings");return "Opening system settings.";
+  if (lower.startsWith("remember ")) {
+    memories.unshift(text.slice(9).trim());
+    save("jarvisMemories", memories);
+    renderMemories();
+    return "Memory saved locally.";
   }
 
-  if(/\b(command console|console)\b/.test(text)){
-    openPanel("chat");return "Command console opened.";
-  }
-
-  if(/\b(close|hide|dismiss)\b/.test(text)){
-    closePanels();return "Panels closed.";
-  }
-
-  /* QUICK ADD COMMANDS */
-
-  if(text.startsWith("add task ")){
-    const title=text.slice(9).trim();
-    if(title){
-      tasks.push({title,due:"",done:false});
-      save("jarvisTasks",tasks);renderTasks();renderOverview();
-      return "Task added.";
-    }
-  }
-
-  if(text.startsWith("remember ")){
-    const note=original.replace(/^.*?\bremember\b/i,"").trim();
-    if(note){
-      memories.unshift({category:"Personal",text:note});
-      save("jarvisMemories",memories);renderMemories();
-      return "I'll keep that in your local memory archive.";
-    }
-  }
-
-  if(/\b(what time is it|current time|the time)\b/.test(text)){
-    return "The current time is "+new Date().toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})+".";
-  }
-
-  if(/\b(hello|hey|hi)\b/.test(text)){
-    return personality==="FRIDAY"?"Hey. What's up?":
-      personality==="EDITH"?"Standing by.":"Hello. How may I assist you?";
-  }
-
-  if(/\bhelp\b/.test(text)){
-    return "Try saying: open School Mode, open Band Mode, open Vehicle Intelligence, open Entertainment, open Memory Archive, open Security, open Development Mode, open Tasks, daily briefing, or switch to EDITH.";
-  }
-
-  return reply;
+  return "I can manage local tasks, notes, classes, and assignments. Full AI reasoning requires a secure AI backend connection.";
 }
 
-$("chatForm").addEventListener("submit",event=>{
+$("chatForm").addEventListener("submit", event => {
   event.preventDefault();
 
-  const text=$("chatInput").value.trim();
-  if(!text)return;
+  const text = $("chatInput").value.trim();
+  if (!text) return;
 
-  addBubble(text,"user");
-  $("chatInput").value="";
-  setState("processing","ANALYZING COMMAND");
-  observerCheck();
+  addBubble(text, "user");
+  $("chatInput").value = "";
 
-  const reply=handleCommand(text);
-  addBubble(reply,"assistant");
-  speak(reply);
+  const response = handleCommand(text);
+
+  setTimeout(() => {
+    addBubble(response, "assistant");
+    speak(response);
+  }, 120);
 });
 
 /* VOICE RECOGNITION */
 
-function getSpeechRecognition(){
-  return window.SpeechRecognition||window.webkitSpeechRecognition||null;
-}
+let recognition = null;
 
-function stopRecognition(){
-  clearTimeout(recognitionTimer);
-  if(recognition){
-    try{recognition.stop()}catch{}
-  }
-}
+$("activateBtn").addEventListener("click", () => {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-function beginRecognition(){
-  const SpeechRecognition=getSpeechRecognition();
-
-  if(!SpeechRecognition){
-    toast("Speech recognition unavailable in this browser.");
+  if (!SR) {
+    toast("Voice recognition is unavailable in this browser.");
     return;
   }
 
-  if(recognition){
-    stopRecognition();
+  if (recognition) {
+    recognition.stop();
     return;
   }
 
-  lastFinalTranscript="";
-  $("transcript").textContent="";
+  recognition = new SR();
+  recognition.lang = "en-US";
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
 
-  recognition=new SpeechRecognition();
-  recognition.lang="en-US";
-  recognition.interimResults=true;
-  recognition.continuous=false;
-  recognition.maxAlternatives=5;
+  $("activateBtn").textContent = "LISTENING...";
 
-  setState("listening");
-
-  recognition.onresult=event=>{
-    let interim="";
-    let finalText="";
-
-    for(let i=event.resultIndex;i<event.results.length;i++){
-      const result=event.results[i];
-      if(result.isFinal){
-        finalText=result[0].transcript||"";
-      }else{
-        interim+=result[0].transcript;
-      }
-    }
-
-    if(interim)$("transcript").textContent=interim;
-
-    if(finalText.trim()){
-      lastFinalTranscript=finalText.trim();
-      $("transcript").textContent=lastFinalTranscript;
-      stopRecognition();
-      recognition=null;
-      setState("processing","UNDERSTANDING COMMAND");
-
-      $("chatInput").value=lastFinalTranscript;
-      $("chatForm").requestSubmit();
-    }
+  recognition.onresult = event => {
+    $("chatInput").value = event.results[0][0].transcript;
+    $("chatForm").requestSubmit();
   };
 
-  recognition.onerror=event=>{
-    observers.communication.failures++;
-    setState("error","VOICE RECOGNITION ISSUE");
-    toast("Voice input: "+event.error);
-    setTimeout(()=>setState("standby"),1400);
+  recognition.onerror = event => {
+    toast("Voice input: " + event.error);
   };
 
-  recognition.onend=()=>{
-    recognition=null;
-    if(!$("transcript").textContent.trim())setState("standby");
+  recognition.onend = () => {
+    $("activateBtn").textContent = "◉ ACTIVATE VOICE";
+    recognition = null;
   };
 
-  try{
-    recognition.start();
-    recognitionTimer=setTimeout(()=>{
-      if(recognition){
-        stopRecognition();
-        toast("Listening timed out. Try again.");
-      }
-    },15000);
-  }catch{
-    recognition=null;
-    setState("error");
-    toast("Could not start microphone.");
-  }
-}
-
-$("core").addEventListener("click",beginRecognition);
-$("core").addEventListener("keydown",event=>{
-  if(event.key==="Enter"||event.key===" "){
-    event.preventDefault();
-    beginRecognition();
-  }
+  recognition.start();
+  toast("Listening. Speak your command.");
 });
 
-/* SECURITY PREVIEW */
+/* PROVIDER SETUP SAFETY */
 
-$("lockdownPreview").addEventListener("click",()=>{
-  if(!confirm("This is only a local visual preview. It does not secure your device. Continue?"))return;
+$("providerForm").addEventListener("submit", event => {
+  event.preventDefault();
 
-  setPersonality("EDITH");
-  closePanels();
-  $("systemStatus").textContent="LOCAL PREVIEW ACTIVE";
-  $("systemReadout").textContent="PREVIEW MODE";
-  toast("EDITH local preview activated.");
+  $("apiKey").value = "";
+
+  toast("Backend not configured. No API key was saved.");
 });
 
-/* CLOCK AND STARTUP */
+/* SETTINGS */
 
-function updateClock(){
-  const now=new Date();
+$("interjectionFrequency").value =
+  localStorage.getItem("jarvisInterjections") || "balanced";
 
-  $("holoClock").textContent=now.toLocaleTimeString([],{
-    hour:"2-digit",minute:"2-digit",second:"2-digit"
-  });
+$("interjectionFrequency").addEventListener("change", event => {
+  localStorage.setItem("jarvisInterjections", event.target.value);
+  toast("Interjection preference saved.");
+});
 
-  $("holoDate").textContent=now.toLocaleDateString([],{
-    month:"short",day:"numeric",year:"numeric"
+$("clearData").addEventListener("click", () => {
+  if (!confirm("Delete local tasks, school data, and memories?")) return;
+
+  tasks = [];
+  memories = [];
+  classes = [];
+  assignments = [];
+
+  save("jarvisTasks", tasks);
+  save("jarvisMemories", memories);
+  save("jarvisClasses", classes);
+  save("jarvisAssignments", assignments);
+
+  renderTasks();
+  renderMemories();
+  renderSchool();
+
+  toast("Local data cleared.");
+});
+
+/* CLOCK AND INITIALIZATION */
+
+function updateClock() {
+  $("clock").textContent = new Date().toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit"
   });
 }
 
-setPersonality(profiles[personality]?personality:"JARVIS");
+setPersonality(personality);
 renderTasks();
-renderSchool();
-renderBand();
-renderVehicle();
 renderMemories();
-renderEntertainment();
-renderDevelopment();
-renderOverview();
+renderSchool();
 updateClock();
-loadVoices();
-updateObservers();
 
-setInterval(updateClock,1000);
-setInterval(observerCheck,5000);
+setInterval(updateClock, 30000);
 
-if("speechSynthesis" in window){
-  speechSynthesis.onvoiceschanged=loadVoices;
-}
-
-if("serviceWorker" in navigator&&location.protocol.startsWith("http")){
-  navigator.serviceWorker.register("./sw.js").catch(()=>{});
+if ("serviceWorker" in navigator &&
+    location.protocol.startsWith("http")) {
+  navigator.serviceWorker.register("./sw.js").catch(() => {});
 }
 </script>
 </body>
