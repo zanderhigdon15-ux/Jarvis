@@ -1,24 +1,24 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#050d18">
+<meta name="theme-color" content="#020914">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>JARVIS | Personal Intelligence System</title>
+<title>JARVIS | Stark Systems</title>
 
 <style>
 :root {
   color-scheme: dark;
-  --bg: #050d18;
-  --panel: rgba(9, 25, 43, .88);
-  --line: rgba(104, 202, 255, .25);
-  --text: #eaf7ff;
-  --muted: #8ba9c0;
-  --accent: #68caff;
-  --accent2: #c3edff;
-  --glow: rgba(70, 183, 255, .45);
+  --bg: #020914;
+  --text: #eafaff;
+  --muted: #80a9bd;
+  --accent: #51dcff;
+  --accent2: #c8f7ff;
+  --line: rgba(81,220,255,.34);
+  --glow: rgba(40,205,255,.5);
+  --panel: rgba(3,17,31,.94);
 }
 
 * { box-sizing: border-box; }
@@ -26,25 +26,25 @@
 body {
   margin: 0;
   min-height: 100vh;
-  overflow-x: hidden;
+  overflow: hidden;
   color: var(--text);
   font-family: Inter, system-ui, sans-serif;
   background:
-    radial-gradient(ellipse at 50% 42%, #12334e 0%, #091827 35%, #030811 80%);
+    radial-gradient(ellipse at 50% 48%, #103b56 0%, #071b2b 36%, #020812 80%);
 }
 
 body.edith {
-  --accent: #ff536f;
-  --accent2: #ffd1d9;
-  --line: rgba(255, 83, 111, .3);
-  --glow: rgba(255, 50, 85, .4);
+  --accent: #ff3e62;
+  --accent2: #ffc0cd;
+  --line: rgba(255,50,85,.4);
+  --glow: rgba(255,35,70,.5);
 }
 
 body.friday {
   --accent: #ffbd57;
-  --accent2: #ffe5b4;
-  --line: rgba(255, 189, 87, .3);
-  --glow: rgba(255, 175, 65, .4);
+  --accent2: #fff0c8;
+  --line: rgba(255,189,87,.4);
+  --glow: rgba(255,170,55,.5);
 }
 
 body::before {
@@ -54,42 +54,53 @@ body::before {
   pointer-events: none;
   opacity: .17;
   background-image:
-    linear-gradient(rgba(120,200,255,.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(120,200,255,.07) 1px, transparent 1px);
-  background-size: 44px 44px;
-  mask-image: radial-gradient(ellipse at center, black, transparent 78%);
+    linear-gradient(rgba(100,220,255,.1) 1px, transparent 1px),
+    linear-gradient(90deg,rgba(100,220,255,.1) 1px,transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(ellipse,black,transparent 78%);
 }
 
-button, input, textarea, select {
-  font: inherit;
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+  opacity: .12;
+  background: repeating-linear-gradient(
+    transparent 0,
+    transparent 3px,
+    rgba(100,220,255,.08) 4px
+  );
 }
 
-button {
-  color: inherit;
-  cursor: pointer;
-}
+button, input, textarea, select { font: inherit; }
+button { color: inherit; cursor: pointer; }
 
 #app {
   position: relative;
-  z-index: 1;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
+  width: 100%;
+  height: 100vh;
+  min-height: 500px;
+  overflow: hidden;
 }
 
 .topbar {
-  width: min(1200px, 100%);
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 70px;
-  margin: auto;
+  padding: 0 30px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
 }
 
 .brand {
-  font-size: 12px;
-  letter-spacing: .32em;
+  font-size: 11px;
+  letter-spacing: .34em;
   font-weight: 700;
 }
 
@@ -98,174 +109,348 @@ button {
 .status {
   display: flex;
   align-items: center;
-  gap: 9px;
-  font-size: 10px;
-  letter-spacing: .12em;
+  gap: 10px;
   color: var(--muted);
+  font-size: 9px;
+  letter-spacing: .17em;
 }
 
 .dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: #6be2b0;
-  box-shadow: 0 0 12px #6be2b0;
+  background: #67ffc3;
+  box-shadow: 0 0 15px #67ffc3;
 }
 
+/* HOLOGRAPHIC STAGE */
+
 .stage {
-  min-height: 620px;
-  flex: 1;
+  position: absolute;
+  inset: 0;
   display: grid;
   place-items: center;
-  position: relative;
+  perspective: 1100px;
 }
 
 .core-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 22px;
+  position: relative;
+  width: min(94vw, 760px);
+  height: min(94vw, 760px);
+  max-height: 90vh;
+  display: grid;
+  place-items: center;
+  transform-style: preserve-3d;
+  transition: transform .3s ease-out;
 }
 
 .core {
-  width: min(68vw, 330px);
+  position: absolute;
+  z-index: 4;
+  width: 43%;
   aspect-ratio: 1;
   border-radius: 50%;
-  position: relative;
   display: grid;
   place-items: center;
-  background: radial-gradient(circle, rgba(54,160,220,.15), transparent 68%);
-  border: 1px solid var(--line);
-  box-shadow: 0 0 55px var(--glow), inset 0 0 50px rgba(100,200,255,.1);
-  animation: corePulse 5s ease-in-out infinite;
+  cursor: pointer;
+  background: radial-gradient(
+    circle,
+    rgba(55,215,255,.19),
+    rgba(15,120,180,.06) 48%,
+    transparent 72%
+  );
+  box-shadow:
+    0 0 70px var(--glow),
+    inset 0 0 65px rgba(70,210,255,.2);
+  animation: corePulse 4s ease-in-out infinite;
 }
 
 .core::before,
 .core::after {
   content: "";
   position: absolute;
-  inset: 8%;
+  inset: 9%;
   border-radius: 50%;
-  border: 1px solid var(--accent);
+  border: 2px solid var(--accent);
   border-left-color: transparent;
   border-bottom-color: transparent;
-  animation: rotate 18s linear infinite;
+  box-shadow: 0 0 25px var(--glow);
+  animation: spin 8s linear infinite;
 }
 
 .core::after {
-  inset: 19%;
-  animation-duration: 12s;
-  animation-direction: reverse;
-  opacity: .6;
+  inset: 20%;
+  border-width: 1px;
+  border-color: var(--accent2);
+  border-right-color: transparent;
+  border-top-color: transparent;
+  animation: spinReverse 5s linear infinite;
 }
 
 .core-inner {
-  width: 39%;
+  width: 31%;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff 0%, var(--accent2) 8%, var(--accent) 30%, #07304d 75%);
-  box-shadow: 0 0 25px var(--accent), 0 0 90px var(--glow);
+  background: radial-gradient(
+    circle at 35% 30%,
+    white 0%,
+    var(--accent2) 9%,
+    var(--accent) 30%,
+    #08729b 60%,
+    #031b31 100%
+  );
+  box-shadow:
+    0 0 25px var(--accent),
+    0 0 65px var(--glow),
+    0 0 120px var(--glow);
+  animation: energy 3s ease-in-out infinite;
 }
 
+/* FLOATING RINGS */
+
+.ring {
+  position: absolute;
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow: 0 0 18px var(--glow);
+}
+
+.ring-one {
+  width: 64%;
+  height: 64%;
+  transform: rotateX(72deg);
+  border-width: 2px;
+  animation: spin 13s linear infinite;
+}
+
+.ring-two {
+  width: 76%;
+  height: 76%;
+  transform: rotateX(72deg) rotateZ(60deg);
+  border-style: dashed;
+  opacity: .5;
+  animation: spinReverse 19s linear infinite;
+}
+
+.ring-three {
+  width: 90%;
+  height: 90%;
+  transform: rotateY(70deg) rotateX(15deg);
+  border-style: dotted;
+  opacity: .5;
+  animation: spin 25s linear infinite;
+}
+
+.ring-four {
+  width: 56%;
+  height: 56%;
+  transform: rotateX(35deg) rotateY(65deg);
+  border-width: 2px;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  animation: spinReverse 10s linear infinite;
+}
+
+.ring-five {
+  width: 100%;
+  height: 100%;
+  transform: rotateX(78deg) rotateY(15deg);
+  border-color: var(--accent2);
+  opacity: .22;
+  animation: spin 32s linear infinite;
+}
+
+/* WIREFRAME SPHERE */
+
+.wire-sphere {
+  position: absolute;
+  width: 42%;
+  height: 42%;
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+  opacity: .4;
+  transform-style: preserve-3d;
+  animation: sphereSpin 16s linear infinite;
+  pointer-events: none;
+}
+
+.wire-sphere::before,
+.wire-sphere::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--accent);
+  border-radius: 50%;
+}
+
+.wire-sphere::before { transform: rotateY(60deg); }
+.wire-sphere::after { transform: rotateY(-60deg); }
+
+.sphere-equator {
+  position: absolute;
+  inset: 20% -2%;
+  border: 1px solid var(--accent2);
+  border-radius: 50%;
+  transform: rotateX(70deg);
+}
+
+/* PARTICLES */
+
+.particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--accent2);
+  box-shadow: 0 0 12px var(--accent);
+  animation: floatParticle var(--duration,8s) ease-in-out infinite;
+  animation-delay: var(--delay,0s);
+}
+
+/* FLOATING DATA DISPLAYS */
+
+.hud {
+  position: absolute;
+  z-index: 3;
+  min-width: 130px;
+  padding: 12px 15px;
+  border-left: 1px solid var(--accent);
+  border-top: 1px solid var(--line);
+  background: linear-gradient(110deg,rgba(30,130,175,.13),transparent);
+  backdrop-filter: blur(8px);
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: .13em;
+  animation: hudFloat 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.hud strong {
+  display: block;
+  margin-top: 7px;
+  color: var(--accent2);
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: .12em;
+}
+
+.hud-clock { top: 19%; left: 2%; }
+.hud-system { top: 26%; right: 2%; animation-delay: -2s; }
+.hud-date { bottom: 24%; left: 2%; animation-delay: -1s; }
+.hud-audio { bottom: 22%; right: 2%; animation-delay: -3s; }
+
+.wave {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 23px;
+  margin-top: 8px;
+}
+
+.wave i {
+  width: 3px;
+  height: 7px;
+  background: var(--accent);
+  box-shadow: 0 0 7px var(--accent);
+  animation: wave 1s ease-in-out infinite alternate;
+}
+
+.wave i:nth-child(2n) { animation-delay: -.4s; }
+.wave i:nth-child(3n) { animation-delay: -.7s; }
+
+/* CENTRAL LABEL */
+
 .core-label {
+  position: absolute;
+  z-index: 6;
+  bottom: 8%;
   text-align: center;
+  pointer-events: none;
 }
 
 .core-label h1 {
+  margin: 0 0 10px;
   font-size: 17px;
-  font-weight: 500;
-  letter-spacing: .42em;
-  margin: 0 0 8px;
+  font-weight: 400;
+  letter-spacing: .5em;
+  text-shadow: 0 0 20px var(--glow);
 }
 
 .core-label p {
-  color: var(--muted);
-  font-size: 10px;
-  letter-spacing: .18em;
   margin: 0;
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: .25em;
 }
 
+/* VOICE CONTROL */
+
 .controls {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-  justify-content: center;
+  position: absolute;
+  z-index: 8;
+  bottom: 1%;
 }
 
 .glass-btn {
-  padding: 12px 18px;
+  padding: 11px 19px;
   border: 1px solid var(--line);
   border-radius: 30px;
-  background: rgba(120,190,235,.08);
-  backdrop-filter: blur(16px);
-  font-size: 11px;
-  letter-spacing: .08em;
-  transition: .2s;
+  background: rgba(40,170,220,.09);
+  backdrop-filter: blur(15px);
+  font-size: 9px;
+  letter-spacing: .16em;
+  transition: .25s;
 }
 
 .glass-btn:hover,
 .glass-btn:focus-visible {
   border-color: var(--accent);
-  box-shadow: 0 0 20px var(--glow);
+  box-shadow: 0 0 25px var(--glow);
   outline: none;
 }
 
 .primary {
-  background: rgba(70,160,220,.22);
   border-color: var(--accent);
+  color: var(--accent2);
 }
 
-.quickbar {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  max-width: 620px;
-}
+/* NO NAVIGATION BAR OR TAB BUTTONS */
 
-.quickbar button {
-  background: transparent;
-  border: 0;
-  color: var(--muted);
-  padding: 9px;
-  font-size: 10px;
-  letter-spacing: .12em;
-}
-
-.quickbar button:hover { color: var(--accent2); }
-
-.footer {
-  width: min(1200px, 100%);
-  margin: 0 auto 15px;
-  display: flex;
-  justify-content: space-between;
-  color: #6e8aa1;
-  font-size: 9px;
-  letter-spacing: .13em;
-}
+/* FLOATING PANELS */
 
 .panel {
   position: fixed;
-  z-index: 10;
-  top: 78px;
-  right: 18px;
-  bottom: 18px;
-  width: min(470px, calc(100vw - 36px));
+  z-index: 30;
+  top: 85px;
+  right: 25px;
+  bottom: 25px;
+  width: min(440px,calc(100vw - 40px));
   padding: 23px;
   overflow-y: auto;
   border: 1px solid var(--line);
-  border-radius: 22px;
+  border-radius: 5px;
   background: var(--panel);
-  backdrop-filter: blur(28px);
-  box-shadow: 0 25px 90px rgba(0,0,0,.55);
-  transform: translateX(calc(100% + 35px));
+  backdrop-filter: blur(30px);
+  box-shadow:
+    0 0 35px var(--glow),
+    0 25px 90px rgba(0,0,0,.6);
+  transform: translateX(calc(100% + 40px)) perspective(800px) rotateY(-8deg);
   opacity: 0;
-  transition: .3s ease;
+  visibility: hidden;
+  transition: .4s cubic-bezier(.2,.8,.2,1);
 }
 
 .panel.open {
-  transform: translateX(0);
+  transform: translateX(0) perspective(800px) rotateY(0);
   opacity: 1;
+  visibility: visible;
 }
 
 .panel-head {
@@ -276,16 +461,17 @@ button {
 }
 
 .panel-head h2 {
-  font-size: 13px;
+  color: var(--accent2);
+  font-size: 12px;
   letter-spacing: .2em;
-  font-weight: 550;
+  font-weight: 500;
 }
 
 .close {
   width: 35px;
   height: 35px;
-  border-radius: 50%;
   border: 1px solid var(--line);
+  border-radius: 50%;
   background: transparent;
   font-size: 18px;
 }
@@ -293,7 +479,7 @@ button {
 .note {
   color: var(--muted);
   font-size: 11px;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .field {
@@ -316,8 +502,8 @@ button {
   width: 100%;
   padding: 12px;
   border: 1px solid var(--line);
-  border-radius: 11px;
-  background: rgba(0,0,0,.3);
+  border-radius: 5px;
+  background: rgba(0,0,0,.35);
   color: var(--text);
 }
 
@@ -330,8 +516,7 @@ button {
   padding: 13px;
   margin: 9px 0;
   border: 1px solid var(--line);
-  border-radius: 13px;
-  background: rgba(255,255,255,.035);
+  background: rgba(30,120,160,.08);
 }
 
 .item strong { font-size: 12px; }
@@ -343,15 +528,12 @@ button {
   font-size: 10px;
 }
 
-.item button {
-  margin-top: 9px;
-}
+.item button { margin-top: 9px; }
 
 .mini {
   padding: 7px 10px;
-  border-radius: 9px;
   border: 1px solid var(--line);
-  background: rgba(255,255,255,.05);
+  background: rgba(255,255,255,.04);
   font-size: 10px;
 }
 
@@ -360,8 +542,7 @@ button {
   padding: 12px;
   margin: 8px 0;
   border: 1px solid var(--line);
-  border-radius: 13px;
-  background: rgba(80,160,220,.1);
+  background: rgba(50,150,200,.1);
   font-size: 12px;
   line-height: 1.5;
 }
@@ -377,34 +558,90 @@ button {
 
 .toast {
   position: fixed;
-  z-index: 30;
+  z-index: 60;
   left: 50%;
   bottom: 25px;
-  transform: translate(-50%, 15px);
+  transform: translate(-50%,15px);
   opacity: 0;
   pointer-events: none;
   padding: 12px 18px;
   border: 1px solid var(--line);
-  border-radius: 30px;
-  background: #0b2034;
+  background: rgba(4,25,42,.95);
   font-size: 11px;
   transition: .2s;
 }
 
 .toast.show {
   opacity: 1;
-  transform: translate(-50%, 0);
+  transform: translate(-50%,0);
 }
 
-@keyframes rotate { to { transform: rotate(360deg); } }
-@keyframes corePulse {
-  0%,100% { filter: brightness(.9); }
-  50% { filter: brightness(1.25); }
+/* MOTION */
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spinReverse { to { transform: rotate(-360deg); } }
+
+@keyframes sphereSpin {
+  from { transform: rotateY(0deg) rotateX(15deg); }
+  to { transform: rotateY(360deg) rotateX(15deg); }
 }
+
+@keyframes corePulse {
+  0%,100% { filter: brightness(.85); }
+  50% { filter: brightness(1.4); }
+}
+
+@keyframes energy {
+  0%,100% { transform: scale(.92); }
+  50% { transform: scale(1.08); }
+}
+
+@keyframes hudFloat {
+  0%,100% { translate: 0 0; }
+  50% { translate: 0 -8px; }
+}
+
+@keyframes floatParticle {
+  0%,100% { transform: translate(0,0); opacity: .2; }
+  50% { transform: translate(15px,-25px); opacity: 1; }
+}
+
+@keyframes wave {
+  to { height: 21px; }
+}
+
+/* RESPONSIVE */
 
 @media(max-width:600px) {
-  .stage { min-height: calc(100vh - 130px); }
-  .core { width: 230px; }
+  .topbar { padding: 0 15px; }
+  .brand { font-size: 9px; }
+  .status { font-size: 8px; }
+
+  .core-wrap {
+    width: 100vw;
+    height: 100vw;
+    max-height: 85vh;
+  }
+
+  .core { width: 43%; }
+
+  .hud {
+    min-width: 95px;
+    padding: 8px;
+    font-size: 7px;
+  }
+
+  .hud strong { font-size: 12px; }
+
+  .hud-clock { top: 17%; left: 1%; }
+  .hud-system { top: 20%; right: 1%; }
+  .hud-date { bottom: 20%; left: 1%; }
+  .hud-audio { bottom: 19%; right: 1%; }
+
+  .core-label { bottom: 5%; }
+  .core-label h1 { font-size: 14px; }
+  .controls { bottom: 0; }
+
   .panel {
     top: auto;
     left: 9px;
@@ -436,10 +673,45 @@ button {
 </header>
 
 <main class="stage">
-  <div class="core-wrap">
+  <div class="core-wrap" id="holographicCore">
 
-    <div class="core" aria-label="JARVIS holographic core">
+    <div class="particles" id="particles"></div>
+
+    <div class="ring ring-five"></div>
+    <div class="ring ring-three"></div>
+    <div class="ring ring-two"></div>
+    <div class="ring ring-one"></div>
+    <div class="ring ring-four"></div>
+
+    <div class="wire-sphere">
+      <div class="sphere-equator"></div>
+    </div>
+
+    <div class="core" id="coreInteraction" aria-label="Activate JARVIS">
       <div class="core-inner"></div>
+    </div>
+
+    <div class="hud hud-clock">
+      LOCAL TIME
+      <strong id="holoClock">--:--</strong>
+    </div>
+
+    <div class="hud hud-system">
+      SYSTEM STATUS
+      <strong id="holoStatus">ONLINE</strong>
+    </div>
+
+    <div class="hud hud-date">
+      DATE
+      <strong id="holoDate">-- --- ----</strong>
+    </div>
+
+    <div class="hud hud-audio">
+      AUDIO INTERFACE
+      <div class="wave">
+        <i></i><i></i><i></i><i></i><i></i>
+        <i></i><i></i><i></i><i></i><i></i>
+      </div>
     </div>
 
     <div class="core-label">
@@ -448,36 +720,23 @@ button {
     </div>
 
     <div class="controls">
-      <button class="glass-btn primary" id="activateBtn">◉ ACTIVATE VOICE</button>
-      <button class="glass-btn" data-panel="chat">OPEN CONSOLE</button>
-    </div>
-
-    <div class="quickbar">
-      <button data-panel="school">SCHOOL HUB</button>
-      <button data-panel="tasks">TASKS</button>
-      <button data-panel="memory">MEMORY</button>
-      <button data-panel="connections">AI CONNECTIONS</button>
-      <button data-panel="settings">SETTINGS</button>
-      <button data-panel="security">EDITH SECURITY</button>
+      <button class="glass-btn primary" id="activateBtn">
+        ◉ ACTIVATE VOICE
+      </button>
     </div>
 
   </div>
 </main>
-
-<footer class="footer">
-  <span>PERSONAL INTELLIGENCE SYSTEM</span>
-  <span id="clock">--:--</span>
-</footer>
 </div>
 
 <!-- COMMAND CONSOLE -->
 <aside class="panel" id="panel-chat">
   <div class="panel-head">
     <h2>COMMAND CONSOLE</h2>
-    <button class="close">×</button>
+    <button class="close" aria-label="Close">×</button>
   </div>
   <p class="note" id="aiStatus">
-    Local command system active. Connect a secure AI backend to enable full reasoning.
+    Local command system active. Full AI reasoning requires a secure backend.
   </p>
   <div id="chatlog">
     <div class="bubble">
@@ -497,7 +756,7 @@ button {
 <aside class="panel" id="panel-school">
   <div class="panel-head">
     <h2>JARVIS // SCHOOL HUB</h2>
-    <button class="close">×</button>
+    <button class="close" aria-label="Close">×</button>
   </div>
 
   <p class="note">
@@ -547,7 +806,7 @@ button {
 <aside class="panel" id="panel-tasks">
   <div class="panel-head">
     <h2>TASK REGISTER</h2>
-    <button class="close">×</button>
+    <button class="close" aria-label="Close">×</button>
   </div>
 
   <form id="taskForm">
@@ -568,11 +827,11 @@ button {
 <aside class="panel" id="panel-memory">
   <div class="panel-head">
     <h2>MEMORY ARCHIVE</h2>
-    <button class="close">×</button>
+    <button class="close" aria-label="Close">×</button>
   </div>
 
   <p class="note">
-    Notes are currently saved locally. Cloud memory will activate after Supabase is configured.
+    Notes are currently saved locally. Cloud memory requires Supabase configuration.
   </p>
 
   <form id="memoryForm">
@@ -589,49 +848,30 @@ button {
 <aside class="panel" id="panel-connections">
   <div class="panel-head">
     <h2>AI CONNECTIONS</h2>
-    <button class="close">×</button>
+    <button class="close" aria-label="Close">×</button>
   </div>
 
   <p class="note">
-    Bring Your Own Key configuration. Each user's provider connection must be
-    stored and used through a secure backend. This screen does not store API keys.
+    Each user's AI provider connection must be stored and used through a secure
+    authenticated backend. This preview does not store API keys.
   </p>
 
-  <form id="providerForm">
-    <div class="field">
-      <label for="provider">AI provider</label>
-      <select id="provider">
-        <option value="openai">OpenAI</option>
-        <option value="anthropic">Anthropic</option>
-        <option value="google">Google Gemini</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label for="model">Preferred model</label>
-      <input id="model" placeholder="Enter provider model name">
-    </div>
-
-    <div class="field">
-      <label for="apiKey">API key</label>
-      <input id="apiKey" type="password" autocomplete="off"
-        placeholder="Backend connection required">
-    </div>
-
-    <button class="glass-btn primary" type="submit">SAVE CONNECTION</button>
-  </form>
-
   <div class="item">
-    <strong>Security status</strong>
-    <small id="providerStatus">
-      Backend not configured. No API key has been saved.
-    </small>
+    <strong>OpenAI</strong>
+    <small>Not configured · Secure backend required</small>
+  </div>
+  <div class="item">
+    <strong>Anthropic</strong>
+    <small>Not configured · Secure backend required</small>
+  </div>
+  <div class="item">
+    <strong>Google Gemini</strong>
+    <small>Not configured · Secure backend required</small>
   </div>
 
   <p class="note">
-    Never put API keys in public JavaScript, localStorage, or GitHub Pages.
-    The final connection will send credentials directly to an authenticated
-    server function over HTTPS.
+    API keys should never be placed in public JavaScript, localStorage, or GitHub Pages.
+    The eventual connection will use an authenticated server function over HTTPS.
   </p>
 </aside>
 
@@ -639,7 +879,7 @@ button {
 <aside class="panel" id="panel-settings">
   <div class="panel-head">
     <h2>SYSTEM SETTINGS</h2>
-    <button class="close">×</button>
+    <button class="close" aria-label="Close">×</button>
   </div>
 
   <div class="field">
@@ -651,22 +891,13 @@ button {
     </select>
   </div>
 
-  <div class="field">
-    <label for="activeVoice">Voice personality</label>
-    <select id="activeVoice">
-      <option>JARVIS</option>
-      <option>EDITH</option>
-      <option>FRIDAY</option>
-    </select>
-  </div>
-
-  <button class="glass-btn" id="previewVoice">PREVIEW VOICE</button>
-
   <p class="note">
-    Browser voice availability varies by device. Neural voice engines
-    require a separately configured service.
+    Personality switching is handled through voice commands and system logic.
+    Browser voice availability varies by device.
   </p>
 
+  <button class="glass-btn" id="previewVoice">PREVIEW CURRENT VOICE</button>
+  <br><br>
   <button class="glass-btn" id="clearData">CLEAR LOCAL DATA</button>
 </aside>
 
@@ -674,29 +905,25 @@ button {
 <aside class="panel" id="panel-security">
   <div class="panel-head">
     <h2>EDITH // SECURITY</h2>
-    <button class="close">×</button>
+    <button class="close" aria-label="Close">×</button>
   </div>
 
   <p class="note">
-    Security status and permission overview. This is a local preview, not
-    device lockdown or active monitoring.
+    Security overview. This is a local preview, not device lockdown or active monitoring.
   </p>
 
   <div class="item">
     <strong>Account protection</strong>
     <small>Requires configured authentication backend.</small>
   </div>
-
   <div class="item">
     <strong>API credential protection</strong>
-    <small>Server-side secret storage not configured.</small>
+    <small>Server-side credential storage not configured.</small>
   </div>
-
   <div class="item">
     <strong>Device monitoring</strong>
     <small>No background device monitoring is active.</small>
   </div>
-
   <div class="item">
     <strong>Lockdown protocol</strong>
     <small>Preview only. No external systems are controlled.</small>
@@ -729,6 +956,7 @@ let assignments = read("jarvisAssignments", []);
 
 let personality = localStorage.getItem("jarvisPersona") || "JARVIS";
 let voices = [];
+let recognition = null;
 
 const profiles = {
   JARVIS: {
@@ -754,8 +982,11 @@ function toast(message) {
   setTimeout(() => $("toast").classList.remove("show"), 2400);
 }
 
+/* PANELS ARE OPENED BY COMMAND, NOT NAVIGATION TABS */
+
 function openPanel(name) {
   document.querySelectorAll(".panel").forEach(p => p.classList.remove("open"));
+
   const panel = $("panel-" + name);
   if (panel) panel.classList.add("open");
 
@@ -768,10 +999,6 @@ function closePanels() {
   document.querySelectorAll(".panel").forEach(p => p.classList.remove("open"));
 }
 
-document.querySelectorAll("[data-panel]").forEach(button => {
-  button.addEventListener("click", () => openPanel(button.dataset.panel));
-});
-
 document.querySelectorAll(".close").forEach(button => {
   button.addEventListener("click", closePanels);
 });
@@ -779,6 +1006,8 @@ document.querySelectorAll(".close").forEach(button => {
 document.addEventListener("keydown", event => {
   if (event.key === "Escape") closePanels();
 });
+
+/* PERSONALITIES */
 
 function setPersonality(name) {
   if (!profiles[name]) return;
@@ -798,8 +1027,59 @@ function setPersonality(name) {
     FRIDAY: "READY WHEN YOU ARE"
   }[name];
 
-  $("activeVoice").value = name;
+  $("systemStatus").textContent = name + " SYSTEM ACTIVE";
 }
+
+/* VOICE OUTPUT */
+
+function loadVoices() {
+  if (!("speechSynthesis" in window)) return;
+  voices = speechSynthesis.getVoices();
+}
+
+function speak(text, who = personality) {
+  if (!("speechSynthesis" in window)) {
+    toast("Speech is not supported in this browser.");
+    return;
+  }
+
+  speechSynthesis.cancel();
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  const voice = voices.find(v => v.lang.toLowerCase().startsWith("en"));
+
+  if (voice) utterance.voice = voice;
+
+  utterance.rate = profiles[who].rate;
+  utterance.pitch = profiles[who].pitch;
+
+  utterance.onstart = () => {
+    $("holoStatus").textContent = "SPEAKING";
+    $("coreMessage").textContent = "RESPONDING";
+  };
+
+  utterance.onend = () => {
+    $("holoStatus").textContent = "ONLINE";
+    $("coreMessage").textContent = {
+      JARVIS: "AT YOUR SERVICE",
+      EDITH: "SECURITY SYSTEM READY",
+      FRIDAY: "READY WHEN YOU ARE"
+    }[personality];
+  };
+
+  speechSynthesis.speak(utterance);
+}
+
+if ("speechSynthesis" in window) {
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+$("previewVoice").addEventListener("click", () => {
+  speak(profiles[personality].sample);
+});
+
+/* LIST RENDERING */
 
 function renderList(container, entries, emptyText, makeItem) {
   const box = $(container);
@@ -817,6 +1097,8 @@ function renderList(container, entries, emptyText, makeItem) {
     box.append(makeItem(entry, index));
   });
 }
+
+/* TASKS */
 
 function renderTasks() {
   renderList("taskList", tasks, "No tasks registered.", (task, index) => {
@@ -866,6 +1148,8 @@ $("taskForm").addEventListener("submit", event => {
   renderTasks();
   toast("Task saved locally.");
 });
+
+/* MEMORY */
 
 function renderMemories() {
   renderList("memoryList", memories, "No saved memories.", (memory, index) => {
@@ -931,7 +1215,6 @@ $("assignmentForm").addEventListener("submit", event => {
   });
 
   save("jarvisAssignments", assignments);
-
   event.target.reset();
   renderSchool();
   toast("Assignment saved.");
@@ -1036,46 +1319,7 @@ function renderSchool() {
   });
 }
 
-/* VOICE */
-
-function loadVoices() {
-  if (!("speechSynthesis" in window)) return;
-  voices = speechSynthesis.getVoices();
-}
-
-function speak(text, who = personality) {
-  if (!("speechSynthesis" in window)) {
-    toast("Speech is not supported in this browser.");
-    return;
-  }
-
-  speechSynthesis.cancel();
-
-  const utterance = new SpeechSynthesisUtterance(text);
-  const voice = voices.find(v => v.lang.toLowerCase().startsWith("en"));
-
-  if (voice) utterance.voice = voice;
-
-  utterance.rate = profiles[who].rate;
-  utterance.pitch = profiles[who].pitch;
-
-  speechSynthesis.speak(utterance);
-}
-
-$("activeVoice").addEventListener("change", event => {
-  setPersonality(event.target.value);
-});
-
-$("previewVoice").addEventListener("click", () => {
-  speak(profiles[personality].sample);
-});
-
-if ("speechSynthesis" in window) {
-  loadVoices();
-  speechSynthesis.onvoiceschanged = loadVoices;
-}
-
-/* LOCAL COMMAND ROUTER */
+/* COMMAND ROUTER */
 
 function addBubble(text, type) {
   const bubble = document.createElement("div");
@@ -1103,22 +1347,22 @@ function handleCommand(text) {
     return "JARVIS is now active.";
   }
 
-  if (lower.includes("school")) {
+  if (lower.includes("school hub") || lower.includes("open school")) {
     openPanel("school");
     return "Opening the School Hub.";
   }
 
-  if (lower.includes("show") && lower.includes("task")) {
+  if (lower.includes("show tasks") || lower.includes("open tasks")) {
     openPanel("tasks");
     return "Opening your task register.";
   }
 
-  if (lower.includes("memory")) {
+  if (lower.includes("memory") || lower.includes("open archive")) {
     openPanel("memory");
     return "Opening the memory archive.";
   }
 
-  if (lower.includes("security") || lower.includes("edith")) {
+  if (lower.includes("security") || lower.includes("edith security")) {
     openPanel("security");
     return "Opening EDITH's security console.";
   }
@@ -1128,14 +1372,24 @@ function handleCommand(text) {
     return "Opening AI connections.";
   }
 
-  if (lower.includes("settings")) {
+  if (lower.includes("settings") || lower.includes("configuration")) {
     openPanel("settings");
     return "Opening system settings.";
   }
 
-  if (lower.includes("close") || lower.includes("dismiss")) {
+  if (lower.includes("console") || lower.includes("command interface")) {
+    openPanel("chat");
+    return "Opening command console.";
+  }
+
+  if (
+    lower.includes("close panel") ||
+    lower.includes("close panels") ||
+    lower.includes("dismiss") ||
+    lower.includes("close everything")
+  ) {
     closePanels();
-    return "Panels closed.";
+    return "Panels dismissed.";
   }
 
   if (lower.startsWith("add task ")) {
@@ -1156,7 +1410,7 @@ function handleCommand(text) {
     return "Memory saved locally.";
   }
 
-  return "I can manage local tasks, notes, classes, and assignments. Full AI reasoning requires a secure AI backend connection.";
+  return "I can currently manage local tasks, notes, classes, and assignments. Full AI reasoning requires a secure backend connection.";
 }
 
 $("chatForm").addEventListener("submit", event => {
@@ -1178,8 +1432,6 @@ $("chatForm").addEventListener("submit", event => {
 
 /* VOICE RECOGNITION */
 
-let recognition = null;
-
 $("activateBtn").addEventListener("click", () => {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
@@ -1199,34 +1451,77 @@ $("activateBtn").addEventListener("click", () => {
   recognition.maxAlternatives = 1;
 
   $("activateBtn").textContent = "LISTENING...";
+  $("holoStatus").textContent = "LISTENING";
+  $("coreMessage").textContent = "AWAITING INPUT";
 
   recognition.onresult = event => {
-    $("chatInput").value = event.results[0][0].transcript;
-    $("chatForm").requestSubmit();
+    const text = event.results[0][0].transcript;
+    addBubble(text, "user");
+
+    const response = handleCommand(text);
+    addBubble(response, "assistant");
+    speak(response);
   };
 
   recognition.onerror = event => {
     toast("Voice input: " + event.error);
+    $("holoStatus").textContent = "ONLINE";
   };
 
   recognition.onend = () => {
     $("activateBtn").textContent = "◉ ACTIVATE VOICE";
     recognition = null;
+    if (!speechSynthesis.speaking) {
+      $("holoStatus").textContent = "ONLINE";
+    }
   };
 
   recognition.start();
   toast("Listening. Speak your command.");
 });
 
-/* PROVIDER SETUP SAFETY */
+/* CLICK CORE TO ACTIVATE VOICE */
 
-$("providerForm").addEventListener("submit", event => {
-  event.preventDefault();
-
-  $("apiKey").value = "";
-
-  toast("Backend not configured. No API key was saved.");
+$("coreInteraction").addEventListener("click", () => {
+  $("activateBtn").click();
 });
+
+/* HOLOGRAPHIC PARALLAX */
+
+$("holographicCore").addEventListener("pointermove", event => {
+  const bounds = event.currentTarget.getBoundingClientRect();
+  const x = (event.clientX - bounds.left) / bounds.width - .5;
+  const y = (event.clientY - bounds.top) / bounds.height - .5;
+
+  event.currentTarget.style.transform =
+    `rotateY(${x * 7}deg) rotateX(${-y * 7}deg)`;
+});
+
+$("holographicCore").addEventListener("pointerleave", event => {
+  event.currentTarget.style.transform = "";
+});
+
+/* PARTICLE GENERATION */
+
+function createParticles() {
+  const container = $("particles");
+  container.replaceChildren();
+
+  for (let i = 0; i < 65; i++) {
+    const particle = document.createElement("span");
+    particle.className = "particle";
+    particle.style.left = Math.random() * 100 + "%";
+    particle.style.top = Math.random() * 100 + "%";
+    particle.style.setProperty("--duration", (5 + Math.random() * 9) + "s");
+    particle.style.setProperty("--delay", (-Math.random() * 10) + "s");
+    container.append(particle);
+  }
+}
+
+/* AI CONNECTION SAFETY */
+
+$("providerStatus").textContent =
+  "No backend configured. No API credentials are being stored.";
 
 /* SETTINGS */
 
@@ -1261,19 +1556,30 @@ $("clearData").addEventListener("click", () => {
 /* CLOCK AND INITIALIZATION */
 
 function updateClock() {
-  $("clock").textContent = new Date().toLocaleTimeString([], {
+  const now = new Date();
+
+  $("holoClock").textContent = now.toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit"
   });
+
+  $("holoDate").textContent = now.toLocaleDateString([], {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  });
+
+  $("clock").textContent = $("holoClock").textContent;
 }
 
 setPersonality(personality);
+createParticles();
 renderTasks();
 renderMemories();
 renderSchool();
 updateClock();
 
-setInterval(updateClock, 30000);
+setInterval(updateClock, 1000);
 
 if ("serviceWorker" in navigator &&
     location.protocol.startsWith("http")) {
