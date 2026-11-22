@@ -1,20 +1,21 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#07111f">
-<title>JARVIS | Personal System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050a12">
+<title>J.A.R.V.I.S.</title>
 
 <style>
 :root {
-  --accent: #4de7ff;
-  --accent-soft: rgba(77,231,255,.13);
-  --bg: #050b14;
-  --panel: rgba(9,24,40,.82);
-  --line: rgba(100,220,255,.22);
-  --text: #e7f6ff;
-  --muted: #87a4b8;
+  --accent: #48dfff;
+  --accent-soft: rgba(72,223,255,.14);
+  --bg: #050a12;
+  --panel: rgba(9,22,36,.92);
+  --text: #e8f8ff;
+  --muted: #83a5b8;
+  --border: rgba(72,223,255,.22);
 }
 
 * { box-sizing: border-box; }
@@ -22,11 +23,29 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    radial-gradient(ellipse at 50% 35%, #102a40, #071321 48%, #040912 90%);
-  color: var(--text);
-  font-family: Arial, sans-serif;
   overflow-x: hidden;
+  background:
+    radial-gradient(ellipse at center, #10263b 0%, #07111e 42%, #03070d 100%);
+  color: var(--text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body.edith {
+  --accent: #ff526d;
+  --accent-soft: rgba(255,82,109,.14);
+  --border: rgba(255,82,109,.25);
+}
+
+body.friday {
+  --accent: #b78aff;
+  --accent-soft: rgba(183,138,255,.14);
+  --border: rgba(183,138,255,.25);
+}
+
+body.jarvis {
+  --accent: #48dfff;
+  --accent-soft: rgba(72,223,255,.14);
+  --border: rgba(72,223,255,.22);
 }
 
 button, input, select, textarea {
@@ -35,386 +54,389 @@ button, input, select, textarea {
 
 button {
   cursor: pointer;
-  color: var(--text);
-  background: #0b2336;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 12px;
-}
-
-button:hover {
-  border-color: var(--accent);
-  color: var(--accent);
 }
 
 .ambient {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(circle at 50% 40%, var(--accent-soft), transparent 55%);
-}
-
-.grid {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  opacity: .12;
+  opacity: .3;
   background-image:
-    linear-gradient(rgba(100,180,220,.15) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(100,180,220,.15) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(rgba(72,223,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(72,223,255,.035) 1px, transparent 1px);
+  background-size: 45px 45px;
+  mask-image: linear-gradient(to bottom, black, transparent 90%);
 }
 
-header, footer {
+header {
   position: relative;
-  z-index: 2;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px clamp(16px, 5vw, 55px);
-  color: var(--muted);
-  font-size: 10px;
-  letter-spacing: 3px;
+  padding: 22px 26px;
+  z-index: 2;
 }
 
 .brand {
-  color: var(--text);
-  font-size: 15px;
+  letter-spacing: 4px;
+  font-size: 13px;
+  font-weight: bold;
 }
 
-#status {
+.brand span {
   color: var(--accent);
+}
+
+.status {
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-align: right;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
 }
 
 main {
   position: relative;
   z-index: 1;
-  width: min(850px, calc(100% - 28px));
+  width: min(900px, 100%);
   margin: auto;
+  padding: 15px 22px 70px;
+  text-align: center;
 }
 
-.stage {
-  height: 390px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
+.personality {
+  color: var(--accent);
+  font-size: 11px;
+  letter-spacing: 5px;
+  margin-top: 20px;
+}
+
+.greeting {
+  margin: 12px 0 0;
+  font-size: clamp(25px, 6vw, 40px);
+  font-weight: 300;
+  letter-spacing: 3px;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 10px;
+  letter-spacing: 1px;
+}
+
+.core-area {
   position: relative;
+  width: 290px;
+  height: 290px;
+  margin: 25px auto 10px;
+  display: grid;
+  place-items: center;
+}
+
+.core-button {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255,255,255,.35), transparent 15%),
+    radial-gradient(circle, var(--accent-soft), rgba(2,10,20,.96) 72%);
+  box-shadow:
+    0 0 22px var(--accent-soft),
+    inset 0 0 28px var(--accent-soft);
+  color: var(--accent);
+  display: grid;
+  place-items: center;
+  position: relative;
+  z-index: 3;
+  transition: .3s;
+}
+
+.core-button:focus-visible {
+  outline: 3px solid white;
+  outline-offset: 7px;
+}
+
+.core-button:active {
+  transform: scale(.96);
+}
+
+.core-symbol {
+  font-size: 44px;
+  font-weight: 200;
+  text-shadow: 0 0 20px var(--accent);
 }
 
 .orbit {
   position: absolute;
-  width: 270px;
-  height: 270px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--border);
   border-radius: 50%;
-  animation: spin 24s linear infinite;
+  animation: rotate 18s linear infinite;
 }
 
-.orbit::before, .orbit::after {
-  content: "";
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 15px var(--accent);
+.orbit.one {
+  width: 205px;
+  height: 205px;
+  border-left-color: transparent;
+  border-right-color: var(--accent);
 }
 
-.orbit::before {
-  top: 22px;
-  left: 40px;
+.orbit.two {
+  width: 255px;
+  height: 255px;
+  border-top-color: transparent;
+  border-bottom-color: var(--accent);
+  animation-direction: reverse;
+  animation-duration: 25s;
 }
 
-.orbit::after {
-  bottom: 34px;
-  right: 20px;
-}
-
-.orbit.second {
-  width: 320px;
-  height: 320px;
+.orbit.three {
+  width: 285px;
+  height: 285px;
   border-style: dashed;
   opacity: .45;
-  animation-direction: reverse;
-  animation-duration: 42s;
+  animation-duration: 45s;
 }
 
-@keyframes spin {
+@keyframes rotate {
   to { transform: rotate(360deg); }
 }
 
-.core {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  border: 1px solid var(--accent);
-  background: radial-gradient(circle at 35% 28%, var(--accent-soft), #07111f 70%);
-  box-shadow: 0 0 35px var(--accent-soft), inset 0 0 30px var(--accent-soft);
-  display: grid;
-  place-items: center;
-  z-index: 2;
-  transition: .3s;
+body.listening .core-button {
+  box-shadow: 0 0 55px var(--accent), inset 0 0 35px var(--accent-soft);
+  animation: pulse 1.2s ease-in-out infinite alternate;
 }
 
-.core-inner {
-  width: 105px;
-  height: 105px;
-  border: 1px solid var(--accent);
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
+body.thinking .core-button {
+  box-shadow: 0 0 42px var(--accent);
+  animation: pulse .7s ease-in-out infinite alternate;
 }
 
-#coreMark {
-  font-size: 42px;
-  color: var(--accent);
-  text-shadow: 0 0 20px var(--accent);
+body.speaking .core-button {
+  box-shadow: 0 0 35px var(--accent);
+  animation: pulse .45s ease-in-out infinite alternate;
 }
-
-.core.listening { animation: pulse 1s infinite; }
-.core.processing { animation: pulse .4s infinite; }
-.core.speaking { box-shadow: 0 0 65px var(--accent); }
 
 @keyframes pulse {
-  50% { transform: scale(1.07); }
+  from { transform: scale(1); }
+  to { transform: scale(1.07); }
 }
 
-.identity {
-  z-index: 2;
-  text-align: center;
-  margin-top: 22px;
-  font-size: 17px;
-  letter-spacing: 5px;
-}
-
-.identity small {
-  display: block;
-  color: var(--accent);
+.core-hint {
+  color: var(--muted);
   font-size: 10px;
-  margin-top: 9px;
   letter-spacing: 3px;
+  margin-top: 10px;
 }
 
-.hint {
-  z-index: 2;
-  color: var(--muted);
+.response {
+  width: min(640px, 100%);
+  min-height: 94px;
+  margin: 22px auto;
+  padding: 19px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(90deg, transparent, rgba(10,28,43,.48), transparent);
+  text-align: left;
+}
+
+.response-label {
   font-size: 9px;
-  letter-spacing: 2px;
-  margin-top: 20px;
-}
-
-.console, .panel {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  backdrop-filter: blur(20px);
-  border-radius: 18px;
-  box-shadow: 0 18px 70px #0005;
-}
-
-.console {
-  padding: 16px;
-  margin: 0 auto 25px;
-}
-
-.messages {
-  height: 190px;
-  overflow-y: auto;
-  padding: 4px;
-}
-
-.message {
-  border-left: 2px solid var(--accent);
-  padding: 9px 12px;
+  letter-spacing: 3px;
+  color: var(--accent);
   margin-bottom: 10px;
-  background: #ffffff08;
-  border-radius: 0 10px 10px 0;
 }
 
-.message b {
-  color: var(--accent);
-  font-size: 10px;
-  letter-spacing: 2px;
-}
-
-.message p {
-  font-size: 13px;
-  line-height: 1.5;
-  margin: 5px 0 0;
-}
-
-.message.user { border-color: #a7b9c7; }
-.message.user b { color: #d7e3ec; }
-.message.edith { border-color: #ff526b; }
-.message.edith b { color: #ff7181; }
-.message.friday { border-color: #bd8cff; }
-.message.friday b { color: #bd8cff; }
-
-#commandForm {
-  display: flex;
-  gap: 8px;
-}
-
-input, select, textarea {
-  width: 100%;
-  min-width: 0;
-  padding: 13px;
-  color: var(--text);
-  background: #06111e;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-}
-
-#commandForm button {
-  color: var(--accent);
-}
-
-.quickrow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 12px;
-}
-
-.quickrow button {
-  flex: 1;
-  font-size: 9px;
-  color: var(--muted);
+.response-text {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #d7edf8;
+  overflow-wrap: anywhere;
 }
 
 .panel {
-  padding: 17px;
-  margin-bottom: 25px;
+  width: min(680px, 100%);
+  margin: 25px auto;
+  padding: 22px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  border-radius: 10px;
+  text-align: left;
+  display: none;
+  animation: appear .25s ease;
 }
 
-.hidden { display: none !important; }
+.panel.open { display: block; }
 
-.panel-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+@keyframes appear {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.panel h2 {
+  font-size: 14px;
+  letter-spacing: 3px;
+  font-weight: 400;
   color: var(--accent);
-  letter-spacing: 2px;
-  margin-bottom: 15px;
+  margin: 0 0 18px;
 }
 
-.panel-head button {
-  font-size: 20px;
-  padding: 4px 11px;
+.panel h3 {
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 1px;
+  margin-top: 22px;
 }
 
-.fieldrow {
-  display: flex;
-  gap: 8px;
-  margin: 9px 0;
+.field {
+  display: block;
+  width: 100%;
+  margin: 10px 0;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: rgba(0,0,0,.3);
+  color: var(--text);
 }
 
-.fieldrow > * { flex: 1; }
+.field::placeholder {
+  color: #668397;
+}
+
+.action {
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 5px;
+  padding: 11px 15px;
+  margin: 5px 5px 5px 0;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.action:hover {
+  background: var(--accent);
+  color: #04101a;
+}
 
 .item {
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
+  gap: 12px;
   align-items: center;
-  gap: 10px;
-  padding: 12px;
-  margin: 8px 0;
-  background: #ffffff08;
-  border: 1px solid #ffffff12;
-  border-radius: 10px;
-  font-size: 13px;
 }
 
-.item small {
-  display: block;
+.item-main {
+  min-width: 0;
+}
+
+.item-title {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.item-meta {
   color: var(--muted);
+  font-size: 10px;
   margin-top: 5px;
 }
 
-.item button {
+.delete {
+  color: #ff8493;
+  border: 0;
+  background: transparent;
   padding: 8px;
 }
 
-.muted {
+.empty {
   color: var(--muted);
   font-size: 12px;
+  padding: 12px 0;
+}
+
+footer {
+  color: #567386;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-align: center;
+  padding: 20px;
+}
+
+.small-note {
+  color: var(--muted);
+  font-size: 11px;
   line-height: 1.6;
 }
 
-footer { font-size: 9px; }
+.hidden {
+  display: none !important;
+}
 
-@media(max-width:560px) {
-  .stage { height: 350px; }
-  .orbit { width: 235px; height: 235px; }
-  .orbit.second { width: 275px; height: 275px; }
-  .core { width: 132px; height: 132px; }
-  .core-inner { width: 94px; height: 94px; }
-  .messages { height: 170px; }
-  .fieldrow { flex-wrap: wrap; }
+@media(max-width:500px) {
+  header { padding: 18px 16px; }
+  main { padding-left: 15px; padding-right: 15px; }
+  .core-area { transform: scale(.92); margin-top: 12px; margin-bottom: 0; }
+  .panel { padding: 17px; }
 }
 </style>
 </head>
 
-<body>
+<body class="jarvis">
+
 <div class="ambient"></div>
-<div class="grid"></div>
 
 <header>
-  <span class="brand">J.A.R.V.I.S.</span>
-  <span id="status">LOCAL SYSTEM · READY</span>
+  <div class="brand">J.A.R.V.I.S. <span>// SYSTEM</span></div>
+  <div class="status">
+    <span class="status-dot"></span>
+    <span id="systemStatus">STANDBY</span>
+  </div>
 </header>
 
 <main>
-  <section class="stage">
-    <div class="orbit"></div>
-    <div class="orbit second"></div>
+  <div class="personality" id="personalityLabel">J.A.R.V.I.S.</div>
+  <h1 class="greeting" id="greeting">Good to see you.</h1>
+  <div class="subtitle">PERSONAL INTELLIGENCE SYSTEM</div>
 
-    <button id="core" class="core" aria-label="Activate assistant">
-      <span class="core-inner">
-        <span id="coreMark">J</span>
-      </span>
+  <div class="core-area">
+    <div class="orbit one"></div>
+    <div class="orbit two"></div>
+    <div class="orbit three"></div>
+
+    <button class="core-button" id="coreButton" aria-label="Activate voice assistant">
+      <span class="core-symbol">J</span>
     </button>
+  </div>
 
-    <div class="identity">
-      <div id="personaName">JARVIS</div>
-      <small id="stateText">STANDING BY</small>
-    </div>
+  <div class="core-hint" id="coreHint">TAP TO SPEAK</div>
 
-    <p class="hint">TAP THE CORE TO SPEAK · OR TYPE BELOW</p>
-  </section>
-
-  <section class="console">
-    <div id="messages" class="messages" aria-live="polite">
-      <div class="message">
-        <b>JARVIS</b>
-        <p>Systems online. Awaiting your instructions.</p>
-      </div>
-    </div>
-
-    <form id="commandForm">
-      <input id="command" placeholder="Talk to JARVIS…" autocomplete="off">
-      <button type="submit">SEND</button>
-    </form>
-
-    <div class="quickrow">
-      <button data-command="Open tasks">TASKS</button>
-      <button data-command="Open school">ACADEMICS</button>
-      <button data-command="Open memory">MEMORY</button>
-      <button data-command="Open settings">SETTINGS</button>
+  <section class="response" aria-live="polite">
+    <div class="response-label" id="responseLabel">JARVIS // READY</div>
+    <div class="response-text" id="responseText">
+      Standing by. How may I assist?
     </div>
   </section>
 
-  <section id="panel" class="panel hidden">
-    <div class="panel-head">
-      <span id="panelTitle">SYSTEM</span>
-      <button id="closePanel">×</button>
-    </div>
-    <div id="panelBody"></div>
+  <section class="panel" id="panel">
+    <h2 id="panelTitle">SYSTEM PANEL</h2>
+    <div id="panelContent"></div>
   </section>
 </main>
 
 <footer>
-  JARVIS PERSONAL SYSTEM
-  <span>LOCAL MODE · V1</span>
+  J.A.R.V.I.S. PERSONAL SYSTEM // LOCAL PROTOTYPE
 </footer>
 
 <script>
@@ -423,664 +445,745 @@ footer { font-size: 9px; }
 
 const $ = id => document.getElementById(id);
 
-const store = {
-  get(key, fallback) {
-    try {
-      return JSON.parse(localStorage.getItem("jv_" + key)) ?? fallback;
-    } catch {
-      return fallback;
-    }
-  },
-  set(key, value) {
-    localStorage.setItem("jv_" + key, JSON.stringify(value));
-  }
-};
+const STORAGE_KEY = "jarvis_personal_system_v3";
 
-let tasks = store.get("tasks", []);
-let assignments = store.get("assignments", []);
-let memories = store.get("memories", []);
-
-let settings = store.get("settings", {
-  voice: true,
+const defaults = {
+  personality: "jarvis",
   interjections: "balanced",
-  edith: true,
-  friday: true
-});
-
-let persona = store.get("persona", "jarvis");
-
-const personalities = {
-  jarvis: {
-    name: "JARVIS",
-    mark: "J",
-    color: "#4de7ff",
-    pitch: .9,
-    rate: 1
-  },
-  edith: {
-    name: "EDITH",
-    mark: "E",
-    color: "#ff526b",
-    pitch: .85,
-    rate: 1.02
-  },
-  friday: {
-    name: "FRIDAY",
-    mark: "F",
-    color: "#bd8cff",
-    pitch: 1.08,
-    rate: 1.05
-  }
+  speed: 1,
+  voiceName: "",
+  tasks: [],
+  assignments: [],
+  memories: [],
+  history: []
 };
 
-function status(text) {
-  $("stateText").textContent = text;
-}
+let data = loadData();
+let recognition = null;
+let listening = false;
+let currentPanel = "";
+let availableVoices = [];
+let initialized = false;
 
-function setPersona(name) {
-  if (!personalities[name]) return;
-
-  persona = name;
-  store.set("persona", name);
-
-  const selected = personalities[name];
-
-  document.documentElement.style.setProperty(
-    "--accent",
-    selected.color
-  );
-
-  document.documentElement.style.setProperty(
-    "--accent-soft",
-    selected.color + "22"
-  );
-
-  $("personaName").textContent = selected.name;
-  $("coreMark").textContent = selected.mark;
-  $("status").textContent = selected.name + " · LOCAL MODE";
-
-  status("STANDING BY");
-}
-
-function addMessage(name, text, type = "") {
-  const message = document.createElement("div");
-  message.className = "message " + type;
-
-  const label = document.createElement("b");
-  label.textContent = name;
-
-  const paragraph = document.createElement("p");
-  paragraph.textContent = text;
-
-  message.append(label, paragraph);
-  $("messages").append(message);
-
-  $("messages").scrollTop = $("messages").scrollHeight;
-}
-
-function speak(text, voice = personalities[persona]) {
-  if (!settings.voice || !("speechSynthesis" in window)) return;
-
-  speechSynthesis.cancel();
-
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.rate = voice.rate;
-  utterance.pitch = voice.pitch;
-
-  utterance.onstart = () => {
-    $("core").classList.add("speaking");
-    status("SPEAKING");
-  };
-
-  utterance.onend = () => {
-    $("core").classList.remove("speaking");
-    status("STANDING BY");
-  };
-
-  speechSynthesis.speak(utterance);
-}
-
-function reply(text, voice = personalities[persona], type = "") {
-  addMessage(voice.name, text, type);
-  speak(text, voice);
+function loadData() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    return { ...defaults, ...saved };
+  } catch {
+    return structuredClone(defaults);
+  }
 }
 
 function saveData() {
-  store.set("tasks", tasks);
-  store.set("assignments", assignments);
-  store.set("memories", memories);
-}
-
-function openPanel(title, html) {
-  $("panelTitle").textContent = title;
-  $("panelBody").innerHTML = html;
-  $("panel").classList.remove("hidden");
-}
-
-function closePanel() {
-  $("panel").classList.add("hidden");
-}
-
-$("closePanel").addEventListener("click", closePanel);
-
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, character => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  })[character]);
-}
-
-/* TASK REGISTER */
-
-function openTasks() {
-  openPanel("TASK REGISTER", `
-    <form id="taskForm" class="fieldrow">
-      <input id="taskName" placeholder="Task name" required>
-      <input id="taskDate" type="date">
-      <button type="submit">ADD</button>
-    </form>
-    <div id="taskList"></div>
-  `);
-
-  renderTasks();
-
-  $("taskForm").addEventListener("submit", event => {
-    event.preventDefault();
-
-    tasks.push({
-      id: crypto.randomUUID(),
-      name: $("taskName").value,
-      due: $("taskDate").value,
-      done: false
-    });
-
-    saveData();
-    renderTasks();
-    $("taskName").value = "";
-  });
-}
-
-function renderTasks() {
-  const list = $("taskList");
-  if (!list) return;
-
-  list.innerHTML = tasks.length
-    ? tasks.map(task => `
-      <div class="item">
-        <div>
-          <strong>${escapeHTML(task.name)}</strong>
-          <small>${escapeHTML(task.due || "No due date")} · ${task.done ? "Complete" : "Open"}</small>
-        </div>
-        <div>
-          <button data-task-done="${task.id}">${task.done ? "UNDO" : "DONE"}</button>
-          <button data-task-delete="${task.id}">×</button>
-        </div>
-      </div>
-    `).join("")
-    : `<p class="muted">No tasks yet.</p>`;
-
-  list.querySelectorAll("[data-task-done]").forEach(button => {
-    button.onclick = () => {
-      const task = tasks.find(item => item.id === button.dataset.taskDone);
-      if (!task) return;
-
-      task.done = !task.done;
-      saveData();
-      renderTasks();
-    };
-  });
-
-  list.querySelectorAll("[data-task-delete]").forEach(button => {
-    button.onclick = () => {
-      tasks = tasks.filter(item => item.id !== button.dataset.taskDelete);
-      saveData();
-      renderTasks();
-    };
-  });
-}
-
-/* ACADEMIC MANAGEMENT */
-
-function openSchool() {
-  openPanel("ACADEMIC MANAGEMENT", `
-    <p class="muted">
-      Add and track your school assignments here.
-      Official school-platform connections are not configured.
-    </p>
-
-    <form id="assignmentForm" class="fieldrow">
-      <input id="className" placeholder="Class" required>
-      <input id="assignmentName" placeholder="Assignment" required>
-      <input id="assignmentDate" type="date">
-      <button type="submit">ADD</button>
-    </form>
-
-    <div id="assignmentList"></div>
-  `);
-
-  renderAssignments();
-
-  $("assignmentForm").addEventListener("submit", event => {
-    event.preventDefault();
-
-    assignments.push({
-      id: crypto.randomUUID(),
-      klass: $("className").value,
-      name: $("assignmentName").value,
-      due: $("assignmentDate").value,
-      done: false
-    });
-
-    saveData();
-    renderAssignments();
-    $("assignmentName").value = "";
-  });
-}
-
-function renderAssignments() {
-  const list = $("assignmentList");
-  if (!list) return;
-
-  list.innerHTML = assignments.length
-    ? assignments.map(item => `
-      <div class="item">
-        <div>
-          <strong>${escapeHTML(item.name)}</strong>
-          <small>${escapeHTML(item.klass)} · ${escapeHTML(item.due || "No due date")} · ${item.done ? "Complete" : "Open"}</small>
-        </div>
-        <button data-assignment-done="${item.id}">${item.done ? "UNDO" : "DONE"}</button>
-      </div>
-    `).join("")
-    : `<p class="muted">No assignments entered.</p>`;
-
-  list.querySelectorAll("[data-assignment-done]").forEach(button => {
-    button.onclick = () => {
-      const item = assignments.find(x => x.id === button.dataset.assignmentDone);
-      if (!item) return;
-
-      item.done = !item.done;
-      saveData();
-      renderAssignments();
-    };
-  });
-}
-
-/* MEMORY ARCHIVE */
-
-function openMemory() {
-  openPanel("MEMORY ARCHIVE", `
-    <p class="muted">
-      Information saved here stays in this browser on this device.
-      Only save information you want stored.
-    </p>
-
-    <form id="memoryForm" class="fieldrow">
-      <input id="memoryText" placeholder="What should I remember?" required>
-      <button type="submit">SAVE</button>
-    </form>
-
-    <div id="memoryList"></div>
-  `);
-
-  renderMemories();
-
-  $("memoryForm").addEventListener("submit", event => {
-    event.preventDefault();
-
-    memories.push({
-      id: crypto.randomUUID(),
-      text: $("memoryText").value
-    });
-
-    saveData();
-    renderMemories();
-    $("memoryText").value = "";
-  });
-}
-
-function renderMemories() {
-  const list = $("memoryList");
-  if (!list) return;
-
-  list.innerHTML = memories.length
-    ? memories.map(item => `
-      <div class="item">
-        <span>${escapeHTML(item.text)}</span>
-        <button data-memory-delete="${item.id}">DELETE</button>
-      </div>
-    `).join("")
-    : `<p class="muted">Memory archive empty.</p>`;
-
-  list.querySelectorAll("[data-memory-delete]").forEach(button => {
-    button.onclick = () => {
-      memories = memories.filter(x => x.id !== button.dataset.memoryDelete);
-      saveData();
-      renderMemories();
-    };
-  });
-}
-
-/* SETTINGS */
-
-function openSettings() {
-  openPanel("SYSTEM SETTINGS", `
-    <div class="fieldrow">
-      <label>
-        Voice
-        <select id="voiceSetting">
-          <option value="yes">On</option>
-          <option value="no">Off</option>
-        </select>
-      </label>
-
-      <label>
-        Interjections
-        <select id="interjectionSetting">
-          <option value="minimal">Minimal</option>
-          <option value="balanced">Balanced</option>
-          <option value="frequent">Frequent</option>
-        </select>
-      </label>
-    </div>
-
-    <div class="fieldrow">
-      <label>
-        EDITH
-        <select id="edithSetting">
-          <option value="yes">Enabled</option>
-          <option value="no">Muted</option>
-        </select>
-      </label>
-
-      <label>
-        FRIDAY
-        <select id="fridaySetting">
-          <option value="yes">Enabled</option>
-          <option value="no">Muted</option>
-        </select>
-      </label>
-    </div>
-
-    <p class="muted">
-      LOCAL MODE: This version does not provide secure authentication.
-      Do not store passwords, financial information, or sensitive documents here.
-    </p>
-
-    <button id="backupButton">EXPORT BACKUP</button>
-    <button id="clearButton">CLEAR LOCAL DATA</button>
-  `);
-
-  $("voiceSetting").value = settings.voice ? "yes" : "no";
-  $("interjectionSetting").value = settings.interjections;
-  $("edithSetting").value = settings.edith ? "yes" : "no";
-  $("fridaySetting").value = settings.friday ? "yes" : "no";
-
-  [
-    "voiceSetting",
-    "interjectionSetting",
-    "edithSetting",
-    "fridaySetting"
-  ].forEach(id => {
-    $(id).onchange = () => {
-      settings = {
-        voice: $("voiceSetting").value === "yes",
-        interjections: $("interjectionSetting").value,
-        edith: $("edithSetting").value === "yes",
-        friday: $("fridaySetting").value === "yes"
-      };
-
-      store.set("settings", settings);
-    };
-  });
-
-  $("backupButton").onclick = () => {
-    const backup = {
-      tasks,
-      assignments,
-      memories,
-      settings,
-      exportedAt: new Date().toISOString()
-    };
-
-    const blob = new Blob(
-      [JSON.stringify(backup, null, 2)],
-      { type: "application/json" }
-    );
-
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-
-    link.href = url;
-    link.download = "jarvis-backup.json";
-    link.click();
-
-    URL.revokeObjectURL(url);
-  };
-
-  $("clearButton").onclick = () => {
-    if (confirm("Delete all JARVIS data stored in this browser?")) {
-      localStorage.clear();
-      location.reload();
-    }
-  };
-}
-
-/* OVERVIEW */
-
-function overview() {
-  const openTasks = tasks.filter(x => !x.done).length;
-  const openAssignments = assignments.filter(x => !x.done).length;
-
-  reply(
-    `You have ${openTasks} open personal tasks, ` +
-    `${openAssignments} open school assignments, and ` +
-    `${memories.length} saved memories.`
-  );
-}
-
-/* PERSONALITY INTERJECTIONS */
-
-function interject(topic) {
-  if (settings.interjections === "minimal") return;
-
-  if (
-    settings.edith &&
-    /security|password|permission|private|code|access/i.test(topic)
-  ) {
-    addMessage(
-      "EDITH",
-      "Security note: sensitive actions require explicit approval. Voice alone is not authentication.",
-      "edith"
-    );
-  }
-
-  if (
-    settings.friday &&
-    settings.interjections === "frequent"
-  ) {
-    addMessage(
-      "FRIDAY",
-      "I have a suggestion, if anyone is accepting those today.",
-      "friday"
-    );
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch {
+    respond("I couldn't save that information. Your browser storage may be full or unavailable.");
   }
 }
 
-/* COMMAND SYSTEM */
+function setState(state) {
+  document.body.classList.remove("listening", "thinking", "speaking");
+  if (state) document.body.classList.add(state);
 
-function handleCommand(raw) {
-  const command = raw.trim();
-  if (!command) return;
+  const labels = {
+    idle: "STANDBY",
+    listening: "LISTENING",
+    thinking: "PROCESSING",
+    speaking: "RESPONDING"
+  };
 
-  addMessage("YOU", command, "user");
-  $("command").value = "";
+  $("systemStatus").textContent = labels[state || "idle"] || "STANDBY";
 
-  $("core").classList.add("processing");
-  status("PROCESSING");
-
-  const query = command.toLowerCase();
-
-  setTimeout(() => {
-    $("core").classList.remove("processing");
-    status("STANDING BY");
-
-    if (/^(switch to edith|edith mode)$/.test(query)) {
-      setPersona("edith");
-      reply("EDITH online. Security protocols remain under your control.");
-      return;
-    }
-
-    if (/^(switch to friday|friday mode)$/.test(query)) {
-      setPersona("friday");
-      reply("FRIDAY here. Let's make this less painfully complicated.");
-      return;
-    }
-
-    if (/^(switch to jarvis|jarvis mode)$/.test(query)) {
-      setPersona("jarvis");
-      reply("JARVIS online.");
-      return;
-    }
-
-    if (/\b(open|show).*\b(tasks?)\b/.test(query)) {
-      openTasks();
-      reply("Task register opened.");
-      return;
-    }
-
-    if (/\b(open|show).*\b(school|academic|assignments?)\b/.test(query)) {
-      openSchool();
-      reply("Academic management opened.");
-      return;
-    }
-
-    if (/\b(open|show).*\b(memory)\b/.test(query)) {
-      openMemory();
-      reply("Memory archive opened.");
-      return;
-    }
-
-    if (/\b(open|show).*\b(settings?)\b/.test(query)) {
-      openSettings();
-      reply("Settings opened.");
-      return;
-    }
-
-    if (/^(close|hide) (panel|window|that)$/.test(query)) {
-      closePanel();
-      reply("Panel closed.");
-      return;
-    }
-
-    if (/\b(overview|daily summary|how much work)\b/.test(query)) {
-      overview();
-      return;
-    }
-
-    if (query.startsWith("remember ")) {
-      memories.push({
-        id: crypto.randomUUID(),
-        text: command.slice(9)
-      });
-
-      saveData();
-      reply("Saved to local memory.");
-      return;
-    }
-
-    if (query.startsWith("add task ")) {
-      tasks.push({
-        id: crypto.randomUUID(),
-        name: command.slice(9),
-        due: "",
-        done: false
-      });
-
-      saveData();
-      reply("Task added.");
-      return;
-    }
-
-    if (/\b(help|commands)\b/.test(query)) {
-      reply(
-        "Try: open tasks, open school, open memory, open settings, " +
-        "add task followed by a task name, remember followed by a note, " +
-        "daily overview, switch to EDITH, or switch to FRIDAY."
-      );
-      return;
-    }
-
-    interject(command);
-
-    reply(
-      "I can manage your local tasks, assignments, memories, settings, " +
-      "and personality modes. I am not connected to a real AI reasoning " +
-      "service yet. A secure backend is needed for full conversational intelligence."
-    );
-
-  }, 300);
+  $("coreHint").textContent = ({
+    idle: "TAP TO SPEAK",
+    listening: "LISTENING // TAP TO STOP",
+    thinking: "PROCESSING",
+    speaking: "RESPONDING"
+  })[state || "idle"];
 }
 
-$("commandForm").addEventListener("submit", event => {
-  event.preventDefault();
-  handleCommand($("command").value);
-});
+function personalityInfo() {
+  return {
+    jarvis: {
+      name: "J.A.R.V.I.S.",
+      symbol: "J",
+      color: "jarvis"
+    },
+    edith: {
+      name: "E.D.I.T.H.",
+      symbol: "E",
+      color: "edith"
+    },
+    friday: {
+      name: "F.R.I.D.A.Y.",
+      symbol: "F",
+      color: "friday"
+    }
+  }[data.personality] || {
+    name: "J.A.R.V.I.S.",
+    symbol: "J",
+    color: "jarvis"
+  };
+}
 
-document.querySelectorAll("[data-command]").forEach(button => {
-  button.onclick = () => handleCommand(button.dataset.command);
-});
+function updatePersonality() {
+  const p = personalityInfo();
+  document.body.classList.remove("jarvis", "edith", "friday");
+  document.body.classList.add(p.color);
+  $("personalityLabel").textContent = p.name;
+  $("coreButton").querySelector(".core-symbol").textContent = p.symbol;
+  $("responseLabel").textContent = p.name + " // READY";
+}
 
-/* VOICE INPUT */
+function speak(text) {
+  if (!("speechSynthesis" in window)) return;
 
-$("core").addEventListener("click", () => {
-  const Recognition =
-    window.SpeechRecognition ||
-    window.webkitSpeechRecognition;
+  window.speechSynthesis.cancel();
 
-  if (!Recognition) {
-    reply("Voice input is not supported here. You can still type commands.");
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.rate = Number(data.speed) || 1;
+
+  const voice = availableVoices.find(v => v.name === data.voiceName);
+  if (voice) utterance.voice = voice;
+
+  utterance.onstart = () => setState("speaking");
+  utterance.onend = () => setState("idle");
+  utterance.onerror = () => setState("idle");
+
+  window.speechSynthesis.speak(utterance);
+}
+
+function respond(message, shouldSpeak = true) {
+  $("responseText").textContent = message;
+  $("responseLabel").textContent = personalityInfo().name + " // RESPONSE";
+  setState("idle");
+
+  data.history.push({
+    message,
+    personality: data.personality,
+    timestamp: new Date().toISOString()
+  });
+
+  if (data.history.length > 40) data.history.shift();
+  saveData();
+
+  if (shouldSpeak) speak(message);
+}
+
+function createRecognition() {
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) return null;
+
+  const r = new SpeechRecognition();
+  r.lang = "en-US";
+  r.continuous = false;
+  r.interimResults = false;
+  r.maxAlternatives = 1;
+
+  r.onstart = () => {
+    listening = true;
+    setState("listening");
+  };
+
+  r.onresult = event => {
+    const transcript = event.results[0][0].transcript;
+    listening = false;
+    setState("thinking");
+    handleCommand(transcript);
+  };
+
+  r.onerror = event => {
+    listening = false;
+    setState("idle");
+
+    if (event.error === "not-allowed") {
+      respond("Microphone permission is blocked. Please allow microphone access in your browser settings.");
+    } else if (event.error !== "no-speech") {
+      respond("I couldn't process that voice input. Please try again.");
+    }
+  };
+
+  r.onend = () => {
+    listening = false;
+    if (!document.body.classList.contains("thinking") &&
+        !document.body.classList.contains("speaking")) {
+      setState("idle");
+    }
+  };
+
+  return r;
+}
+
+function toggleListening() {
+  if (listening && recognition) {
+    recognition.stop();
+    listening = false;
+    setState("idle");
     return;
   }
 
-  const recognition = new Recognition();
-
-  recognition.lang = "en-US";
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
-
-  recognition.onstart = () => {
-    $("core").classList.add("listening");
-    status("LISTENING");
-  };
-
-  recognition.onend = () => {
-    $("core").classList.remove("listening");
-    status("STANDING BY");
-  };
-
-  recognition.onerror = () => {
-    reply("I couldn't access the microphone. Check your browser permissions.");
-  };
-
-  recognition.onresult = event => {
-    handleCommand(event.results[0][0].transcript);
-  };
+  if (!recognition) {
+    respond("Voice recognition isn't supported in this browser. You can open the typing panel by saying so only when voice recognition is available. Use the browser's supported speech recognition or a compatible device.");
+    return;
+  }
 
   try {
     recognition.start();
   } catch {
-    reply("Voice input could not start. Try again.");
+    respond("The microphone is already starting. Give it a moment.");
   }
-});
+}
 
-/* INITIALIZE */
+function normalize(text) {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s'-]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
-setPersona(persona);
+function handleCommand(raw) {
+  const text = normalize(raw);
+  if (!text) {
+    respond("I didn't catch that. Try again.");
+    return;
+  }
+
+  if (text.includes("switch to edith") || text === "edith") {
+    switchPersonality("edith");
+    return;
+  }
+
+  if (text.includes("switch to friday") || text === "friday") {
+    switchPersonality("friday");
+    return;
+  }
+
+  if (text.includes("switch to jarvis") || text === "jarvis") {
+    switchPersonality("jarvis");
+    return;
+  }
+
+  if (text.includes("open tasks") || text.includes("show tasks")) {
+    openPanel("tasks");
+    return;
+  }
+
+  if (text.includes("open academics") ||
+      text.includes("open assignments") ||
+      text.includes("show assignments")) {
+    openPanel("academics");
+    return;
+  }
+
+  if (text.includes("open memory") || text.includes("show memory")) {
+    openPanel("memory");
+    return;
+  }
+
+  if (text.includes("open settings") || text.includes("system settings")) {
+    openPanel("settings");
+    return;
+  }
+
+  if (text.includes("open typing") || text.includes("show typing")) {
+    openPanel("typing");
+    return;
+  }
+
+  if (text.includes("close panel") || text.includes("close window")) {
+    closePanel();
+    respond("Panel closed.");
+    return;
+  }
+
+  if (text.includes("what time")) {
+    respond("The current time is " +
+      new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }));
+    return;
+  }
+
+  if (text.includes("what date") || text.includes("today's date")) {
+    respond("Today is " +
+      new Date().toLocaleDateString([], {
+        weekday: "long", month: "long", day: "numeric", year: "numeric"
+      }));
+    return;
+  }
+
+  if (text.includes("how many tasks")) {
+    respond("You currently have " + data.tasks.length + " active tasks.");
+    return;
+  }
+
+  if (text.includes("how many assignments")) {
+    respond("You currently have " + data.assignments.length + " assignments saved.");
+    return;
+  }
+
+  if (text.startsWith("add task ")) {
+    const title = raw.slice(raw.toLowerCase().indexOf("add task") + 9).trim();
+    if (title) addTask(title);
+    return;
+  }
+
+  if (text.startsWith("remember ")) {
+    const note = raw.slice(raw.toLowerCase().indexOf("remember") + 9).trim();
+    if (note) addMemory(note);
+    return;
+  }
+
+  if (text.includes("help")) {
+    respond("You can ask me to open tasks, open academics, open memory, open settings, switch to EDITH, switch to FRIDAY, switch to JARVIS, add a task, or remember something.");
+    return;
+  }
+
+  if (data.personality === "edith") {
+    respond("I can manage your local system functions, but I don't have access to a full AI reasoning engine yet. Give me a supported command.");
+  } else if (data.personality === "friday") {
+    respond("I'd love to help, but my full intelligence engine isn't connected yet. Try one of the available commands.");
+  } else {
+    respond("I understand the request, but my full AI engine isn't connected yet. I can manage tasks, assignments, memory, settings, and supported voice commands.");
+  }
+}
+
+function switchPersonality(name) {
+  data.personality = name;
+  saveData();
+  updatePersonality();
+
+  const messages = {
+    jarvis: "JARVIS online. I'll coordinate your system.",
+    edith: "EDITH online. Security and permissions remain my priority.",
+    friday: "FRIDAY online. Let's make this a little less boring."
+  };
+
+  respond(messages[name]);
+}
+
+function openPanel(name) {
+  currentPanel = name;
+  $("panel").classList.add("open");
+  renderPanel();
+  $("panel").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function closePanel() {
+  currentPanel = "";
+  $("panel").classList.remove("open");
+}
+
+function addTask(title) {
+  data.tasks.push({
+    id: crypto.randomUUID(),
+    title,
+    created: new Date().toISOString()
+  });
+
+  saveData();
+  if (currentPanel === "tasks") renderPanel();
+  respond("I've added that to your tasks.");
+}
+
+function addAssignment(title, course, due) {
+  data.assignments.push({
+    id: crypto.randomUUID(),
+    title,
+    course,
+    due
+  });
+
+  saveData();
+  if (currentPanel === "academics") renderPanel();
+  respond("Assignment saved.");
+}
+
+function addMemory(note) {
+  data.memories.push({
+    id: crypto.randomUUID(),
+    note,
+    created: new Date().toISOString()
+  });
+
+  saveData();
+  if (currentPanel === "memory") renderPanel();
+  respond("I've saved that as a local memory note.");
+}
+
+function deleteItem(collection, id) {
+  if (!["tasks", "assignments", "memories"].includes(collection)) return;
+
+  data[collection] = data[collection].filter(item => item.id !== id);
+  saveData();
+  renderPanel();
+}
+
+function element(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+function createItem(title, meta, collection, id) {
+  const row = element("div", "item");
+  const main = element("div", "item-main");
+  main.appendChild(element("div", "item-title", title));
+  main.appendChild(element("div", "item-meta", meta));
+
+  const remove = element("button", "delete", "REMOVE");
+  remove.type = "button";
+  remove.addEventListener("click", () => deleteItem(collection, id));
+
+  row.append(main, remove);
+  return row;
+}
+
+function addSectionHeading(parent, title) {
+  parent.appendChild(element("h3", "", title));
+}
+
+function addEmpty(parent, message) {
+  parent.appendChild(element("div", "empty", message));
+}
+
+function renderPanel() {
+  const content = $("panelContent");
+  content.replaceChildren();
+
+  const titles = {
+    tasks: "TASK MANAGEMENT",
+    academics: "ACADEMIC SYSTEM",
+    memory: "PERSONAL MEMORY",
+    settings: "SYSTEM CONFIGURATION",
+    typing: "TEXT INPUT"
+  };
+
+  $("panelTitle").textContent = titles[currentPanel] || "SYSTEM PANEL";
+
+  if (currentPanel === "tasks") renderTasks(content);
+  if (currentPanel === "academics") renderAcademics(content);
+  if (currentPanel === "memory") renderMemory(content);
+  if (currentPanel === "settings") renderSettings(content);
+  if (currentPanel === "typing") renderTyping(content);
+}
+
+function renderTasks(parent) {
+  const input = element("input", "field");
+  input.placeholder = "Describe a task...";
+  input.id = "newTask";
+
+  const button = element("button", "action", "ADD TASK");
+  button.type = "button";
+  button.addEventListener("click", () => {
+    const value = input.value.trim();
+    if (value) addTask(value);
+  });
+
+  parent.append(input, button);
+  addSectionHeading(parent, "ACTIVE TASKS");
+
+  if (!data.tasks.length) addEmpty(parent, "No tasks saved.");
+
+  data.tasks.forEach(task => {
+    parent.appendChild(createItem(
+      task.title,
+      "Added " + new Date(task.created).toLocaleDateString(),
+      "tasks",
+      task.id
+    ));
+  });
+}
+
+function renderAcademics(parent) {
+  const title = element("input", "field");
+  title.placeholder = "Assignment name";
+
+  const course = element("input", "field");
+  course.placeholder = "Class";
+
+  const due = element("input", "field");
+  due.type = "date";
+
+  const button = element("button", "action", "SAVE ASSIGNMENT");
+  button.type = "button";
+  button.addEventListener("click", () => {
+    if (!title.value.trim() || !course.value.trim()) {
+      respond("Please enter an assignment name and class.");
+      return;
+    }
+
+    addAssignment(title.value.trim(), course.value.trim(), due.value);
+  });
+
+  parent.append(title, course, due, button);
+  addSectionHeading(parent, "ASSIGNMENTS");
+
+  if (!data.assignments.length) addEmpty(parent, "No assignments saved.");
+
+  data.assignments.forEach(item => {
+    parent.appendChild(createItem(
+      item.title,
+      item.course + (item.due ? " // Due " + item.due : " // No due date"),
+      "assignments",
+      item.id
+    ));
+  });
+}
+
+function renderMemory(parent) {
+  const input = element("textarea", "field");
+  input.placeholder = "Add a personal note or preference...";
+  input.rows = 3;
+
+  const button = element("button", "action", "SAVE NOTE");
+  button.type = "button";
+  button.addEventListener("click", () => {
+    const value = input.value.trim();
+    if (value) addMemory(value);
+  });
+
+  parent.append(input, button);
+
+  parent.appendChild(element(
+    "p",
+    "small-note",
+    "These are local notes saved in this browser. They are not encrypted or synced."
+  ));
+
+  addSectionHeading(parent, "SAVED NOTES");
+
+  if (!data.memories.length) addEmpty(parent, "No notes saved.");
+
+  data.memories.forEach(item => {
+    parent.appendChild(createItem(
+      item.note,
+      "Saved " + new Date(item.created).toLocaleDateString(),
+      "memories",
+      item.id
+    ));
+  });
+}
+
+function renderSettings(parent) {
+  addSectionHeading(parent, "ACTIVE PERSONALITY");
+
+  ["jarvis", "edith", "friday"].forEach(name => {
+    const button = element("button", "action", name.toUpperCase());
+    button.type = "button";
+    button.addEventListener("click", () => switchPersonality(name));
+    parent.appendChild(button);
+  });
+
+  addSectionHeading(parent, "VOICE SPEED");
+
+  const speed = element("input", "field");
+  speed.type = "range";
+  speed.min = ".75";
+  speed.max = "1.25";
+  speed.step = ".05";
+  speed.value = data.speed;
+
+  speed.addEventListener("input", () => {
+    data.speed = Number(speed.value);
+    saveData();
+  });
+
+  parent.appendChild(speed);
+
+  const speedLabel = element("div", "small-note", "Current speed: " + data.speed);
+  speed.addEventListener("change", () => {
+    speedLabel.textContent = "Current speed: " + data.speed;
+  });
+  parent.appendChild(speedLabel);
+
+  addSectionHeading(parent, "VOICE SELECTION");
+
+  const voiceSelect = element("select", "field");
+  voiceSelect.appendChild(new Option("Default device voice", ""));
+
+  availableVoices.forEach(voice => {
+    voiceSelect.appendChild(new Option(voice.name + " (" + voice.lang + ")", voice.name));
+  });
+
+  voiceSelect.value = data.voiceName;
+
+  voiceSelect.addEventListener("change", () => {
+    data.voiceName = voiceSelect.value;
+    saveData();
+  });
+
+  parent.appendChild(voiceSelect);
+
+  const preview = element("button", "action", "TEST VOICE");
+  preview.type = "button";
+  preview.addEventListener("click", () => speak("System voice test. JARVIS is ready."));
+  parent.appendChild(preview);
+
+  addSectionHeading(parent, "INTERJECTIONS");
+
+  const frequency = element("select", "field");
+  ["minimal", "balanced", "frequent"].forEach(value => {
+    frequency.appendChild(new Option(value, value));
+  });
+
+  frequency.value = data.interjections;
+  frequency.addEventListener("change", () => {
+    data.interjections = frequency.value;
+    saveData();
+  });
+
+  parent.appendChild(frequency);
+
+  addSectionHeading(parent, "DATA BACKUP");
+
+  const backup = element("button", "action", "EXPORT BACKUP");
+  backup.type = "button";
+  backup.addEventListener("click", exportBackup);
+
+  const restore = element("button", "action", "RESTORE BACKUP");
+  restore.type = "button";
+
+  const file = element("input", "field");
+  file.type = "file";
+  file.accept = "application/json";
+  file.setAttribute("aria-label", "Choose a JARVIS backup file");
+
+  restore.addEventListener("click", () => file.click());
+
+  file.addEventListener("change", restoreBackup);
+
+  parent.append(backup, restore, file);
+
+  addSectionHeading(parent, "LOCAL DATA");
+
+  const warning = element(
+    "p",
+    "small-note",
+    "Clearing local data permanently removes saved tasks, assignments, and notes from this browser. Export a backup first."
+  );
+
+  const clear = element("button", "action", "CLEAR LOCAL DATA");
+  clear.type = "button";
+  clear.addEventListener("click", () => {
+    if (!confirm("Delete all locally saved JARVIS information? This cannot be undone.")) return;
+
+    data = structuredClone(defaults);
+    saveData();
+    updatePersonality();
+    renderPanel();
+    respond("Local data cleared.");
+  });
+
+  parent.append(warning, clear);
+}
+
+function renderTyping(parent) {
+  const input = element("textarea", "field");
+  input.placeholder = "Type a command...";
+  input.rows = 3;
+
+  const send = element("button", "action", "SEND");
+  send.type = "button";
+  send.addEventListener("click", () => {
+    const text = input.value.trim();
+    if (!text) return;
+    closePanel();
+    setState("thinking");
+    handleCommand(text);
+  });
+
+  parent.append(input, send);
+  input.focus();
+}
+
+function exportBackup() {
+  const blob = new Blob([JSON.stringify(data, null, 2)], {
+    type: "application/json"
+  });
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "jarvis-backup.json";
+  a.click();
+  URL.revokeObjectURL(url);
+  respond("Backup exported.");
+}
+
+function restoreBackup(event) {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    try {
+      const imported = JSON.parse(reader.result);
+
+      if (!imported || typeof imported !== "object" ||
+          !Array.isArray(imported.tasks) ||
+          !Array.isArray(imported.assignments) ||
+          !Array.isArray(imported.memories)) {
+        throw new Error("Invalid backup");
+      }
+
+      if (!confirm("Replace your current local data with this backup?")) return;
+
+      data = { ...defaults, ...imported };
+      saveData();
+      updatePersonality();
+      renderPanel();
+      respond("Backup restored.");
+    } catch {
+      respond("That file doesn't appear to be a valid JARVIS backup.");
+    }
+  };
+
+  reader.readAsText(file);
+}
+
+function initializeVoices() {
+  if (!("speechSynthesis" in window)) return;
+
+  availableVoices = window.speechSynthesis.getVoices();
+
+  if (currentPanel === "settings") renderPanel();
+}
+
+if ("speechSynthesis" in window) {
+  initializeVoices();
+  window.speechSynthesis.onvoiceschanged = initializeVoices;
+}
+
+$("coreButton").addEventListener("click", toggleListening);
+
+updatePersonality();
+recognition = createRecognition();
+
+if (!recognition) {
+  $("coreHint").textContent = "VOICE RECOGNITION UNAVAILABLE";
+}
+
+const hour = new Date().getHours();
+
+$("greeting").textContent =
+  hour < 12 ? "Good morning." :
+  hour < 18 ? "Good afternoon." :
+  "Good evening.";
+
+if (!initialized) {
+  initialized = true;
+  $("responseText").textContent =
+    "Standing by. Tap the central core to begin a voice session. Say 'help' for supported commands.";
+}
 
 })();
 </script>
+
 </body>
 </html>
+```
