@@ -1,283 +1,684 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#080d18">
-  <title>JARVIS</title>
-  <style>
-    :root {
-      --bg: #080d18;
-      --panel: #101a2b;
-      --blue: #35cfff;
-      --green: #45e69a;
-      --amber: #ffc45c;
-      --red: #ff5268;
-      --purple: #b78aff;
-      --text: #e8f5ff;
-      --muted: #8295aa;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#070c16">
+<title>JARVIS | Personal Assistant</title>
 
-    * { box-sizing: border-box; }
+<style>
+:root {
+  --bg:#070c16;
+  --panel:#101b2b;
+  --blue:#36cfff;
+  --green:#43e6a0;
+  --amber:#ffc45c;
+  --red:#ff5268;
+  --purple:#b78aff;
+  --orange:#ff985c;
+  --text:#edf7ff;
+  --muted:#8297ad;
+  --border:#203750;
+}
 
-    body {
-      margin: 0;
-      background: radial-gradient(ellipse at top, #12243b, var(--bg) 65%);
-      color: var(--text);
-      font-family: Arial, sans-serif;
-      min-height: 100vh;
-    }
+* {box-sizing:border-box}
 
-    header {
-      padding: 24px 20px;
-      border-bottom: 1px solid #20334a;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+body {
+  margin:0;
+  background:radial-gradient(ellipse at top,#12243a,var(--bg) 65%);
+  color:var(--text);
+  font-family:Arial,sans-serif;
+  min-height:100vh;
+}
 
-    .logo {
-      color: var(--blue);
-      letter-spacing: 5px;
-      font-size: 22px;
-      font-weight: bold;
-    }
+button,input,textarea {font:inherit}
 
-    .status {
-      color: var(--green);
-      font-size: 12px;
-      letter-spacing: 2px;
-    }
+button {cursor:pointer}
 
-    main {
-      width: min(900px, 92%);
-      margin: 30px auto;
-    }
+.app {
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:225px minmax(0,1fr);
+}
 
-    .welcome {
-      text-align: center;
-      padding: 35px 10px;
-    }
+.sidebar {
+  background:#080f1b;
+  border-right:1px solid var(--border);
+  padding:24px 15px;
+}
 
-    .core {
-      width: 115px;
-      height: 115px;
-      border: 2px solid var(--blue);
-      border-radius: 50%;
-      margin: 0 auto 22px;
-      display: grid;
-      place-items: center;
-      color: var(--blue);
-      font-size: 35px;
-      box-shadow: 0 0 25px #35cfff44, inset 0 0 25px #35cfff22;
-    }
+.brand {
+  font-size:22px;
+  letter-spacing:5px;
+  color:var(--blue);
+  font-weight:bold;
+  margin:8px 10px 35px;
+}
 
-    h1 { margin: 0 0 10px; letter-spacing: 3px; }
-    .muted { color: var(--muted); }
+.nav-label {
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:2px;
+  margin:25px 10px 10px;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 15px;
-    }
+.nav-button {
+  width:100%;
+  border:1px solid transparent;
+  color:#b8c9d9;
+  background:transparent;
+  text-align:left;
+  padding:13px;
+  border-radius:8px;
+  margin:3px 0;
+}
 
-    .panel {
-      background: #101a2be8;
-      border: 1px solid #243951;
-      border-radius: 12px;
-      padding: 20px;
-    }
+.nav-button:hover,.nav-button.active {
+  background:#11283a;
+  border-color:#24516c;
+  color:var(--blue);
+}
 
-    .panel h2 {
-      font-size: 14px;
-      letter-spacing: 2px;
-      margin-top: 0;
-      color: var(--blue);
-    }
+.main {min-width:0}
 
-    .green { color: var(--green); }
-    .amber { color: var(--amber); }
-    .purple { color: var(--purple); }
+.topbar {
+  min-height:75px;
+  padding:18px 28px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  gap:12px;
+}
 
-    input, textarea, button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 9px;
-      border-radius: 7px;
-      font: inherit;
-    }
+.status {
+  color:var(--green);
+  font-size:11px;
+  letter-spacing:2px;
+}
 
-    input, textarea {
-      background: #080f1c;
-      border: 1px solid #30445c;
-      color: var(--text);
-    }
+.content {
+  max-width:1100px;
+  margin:auto;
+  padding:30px;
+}
 
-    button {
-      background: #12344b;
-      color: var(--blue);
-      border: 1px solid var(--blue);
-      cursor: pointer;
-      font-weight: bold;
-    }
+.page {display:none}
+.page.active {display:block}
 
-    button:hover { background: #1a4964; }
+.heading {
+  font-size:25px;
+  letter-spacing:2px;
+  margin:0 0 8px;
+}
 
-    .item {
-      padding: 10px 0;
-      border-bottom: 1px solid #243951;
-      overflow-wrap: anywhere;
-    }
+.subtitle {
+  color:var(--muted);
+  margin-bottom:28px;
+  font-size:14px;
+}
 
-    .item:last-child { border-bottom: none; }
+.hero {
+  text-align:center;
+  padding:30px 10px 40px;
+}
 
-    .delete {
-      width: auto;
-      padding: 5px 10px;
-      margin-left: 8px;
-      color: var(--red);
-      border-color: var(--red);
-      font-size: 12px;
-    }
+.core {
+  width:170px;
+  height:170px;
+  border:2px solid var(--blue);
+  border-radius:50%;
+  margin:0 auto 25px;
+  display:grid;
+  place-items:center;
+  position:relative;
+  box-shadow:0 0 35px #36cfff44,inset 0 0 30px #36cfff22;
+  animation:pulse 3s infinite ease-in-out;
+}
 
-    footer {
-      text-align: center;
-      color: var(--muted);
-      padding: 25px;
-      font-size: 11px;
-      letter-spacing: 2px;
-    }
-  </style>
+.core:before,.core:after {
+  content:"";
+  position:absolute;
+  border:1px solid #36cfff66;
+  border-radius:50%;
+}
+
+.core:before {inset:10px}
+.core:after {inset:-12px;border-style:dashed}
+
+.core span {
+  font-size:50px;
+  color:var(--blue);
+  font-weight:bold;
+}
+
+@keyframes pulse {
+  50% {box-shadow:0 0 55px #36cfff77,inset 0 0 40px #36cfff44}
+}
+
+.hero h1 {
+  font-size:25px;
+  letter-spacing:5px;
+}
+
+.hero p {color:var(--muted)}
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+}
+
+.card {
+  background:linear-gradient(145deg,#132238,#0c1524);
+  border:1px solid var(--border);
+  padding:20px;
+  border-radius:12px;
+}
+
+.card h3 {
+  font-size:12px;
+  letter-spacing:2px;
+  color:var(--blue);
+  margin-top:0;
+}
+
+.green {color:var(--green)}
+.amber {color:var(--amber)}
+.red {color:var(--red)}
+.purple {color:var(--purple)}
+.orange {color:var(--orange)}
+
+.button {
+  border:1px solid var(--blue);
+  color:var(--blue);
+  background:#12344b;
+  padding:12px 16px;
+  border-radius:8px;
+  font-weight:bold;
+}
+
+.button:hover {background:#1c4b68}
+
+.button.secondary {
+  border-color:var(--border);
+  background:#101b2b;
+  color:var(--text);
+}
+
+.button.danger {
+  border-color:var(--red);
+  color:var(--red);
+  background:#28131d;
+}
+
+.button.full {width:100%;margin-top:10px}
+
+input,textarea {
+  width:100%;
+  padding:13px;
+  border-radius:8px;
+  background:#080f1c;
+  border:1px solid #30445c;
+  color:var(--text);
+  margin:7px 0;
+}
+
+textarea {min-height:100px;resize:vertical}
+
+.console {
+  background:#080f1c;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+}
+
+.messages {
+  min-height:180px;
+  max-height:350px;
+  overflow:auto;
+  margin-bottom:12px;
+}
+
+.message {
+  padding:12px;
+  margin:8px 0;
+  border-radius:8px;
+  background:#122239;
+  overflow-wrap:anywhere;
+}
+
+.message.user {
+  border-left:3px solid var(--purple);
+}
+
+.message.jarvis {
+  border-left:3px solid var(--blue);
+}
+
+.row {
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.row input {min-width:0}
+
+.item {
+  padding:12px 0;
+  border-bottom:1px solid var(--border);
+  overflow-wrap:anywhere;
+}
+
+.item:last-child {border-bottom:none}
+
+.item button {
+  float:right;
+  padding:5px 8px;
+  font-size:11px;
+}
+
+.small {
+  color:var(--muted);
+  font-size:12px;
+}
+
+.core-controls {
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+footer {
+  text-align:center;
+  padding:30px;
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:2px;
+}
+
+@media(max-width:700px) {
+  .app {grid-template-columns:1fr}
+  .sidebar {
+    border-right:0;
+    border-bottom:1px solid var(--border);
+    padding:12px;
+  }
+  .brand {margin:8px}
+  .nav-label {display:none}
+  .nav-list {
+    display:flex;
+    overflow-x:auto;
+    gap:5px;
+  }
+  .nav-button {
+    width:auto;
+    white-space:nowrap;
+    padding:10px;
+  }
+  .content {padding:20px 15px}
+  .topbar {padding:15px}
+}
+</style>
 </head>
 
 <body>
-  <header>
-    <div class="logo">J.A.R.V.I.S.</div>
-    <div class="status">● LOCAL SYSTEM ONLINE</div>
-  </header>
+<div class="app">
 
-  <main>
-    <section class="welcome">
-      <div class="core">J</div>
-      <h1>GOOD TO SEE YOU</h1>
-      <p class="muted">Just A Rather Very Intelligent System</p>
-      <p class="green">Dashboard initialized.</p>
-    </section>
+<aside class="sidebar">
+  <div class="brand">J.A.R.V.I.S.</div>
 
-    <section class="grid">
-      <div class="panel">
-        <h2>SYSTEM STATUS</h2>
-        <p class="green">● Interface operational</p>
-        <p class="green">● Local storage available</p>
-        <p class="amber">● AI connection not configured</p>
-      </div>
+  <div class="nav-label">MAIN SYSTEM</div>
+  <div class="nav-list">
+    <button class="nav-button active" data-page="home">⌂ Home</button>
+    <button class="nav-button" data-page="chat">◉ Chat</button>
+    <button class="nav-button" data-page="tasks">▣ Tasks</button>
+    <button class="nav-button" data-page="memory">◈ Memory</button>
+    <button class="nav-button" data-page="edith">◆ EDITH</button>
+    <button class="nav-button" data-page="friday">✦ FRIDAY</button>
+    <button class="nav-button" data-page="settings">⚙ Settings</button>
+  </div>
+</aside>
 
-      <div class="panel">
-        <h2>TASK MANAGER</h2>
-        <div id="tasks"></div>
-        <input id="taskInput" placeholder="Enter a task...">
-        <button onclick="addTask()">ADD TASK</button>
-      </div>
+<div class="main">
 
-      <div class="panel">
-        <h2>MEMORY BANK</h2>
-        <div id="memories"></div>
-        <input id="memoryInput" placeholder="Something to remember...">
-        <button onclick="addMemory()">SAVE MEMORY</button>
-      </div>
+<header class="topbar">
+  <strong id="pageTitle">JARVIS / HOME</strong>
+  <span class="status">● INTERFACE ONLINE</span>
+</header>
 
-      <div class="panel">
-        <h2>JARVIS CONSOLE</h2>
-        <p class="muted" id="response">
-          Good day. My interface is operational. My AI connection is still awaiting configuration.
-        </p>
-        <input id="commandInput" placeholder="Enter a command...">
-        <button onclick="runCommand()">SEND</button>
-      </div>
-    </section>
-  </main>
+<main class="content">
 
-  <footer>JARVIS SYSTEMS • VERSION 0.1 • DEVELOPMENT BUILD</footer>
+<section class="page active" id="home">
+  <div class="hero">
+    <div class="core"><span>J</span></div>
+    <h1>AT YOUR SERVICE</h1>
+    <p id="greeting">Personal assistant interface initialized.</p>
+    <div class="core-controls">
+      <button class="button" onclick="startVoice()">🎙 ACTIVATE VOICE</button>
+      <button class="button secondary" onclick="openPage('chat')">OPEN CHAT</button>
+    </div>
+    <p class="small" id="voiceStatus">Voice system standing by.</p>
+  </div>
 
-  <script>
-    const getData = key => JSON.parse(localStorage.getItem(key) || "[]");
-    const saveData = (key, data) =>
-      localStorage.setItem(key, JSON.stringify(data));
+  <div class="grid">
+    <div class="card">
+      <h3>SYSTEM STATUS</h3>
+      <p class="green">● Interface operational</p>
+      <p class="green">● Local storage available</p>
+      <p class="amber">● AI connection pending</p>
+    </div>
+    <div class="card">
+      <h3>TASK OVERVIEW</h3>
+      <h2 id="taskCount">0</h2>
+      <p class="small">Open tasks</p>
+      <button class="button secondary full" onclick="openPage('tasks')">VIEW TASKS</button>
+    </div>
+    <div class="card">
+      <h3>MEMORY BANK</h3>
+      <h2 id="memoryCount">0</h2>
+      <p class="small">Saved memories</p>
+      <button class="button secondary full" onclick="openPage('memory')">VIEW MEMORY</button>
+    </div>
+  </div>
+</section>
 
-    function renderTasks() {
-      const tasks = getData("jarvisTasks");
-      document.getElementById("tasks").innerHTML = tasks.length
-        ? tasks.map((task, i) =>
-            `<div class="item">${escapeHTML(task)}
-            <button class="delete" onclick="deleteTask(${i})">DONE</button></div>`
-          ).join("")
-        : '<p class="muted">No tasks currently recorded.</p>';
-    }
+<section class="page" id="chat">
+  <h1 class="heading">JARVIS CONSOLE</h1>
+  <p class="subtitle">Communication interface</p>
+  <div class="console">
+    <div class="messages" id="messages">
+      <div class="message jarvis">JARVIS: Interface online. AI connection has not yet been configured.</div>
+    </div>
+    <div class="row">
+      <input id="chatInput" placeholder="Enter a command..." onkeydown="if(event.key==='Enter')sendMessage()">
+      <button class="button" onclick="sendMessage()">SEND</button>
+      <button class="button" onclick="startVoice()">🎙</button>
+    </div>
+    <button class="button secondary full" onclick="stopVoice()">STOP VOICE</button>
+  </div>
+</section>
 
-    function addTask() {
-      const input = document.getElementById("taskInput");
-      if (!input.value.trim()) return;
-      const tasks = getData("jarvisTasks");
-      tasks.push(input.value.trim());
-      saveData("jarvisTasks", tasks);
-      input.value = "";
-      renderTasks();
-    }
+<section class="page" id="tasks">
+  <h1 class="heading">TASK MANAGEMENT</h1>
+  <p class="subtitle">Your active assignments and objectives.</p>
+  <div class="card">
+    <div id="taskList"></div>
+    <input id="newTask" placeholder="Enter a new task..." onkeydown="if(event.key==='Enter')addTask()">
+    <button class="button full" onclick="addTask()">ADD TASK</button>
+  </div>
+</section>
 
-    function deleteTask(index) {
-      const tasks = getData("jarvisTasks");
-      tasks.splice(index, 1);
-      saveData("jarvisTasks", tasks);
-      renderTasks();
-    }
+<section class="page" id="memory">
+  <h1 class="heading">MEMORY BANK</h1>
+  <p class="subtitle">Information saved locally on this device.</p>
+  <div class="card">
+    <div id="memoryList"></div>
+    <textarea id="newMemory" placeholder="What should I remember?"></textarea>
+    <button class="button full" onclick="addMemory()">SAVE MEMORY</button>
+  </div>
+</section>
 
-    function renderMemories() {
-      const memories = getData("jarvisMemories");
-      document.getElementById("memories").innerHTML = memories.length
-        ? memories.map((memory, i) =>
-            `<div class="item">${escapeHTML(memory)}
-            <button class="delete" onclick="deleteMemory(${i})">DELETE</button></div>`
-          ).join("")
-        : '<p class="muted">Memory bank is empty.</p>';
-    }
+<section class="page" id="edith">
+  <h1 class="heading red">EDITH</h1>
+  <p class="subtitle">Enhanced security and administrative interface.</p>
+  <div class="card">
+    <h3 style="color:var(--red)">SECURITY OVERVIEW</h3>
+    <p class="green">● Local data stored in browser</p>
+    <p class="green">● No external account access configured</p>
+    <p class="amber">● External integrations not configured</p>
+    <p class="small">EDITH currently provides a status overview. Device monitoring and security integrations are not active.</p>
+  </div>
+</section>
 
-    function addMemory() {
-      const input = document.getElementById("memoryInput");
-      if (!input.value.trim()) return;
-      const memories = getData("jarvisMemories");
-      memories.push(input.value.trim());
-      saveData("jarvisMemories", memories);
-      input.value = "";
-      renderMemories();
-    }
+<section class="page" id="friday">
+  <h1 class="heading purple">FRIDAY</h1>
+  <p class="subtitle">Alternative assistant personality.</p>
+  <div class="card">
+    <h3 style="color:var(--purple)">PERSONALITY SELECTOR</h3>
+    <p>Switch the active assistant interface.</p>
+    <button class="button full" onclick="setPersonality('JARVIS')">JARVIS</button>
+    <button class="button full" style="border-color:var(--red);color:var(--red)" onclick="setPersonality('EDITH')">EDITH</button>
+    <button class="button full" style="border-color:var(--purple);color:var(--purple)" onclick="setPersonality('FRIDAY')">FRIDAY</button>
+    <p id="personalityStatus" class="small">Active personality: JARVIS</p>
+  </div>
+</section>
 
-    function deleteMemory(index) {
-      const memories = getData("jarvisMemories");
-      memories.splice(index, 1);
-      saveData("jarvisMemories", memories);
-      renderMemories();
-    }
+<section class="page" id="settings">
+  <h1 class="heading">SYSTEM SETTINGS</h1>
+  <p class="subtitle">Configure your local interface.</p>
+  <div class="card">
+    <h3>VOICE SETTINGS</h3>
+    <button class="button full" onclick="testSpeech()">TEST SPOKEN RESPONSE</button>
+    <button class="button secondary full" onclick="stopVoice()">STOP SPEECH</button>
+    <p class="small">Voice recognition availability depends on your browser and device.</p>
+  </div>
+  <div class="card" style="margin-top:15px">
+    <h3>LOCAL DATA</h3>
+    <p class="small">Tasks and memories are stored in this browser. Clearing browser data may erase them.</p>
+    <button class="button danger full" onclick="clearLocalData()">CLEAR ALL LOCAL DATA</button>
+  </div>
+</section>
 
-    function escapeHTML(value) {
-      return value.replace(/[&<>"']/g, char => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;",
-        '"': "&quot;", "'": "&#39;"
-      })[char]);
-    }
+</main>
 
-    function runCommand() {
-      const input = document.getElementById("commandInput");
-      const response = document.getElementById("response");
-      const command = input.value.trim();
-      if (!command) return;
+<footer>JARVIS SYSTEMS • DEVELOPMENT BUILD 0.2</footer>
+</div>
+</div>
 
-      response.textContent =
-        `Command received: "${command}". AI connection is not configured yet.`;
-      input.value = "";
-    }
+<script>
+const read = key => {
+  try { return JSON.parse(localStorage.getItem(key) || "[]"); }
+  catch { return []; }
+};
 
-    renderTasks();
-    renderMemories();
-  </script>
+const save = (key,value) =>
+  localStorage.setItem(key,JSON.stringify(value));
+
+function openPage(name) {
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(name).classList.add("active");
+
+  document.querySelectorAll(".nav-button").forEach(b=>
+    b.classList.toggle("active",b.dataset.page===name)
+  );
+
+  document.getElementById("pageTitle").textContent =
+    "JARVIS / " + name.toUpperCase();
+
+  renderAll();
+}
+
+document.querySelectorAll(".nav-button").forEach(button=>{
+  button.addEventListener("click",()=>openPage(button.dataset.page));
+});
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",
+    '"':"&quot;","'":"&#39;"
+  })[c]);
+}
+
+function addTask() {
+  const input=document.getElementById("newTask");
+  if(!input.value.trim()) return;
+  const tasks=read("jarvisTasks");
+  tasks.push({text:input.value.trim(),done:false});
+  save("jarvisTasks",tasks);
+  input.value="";
+  renderAll();
+}
+
+function toggleTask(index) {
+  const tasks=read("jarvisTasks");
+  tasks[index].done=!tasks[index].done;
+  save("jarvisTasks",tasks);
+  renderAll();
+}
+
+function deleteTask(index) {
+  const tasks=read("jarvisTasks");
+  tasks.splice(index,1);
+  save("jarvisTasks",tasks);
+  renderAll();
+}
+
+function addMemory() {
+  const input=document.getElementById("newMemory");
+  if(!input.value.trim()) return;
+  const memories=read("jarvisMemories");
+  memories.push(input.value.trim());
+  save("jarvisMemories",memories);
+  input.value="";
+  renderAll();
+}
+
+function deleteMemory(index) {
+  const memories=read("jarvisMemories");
+  memories.splice(index,1);
+  save("jarvisMemories",memories);
+  renderAll();
+}
+
+function renderAll() {
+  const tasks=read("jarvisTasks");
+  const memories=read("jarvisMemories");
+
+  document.getElementById("taskList").innerHTML=tasks.length
+    ? tasks.map((t,i)=>`
+      <div class="item">
+        <span style="${t.done?'text-decoration:line-through;color:#8297ad':''}">
+          ${escapeHTML(t.text)}
+        </span>
+        <button class="button secondary" onclick="deleteTask(${i})">DELETE</button>
+        <button class="button secondary" onclick="toggleTask(${i})">${t.done?'UNDO':'DONE'}</button>
+      </div>`).join("")
+    : '<p class="small">No tasks recorded.</p>';
+
+  document.getElementById("memoryList").innerHTML=memories.length
+    ? memories.map((m,i)=>`
+      <div class="item">
+        ${escapeHTML(m)}
+        <button class="button secondary" onclick="deleteMemory(${i})">DELETE</button>
+      </div>`).join("")
+    : '<p class="small">Memory bank is empty.</p>';
+
+  document.getElementById("taskCount").textContent=tasks.filter(t=>!t.done).length;
+  document.getElementById("memoryCount").textContent=memories.length;
+}
+
+let personality="JARVIS";
+
+function setPersonality(name) {
+  personality=name;
+  document.getElementById("personalityStatus").textContent=
+    "Active personality: "+name;
+  document.getElementById("greeting").textContent=
+    name+" interface selected.";
+  document.getElementById("pageTitle").textContent=
+    name+" / PERSONALITY ACTIVE";
+}
+
+function addMessage(text,type) {
+  const box=document.getElementById("messages");
+  const div=document.createElement("div");
+  div.className="message "+type;
+  div.textContent=text;
+  box.appendChild(div);
+  box.scrollTop=box.scrollHeight;
+}
+
+function sendMessage() {
+  const input=document.getElementById("chatInput");
+  const text=input.value.trim();
+  if(!text) return;
+
+  addMessage("YOU: "+text,"user");
+  input.value="";
+
+  const response=
+    "My interface received your message, but my AI brain is not connected yet. I can currently manage local tasks and memories.";
+
+  addMessage(personality+": "+response,"jarvis");
+  speak(response);
+}
+
+function speak(text) {
+  if(!("speechSynthesis" in window)) {
+    document.getElementById("voiceStatus").textContent=
+      "Speech synthesis is unavailable in this browser.";
+    return;
+  }
+
+  speechSynthesis.cancel();
+  const utterance=new SpeechSynthesisUtterance(text);
+  utterance.rate=0.95;
+  utterance.pitch=0.9;
+  speechSynthesis.speak(utterance);
+}
+
+function testSpeech() {
+  speak("JARVIS voice system is online. Awaiting your instructions.");
+}
+
+function stopVoice() {
+  if("speechSynthesis" in window) speechSynthesis.cancel();
+  if(window.activeRecognition) {
+    window.activeRecognition.stop();
+    window.activeRecognition=null;
+  }
+  document.getElementById("voiceStatus").textContent="Voice stopped.";
+}
+
+function startVoice() {
+  const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+
+  if(!Recognition) {
+    document.getElementById("voiceStatus").textContent=
+      "Voice recognition is not supported in this browser. Try Chrome or Safari.";
+    return;
+  }
+
+  const recognition=new Recognition();
+  recognition.lang="en-US";
+  recognition.interimResults=false;
+  recognition.continuous=false;
+
+  window.activeRecognition=recognition;
+
+  document.getElementById("voiceStatus").textContent="Listening...";
+
+  recognition.onresult=event=>{
+    const transcript=event.results[0][0].transcript;
+    document.getElementById("voiceStatus").textContent=
+      "Recognized: "+transcript;
+    document.getElementById("chatInput").value=transcript;
+    openPage("chat");
+    sendMessage();
+  };
+
+  recognition.onerror=event=>{
+    document.getElementById("voiceStatus").textContent=
+      "Voice error: "+event.error;
+  };
+
+  recognition.onend=()=>{
+    window.activeRecognition=null;
+  };
+
+  recognition.start();
+}
+
+function clearLocalData() {
+  if(!confirm("Delete all locally saved JARVIS tasks and memories?"))return;
+  localStorage.removeItem("jarvisTasks");
+  localStorage.removeItem("jarvisMemories");
+  renderAll();
+}
+
+renderAll();
+</script>
 </body>
 </html>
