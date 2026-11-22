@@ -1,684 +1,773 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#070c16">
-<title>JARVIS | Personal Assistant</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07111f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>JARVIS</title>
 <style>
-:root {
-  --bg:#070c16;
-  --panel:#101b2b;
-  --blue:#36cfff;
-  --green:#43e6a0;
-  --amber:#ffc45c;
-  --red:#ff5268;
-  --purple:#b78aff;
-  --orange:#ff985c;
-  --text:#edf7ff;
-  --muted:#8297ad;
-  --border:#203750;
-}
-
-* {box-sizing:border-box}
-
-body {
-  margin:0;
-  background:radial-gradient(ellipse at top,#12243a,var(--bg) 65%);
-  color:var(--text);
-  font-family:Arial,sans-serif;
-  min-height:100vh;
-}
-
-button,input,textarea {font:inherit}
-
-button {cursor:pointer}
-
-.app {
-  min-height:100vh;
-  display:grid;
-  grid-template-columns:225px minmax(0,1fr);
-}
-
-.sidebar {
-  background:#080f1b;
-  border-right:1px solid var(--border);
-  padding:24px 15px;
-}
-
-.brand {
-  font-size:22px;
-  letter-spacing:5px;
-  color:var(--blue);
-  font-weight:bold;
-  margin:8px 10px 35px;
-}
-
-.nav-label {
-  color:var(--muted);
-  font-size:10px;
-  letter-spacing:2px;
-  margin:25px 10px 10px;
-}
-
-.nav-button {
-  width:100%;
-  border:1px solid transparent;
-  color:#b8c9d9;
-  background:transparent;
-  text-align:left;
-  padding:13px;
-  border-radius:8px;
-  margin:3px 0;
-}
-
-.nav-button:hover,.nav-button.active {
-  background:#11283a;
-  border-color:#24516c;
-  color:var(--blue);
-}
-
-.main {min-width:0}
-
-.topbar {
-  min-height:75px;
-  padding:18px 28px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  border-bottom:1px solid var(--border);
-  gap:12px;
-}
-
-.status {
-  color:var(--green);
-  font-size:11px;
-  letter-spacing:2px;
-}
-
-.content {
-  max-width:1100px;
-  margin:auto;
-  padding:30px;
-}
-
-.page {display:none}
-.page.active {display:block}
-
-.heading {
-  font-size:25px;
-  letter-spacing:2px;
-  margin:0 0 8px;
-}
-
-.subtitle {
-  color:var(--muted);
-  margin-bottom:28px;
-  font-size:14px;
-}
-
-.hero {
-  text-align:center;
-  padding:30px 10px 40px;
-}
-
-.core {
-  width:170px;
-  height:170px;
-  border:2px solid var(--blue);
-  border-radius:50%;
-  margin:0 auto 25px;
-  display:grid;
-  place-items:center;
-  position:relative;
-  box-shadow:0 0 35px #36cfff44,inset 0 0 30px #36cfff22;
-  animation:pulse 3s infinite ease-in-out;
-}
-
-.core:before,.core:after {
-  content:"";
-  position:absolute;
-  border:1px solid #36cfff66;
-  border-radius:50%;
-}
-
-.core:before {inset:10px}
-.core:after {inset:-12px;border-style:dashed}
-
-.core span {
-  font-size:50px;
-  color:var(--blue);
-  font-weight:bold;
-}
-
-@keyframes pulse {
-  50% {box-shadow:0 0 55px #36cfff77,inset 0 0 40px #36cfff44}
-}
-
-.hero h1 {
-  font-size:25px;
-  letter-spacing:5px;
-}
-
-.hero p {color:var(--muted)}
-
-.grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:16px;
-}
-
-.card {
-  background:linear-gradient(145deg,#132238,#0c1524);
-  border:1px solid var(--border);
-  padding:20px;
-  border-radius:12px;
-}
-
-.card h3 {
-  font-size:12px;
-  letter-spacing:2px;
-  color:var(--blue);
-  margin-top:0;
-}
-
-.green {color:var(--green)}
-.amber {color:var(--amber)}
-.red {color:var(--red)}
-.purple {color:var(--purple)}
-.orange {color:var(--orange)}
-
-.button {
-  border:1px solid var(--blue);
-  color:var(--blue);
-  background:#12344b;
-  padding:12px 16px;
-  border-radius:8px;
-  font-weight:bold;
-}
-
-.button:hover {background:#1c4b68}
-
-.button.secondary {
-  border-color:var(--border);
-  background:#101b2b;
-  color:var(--text);
-}
-
-.button.danger {
-  border-color:var(--red);
-  color:var(--red);
-  background:#28131d;
-}
-
-.button.full {width:100%;margin-top:10px}
-
-input,textarea {
-  width:100%;
-  padding:13px;
-  border-radius:8px;
-  background:#080f1c;
-  border:1px solid #30445c;
-  color:var(--text);
-  margin:7px 0;
-}
-
-textarea {min-height:100px;resize:vertical}
-
-.console {
-  background:#080f1c;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:16px;
-}
-
-.messages {
-  min-height:180px;
-  max-height:350px;
-  overflow:auto;
-  margin-bottom:12px;
-}
-
-.message {
-  padding:12px;
-  margin:8px 0;
-  border-radius:8px;
-  background:#122239;
-  overflow-wrap:anywhere;
-}
-
-.message.user {
-  border-left:3px solid var(--purple);
-}
-
-.message.jarvis {
-  border-left:3px solid var(--blue);
-}
-
-.row {
-  display:flex;
-  gap:8px;
-  align-items:center;
-}
-
-.row input {min-width:0}
-
-.item {
-  padding:12px 0;
-  border-bottom:1px solid var(--border);
-  overflow-wrap:anywhere;
-}
-
-.item:last-child {border-bottom:none}
-
-.item button {
-  float:right;
-  padding:5px 8px;
-  font-size:11px;
-}
-
-.small {
-  color:var(--muted);
-  font-size:12px;
-}
-
-.core-controls {
-  display:flex;
-  justify-content:center;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-footer {
-  text-align:center;
-  padding:30px;
-  color:var(--muted);
-  font-size:10px;
-  letter-spacing:2px;
-}
-
-@media(max-width:700px) {
-  .app {grid-template-columns:1fr}
-  .sidebar {
-    border-right:0;
-    border-bottom:1px solid var(--border);
-    padding:12px;
-  }
-  .brand {margin:8px}
-  .nav-label {display:none}
-  .nav-list {
-    display:flex;
-    overflow-x:auto;
-    gap:5px;
-  }
-  .nav-button {
-    width:auto;
-    white-space:nowrap;
-    padding:10px;
-  }
-  .content {padding:20px 15px}
-  .topbar {padding:15px}
-}
+:root{color-scheme:dark;--bg:#06101d;--glass:rgba(16,35,57,.48);--line:rgba(157,208,255,.19);--text:#eaf6ff;--muted:#91a9bd;--accent:#68caff;--accent2:#b9e8ff;--shadow:0 24px 80px rgba(0,0,0,.38)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+body{overflow-x:hidden;background:radial-gradient(ellipse at 50% 42%,#102b45 0,#091827 34%,#050b14 78%);min-height:100svh}
+body:before,body:after{content:"";position:fixed;inset:0;pointer-events:none}
+body:before{opacity:.18;background-image:linear-gradient(rgba(150,210,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(150,210,255,.055) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse at center,#000,transparent 75%)}
+body:after{background:radial-gradient(circle at 15% 15%,rgba(43,136,196,.13),transparent 30%),radial-gradient(circle at 85% 75%,rgba(30,83,138,.13),transparent 34%)}
+button,input,textarea,select{font:inherit}button{cursor:pointer;color:inherit}
+#app{position:relative;z-index:1;min-height:100svh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 22px env(safe-area-inset-bottom)}
+.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;max-width:1100px;width:100%;margin:0 auto}
+.brand{font-size:12px;letter-spacing:.32em;color:#d6efff;font-weight:650}.brand span{color:var(--accent)}
+.status{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.dot{width:7px;height:7px;border-radius:50%;background:#69d9b0;box-shadow:0 0 12px #69d9b0}
+.stage{flex:1;display:flex;align-items:center;justify-content:center;min-height:540px;position:relative}
+.core-wrap{display:flex;flex-direction:column;align-items:center;gap:26px;transform:translateY(-8px)}
+.core{width:min(58vw,260px);aspect-ratio:1;border:1px solid rgba(133,208,255,.35);border-radius:50%;position:relative;display:grid;place-items:center;background:radial-gradient(circle,rgba(61,163,220,.17),rgba(8,28,48,.28) 55%,rgba(8,20,34,.08) 70%);box-shadow:0 0 35px rgba(60,171,230,.13),inset 0 0 45px rgba(95,194,255,.11)}
+.core:before,.core:after{content:"";position:absolute;border-radius:50%;inset:12%;border:1px solid rgba(135,218,255,.38);box-shadow:0 0 24px rgba(91,190,255,.12)}
+.core:before{border-left-color:transparent;border-bottom-color:rgba(135,218,255,.12);animation:spin 18s linear infinite}
+.core:after{inset:22%;border-right-color:transparent;border-top-color:rgba(135,218,255,.12);animation:spin 12s linear infinite reverse}
+.core-inner{width:42%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e8fbff 0,#86d9ff 10%,#2376a7 35%,#0b2944 70%);box-shadow:0 0 22px #6dcaff,0 0 65px rgba(63,177,242,.55),inset 0 0 18px rgba(255,255,255,.45);animation:pulse 4s ease-in-out infinite}
+.core-label{text-align:center}.core-label h1{font-size:14px;letter-spacing:.42em;font-weight:500;margin:0 0 9px 0}.core-label p{font-size:11px;color:var(--muted);letter-spacing:.14em;margin:0}
+.controls{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.glass-btn{border:1px solid var(--line);background:linear-gradient(145deg,rgba(170,220,255,.12),rgba(25,56,83,.22));backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-radius:999px;padding:12px 19px;font-size:12px;letter-spacing:.06em;box-shadow:inset 0 1px rgba(255,255,255,.09);transition:.2s}
+.glass-btn:hover,.glass-btn:focus-visible{border-color:var(--accent);box-shadow:0 0 24px rgba(91,190,255,.18);outline:none}.glass-btn.primary{background:linear-gradient(135deg,rgba(75,174,230,.32),rgba(23,77,113,.38));border-color:rgba(119,211,255,.45)}
+.quickbar{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:2px}.quickbar button{border:0;background:transparent;color:#829bb1;font-size:11px;padding:8px 10px}.quickbar button:hover{color:var(--accent2)}
+.footer{max-width:1100px;width:100%;margin:0 auto 14px;display:flex;justify-content:space-between;color:#688198;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.panel{position:fixed;z-index:5;top:76px;right:18px;bottom:18px;width:min(440px,calc(100vw - 36px));border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,rgba(18,42,66,.88),rgba(7,19,32,.91));backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);box-shadow:var(--shadow),inset 0 1px rgba(255,255,255,.1);padding:22px;overflow:auto;transform:translateX(calc(100% + 30px));opacity:0;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s}
+.panel.open{transform:translateX(0);opacity:1}.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.panel-head h2{font-size:14px;letter-spacing:.2em;font-weight:550;margin:0}.close{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.05);font-size:18px}
+.field{display:flex;flex-direction:column;gap:7px;margin:13px 0}.field label{font-size:10px;color:var(--muted);letter-spacing:.13em;text-transform:uppercase}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:12px;background:rgba(3,13,23,.6);color:var(--text);padding:12px;outline:none}.field textarea{min-height:90px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent)}
+.row{display:flex;gap:9px;align-items:center}.row>*{flex:1;min-width:0}.section-note{font-size:12px;color:var(--muted);line-height:1.6;margin:0 0 14px}
+.item{padding:13px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.035);margin:9px 0}.item strong{font-size:13px;font-weight:550}.item small{display:block;color:var(--muted);font-size:11px;margin-top:5px}.item-actions{display:flex;gap:8px;margin-top:10px}.mini{font-size:10px;padding:7px 10px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.05)}
+.chatlog{display:flex;flex-direction:column;gap:10px;max-height:48vh;overflow:auto;margin-bottom:14px}.bubble{max-width:88%;padding:11px 13px;border-radius:14px;font-size:12px;line-height:1.5;background:rgba(120,190,235,.1);border:1px solid var(--line)}.bubble.user{align-self:flex-end;background:rgba(63,150,205,.2)}.bubble.assistant{align-self:flex-start}
+.range-line{display:flex;justify-content:space-between;color:var(--muted);font-size:11px}.field input[type=range]{padding:0;accent-color:var(--accent)}
+.personality{display:flex;gap:8px;margin:12px 0 18px}.personality button{flex:1;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.04);padding:10px 5px;font-size:10px;letter-spacing:.1em}.personality button.active{border-color:var(--accent);color:var(--accent2);background:rgba(90,180,235,.12)}
+.empty{color:#7890a5;text-align:center;padding:26px 8px;font-size:12px}
+.toast{position:fixed;z-index:8;bottom:28px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:rgba(13,34,53,.92);border:1px solid var(--line);padding:11px 16px;border-radius:999px;font-size:11px;transition:.25s}.toast.show{opacity:1;transform:translate(-50%,0)}
+body.edith{--accent:#ff7185;--accent2:#ffd0d7;--line:rgba(255,130,150,.2)}body.friday{--accent:#c39aff;--accent2:#e5d4ff;--line:rgba(192,150,255,.2)}
+@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{0%,100%{transform:scale(.94);filter:brightness(.9)}50%{transform:scale(1.06);filter:brightness(1.25)}}
+@media(max-width:600px){#app{padding-left:16px;padding-right:16px}.topbar{height:58px}.stage{min-height:calc(100svh - 120px)}.core{width:220px}.panel{top:auto;right:9px;left:9px;bottom:9px;width:auto;max-height:82svh;border-radius:22px}.footer{font-size:9px}.glass-btn{padding:11px 15px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style>
 </head>
-
 <body>
-<div class="app">
+<div id="app">
+  <header class="topbar">
+    <div class="brand">T<span>.</span> STARK SYSTEMS</div>
+    <div class="status"><span class="dot"></span><span id="systemStatus">LOCAL SYSTEM READY</span></div>
+  </header>
 
-<aside class="sidebar">
-  <div class="brand">J.A.R.V.I.S.</div>
+  <main class="stage">
+    <div class="core-wrap">
+      <div class="core" aria-label="Animated JARVIS interface core">
+        <div class="core-inner"></div>
+      </div>
 
-  <div class="nav-label">MAIN SYSTEM</div>
-  <div class="nav-list">
-    <button class="nav-button active" data-page="home">⌂ Home</button>
-    <button class="nav-button" data-page="chat">◉ Chat</button>
-    <button class="nav-button" data-page="tasks">▣ Tasks</button>
-    <button class="nav-button" data-page="memory">◈ Memory</button>
-    <button class="nav-button" data-page="edith">◆ EDITH</button>
-    <button class="nav-button" data-page="friday">✦ FRIDAY</button>
-    <button class="nav-button" data-page="settings">⚙ Settings</button>
+      <div class="core-label">
+        <h1 id="personaTitle">J.A.R.V.I.S.</h1>
+        <p id="coreMessage">AT YOUR SERVICE</p>
+      </div>
+
+      <div class="controls">
+        <button class="glass-btn primary" id="activateBtn">◉ &nbsp; ACTIVATE VOICE</button>
+        <button class="glass-btn" data-panel="chat">OPEN CONSOLE</button>
+      </div>
+
+      <div class="quickbar">
+        <button data-panel="tasks">TASKS</button>
+        <button data-panel="memory">MEMORY</button>
+        <button data-panel="overview">DAILY OVERVIEW</button>
+        <button data-panel="settings">SETTINGS</button>
+      </div>
+
+      <div class="personality" style="width:min(330px,90vw)">
+        <button class="active" data-persona="JARVIS">JARVIS</button>
+        <button data-persona="EDITH">EDITH</button>
+        <button data-persona="FRIDAY">FRIDAY</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>PERSONAL ASSISTANT // PROTOTYPE</span>
+    <span id="clock">--:--</span>
+  </footer>
+</div>
+
+<aside class="panel" id="panel-chat">
+  <div class="panel-head">
+    <h2>COMMAND CONSOLE</h2>
+    <button class="close" aria-label="Close">×</button>
+  </div>
+  <p class="section-note">The local console is active. A real AI service is not connected yet.</p>
+  <div class="chatlog" id="chatlog">
+    <div class="bubble assistant">Systems are ready. I can manage local tasks and notes. AI conversation will be enabled after a secure service is connected.</div>
+  </div>
+  <form id="chatForm">
+    <div class="field">
+      <label for="chatInput">Message</label>
+      <textarea id="chatInput" placeholder="Type a command or message..." required></textarea>
+    </div>
+    <button class="glass-btn primary" type="submit">SEND MESSAGE</button>
+  </form>
+</aside>
+
+<aside class="panel" id="panel-tasks">
+  <div class="panel-head">
+    <h2>TASK REGISTER</h2>
+    <button class="close">×</button>
+  </div>
+  <p class="section-note">Tasks are stored locally in this browser on this device.</p>
+  <form id="taskForm">
+    <div class="field">
+      <label for="taskTitle">Task</label>
+      <input id="taskTitle" placeholder="e.g. Finish biology notes" required>
+    </div>
+    <div class="field">
+      <label for="taskDue">Due date</label>
+      <input id="taskDue" type="date">
+    </div>
+    <button class="glass-btn primary">ADD TASK</button>
+  </form>
+  <div id="taskList"></div>
+</aside>
+
+<aside class="panel" id="panel-memory">
+  <div class="panel-head">
+    <h2>MEMORY ARCHIVE</h2>
+    <button class="close">×</button>
+  </div>
+  <p class="section-note">Save notes you want this browser-based prototype to keep. This is local device storage, not cloud memory.</p>
+  <form id="memoryForm">
+    <div class="field">
+      <label for="memoryText">Memory / note</label>
+      <textarea id="memoryText" placeholder="Save a useful note..." required></textarea>
+    </div>
+    <button class="glass-btn primary">SAVE MEMORY</button>
+  </form>
+  <div id="memoryList"></div>
+</aside>
+
+<aside class="panel" id="panel-overview">
+  <div class="panel-head">
+    <h2>DAILY OVERVIEW</h2>
+    <button class="close">×</button>
+  </div>
+  <p class="section-note" id="overviewDate"></p>
+  <div id="overviewContent"></div>
+</aside>
+
+<aside class="panel" id="panel-settings">
+  <div class="panel-head">
+    <h2>SYSTEM SETTINGS</h2>
+    <button class="close">×</button>
+  </div>
+  <p class="section-note">Choose a separate browser voice and speaking style for each personality. Available voices depend on this device and browser.</p>
+  <div id="voiceSettings"></div>
+  <div class="field">
+    <label>Voice preview</label>
+    <button class="glass-btn" id="previewCurrent">PREVIEW ACTIVE PERSONALITY</button>
+  </div>
+  <p class="section-note">Voice recognition requires browser support and microphone permission. This page cannot listen continuously in the background on iPhone.</p>
+  <button class="glass-btn" id="clearData">CLEAR LOCAL TASKS & MEMORY</button>
+</aside>
+
+<aside class="panel" id="panel-security">
+  <div class="panel-head">
+    <h2>EDITH // SECURITY</h2>
+    <button class="close">×</button>
+  </div>
+  <p class="section-note">Security console placeholder. No accounts, devices, cameras, or external systems are connected.</p>
+  <div class="item">
+    <strong>Local storage</strong>
+    <small>Available on this browser</small>
+  </div>
+  <div class="item">
+    <strong>External integrations</strong>
+    <small>Not connected</small>
+  </div>
+  <div class="item">
+    <strong>Permissions</strong>
+    <small>No background monitoring enabled</small>
   </div>
 </aside>
 
-<div class="main">
-
-<header class="topbar">
-  <strong id="pageTitle">JARVIS / HOME</strong>
-  <span class="status">● INTERFACE ONLINE</span>
-</header>
-
-<main class="content">
-
-<section class="page active" id="home">
-  <div class="hero">
-    <div class="core"><span>J</span></div>
-    <h1>AT YOUR SERVICE</h1>
-    <p id="greeting">Personal assistant interface initialized.</p>
-    <div class="core-controls">
-      <button class="button" onclick="startVoice()">🎙 ACTIVATE VOICE</button>
-      <button class="button secondary" onclick="openPage('chat')">OPEN CHAT</button>
-    </div>
-    <p class="small" id="voiceStatus">Voice system standing by.</p>
-  </div>
-
-  <div class="grid">
-    <div class="card">
-      <h3>SYSTEM STATUS</h3>
-      <p class="green">● Interface operational</p>
-      <p class="green">● Local storage available</p>
-      <p class="amber">● AI connection pending</p>
-    </div>
-    <div class="card">
-      <h3>TASK OVERVIEW</h3>
-      <h2 id="taskCount">0</h2>
-      <p class="small">Open tasks</p>
-      <button class="button secondary full" onclick="openPage('tasks')">VIEW TASKS</button>
-    </div>
-    <div class="card">
-      <h3>MEMORY BANK</h3>
-      <h2 id="memoryCount">0</h2>
-      <p class="small">Saved memories</p>
-      <button class="button secondary full" onclick="openPage('memory')">VIEW MEMORY</button>
-    </div>
-  </div>
-</section>
-
-<section class="page" id="chat">
-  <h1 class="heading">JARVIS CONSOLE</h1>
-  <p class="subtitle">Communication interface</p>
-  <div class="console">
-    <div class="messages" id="messages">
-      <div class="message jarvis">JARVIS: Interface online. AI connection has not yet been configured.</div>
-    </div>
-    <div class="row">
-      <input id="chatInput" placeholder="Enter a command..." onkeydown="if(event.key==='Enter')sendMessage()">
-      <button class="button" onclick="sendMessage()">SEND</button>
-      <button class="button" onclick="startVoice()">🎙</button>
-    </div>
-    <button class="button secondary full" onclick="stopVoice()">STOP VOICE</button>
-  </div>
-</section>
-
-<section class="page" id="tasks">
-  <h1 class="heading">TASK MANAGEMENT</h1>
-  <p class="subtitle">Your active assignments and objectives.</p>
-  <div class="card">
-    <div id="taskList"></div>
-    <input id="newTask" placeholder="Enter a new task..." onkeydown="if(event.key==='Enter')addTask()">
-    <button class="button full" onclick="addTask()">ADD TASK</button>
-  </div>
-</section>
-
-<section class="page" id="memory">
-  <h1 class="heading">MEMORY BANK</h1>
-  <p class="subtitle">Information saved locally on this device.</p>
-  <div class="card">
-    <div id="memoryList"></div>
-    <textarea id="newMemory" placeholder="What should I remember?"></textarea>
-    <button class="button full" onclick="addMemory()">SAVE MEMORY</button>
-  </div>
-</section>
-
-<section class="page" id="edith">
-  <h1 class="heading red">EDITH</h1>
-  <p class="subtitle">Enhanced security and administrative interface.</p>
-  <div class="card">
-    <h3 style="color:var(--red)">SECURITY OVERVIEW</h3>
-    <p class="green">● Local data stored in browser</p>
-    <p class="green">● No external account access configured</p>
-    <p class="amber">● External integrations not configured</p>
-    <p class="small">EDITH currently provides a status overview. Device monitoring and security integrations are not active.</p>
-  </div>
-</section>
-
-<section class="page" id="friday">
-  <h1 class="heading purple">FRIDAY</h1>
-  <p class="subtitle">Alternative assistant personality.</p>
-  <div class="card">
-    <h3 style="color:var(--purple)">PERSONALITY SELECTOR</h3>
-    <p>Switch the active assistant interface.</p>
-    <button class="button full" onclick="setPersonality('JARVIS')">JARVIS</button>
-    <button class="button full" style="border-color:var(--red);color:var(--red)" onclick="setPersonality('EDITH')">EDITH</button>
-    <button class="button full" style="border-color:var(--purple);color:var(--purple)" onclick="setPersonality('FRIDAY')">FRIDAY</button>
-    <p id="personalityStatus" class="small">Active personality: JARVIS</p>
-  </div>
-</section>
-
-<section class="page" id="settings">
-  <h1 class="heading">SYSTEM SETTINGS</h1>
-  <p class="subtitle">Configure your local interface.</p>
-  <div class="card">
-    <h3>VOICE SETTINGS</h3>
-    <button class="button full" onclick="testSpeech()">TEST SPOKEN RESPONSE</button>
-    <button class="button secondary full" onclick="stopVoice()">STOP SPEECH</button>
-    <p class="small">Voice recognition availability depends on your browser and device.</p>
-  </div>
-  <div class="card" style="margin-top:15px">
-    <h3>LOCAL DATA</h3>
-    <p class="small">Tasks and memories are stored in this browser. Clearing browser data may erase them.</p>
-    <button class="button danger full" onclick="clearLocalData()">CLEAR ALL LOCAL DATA</button>
-  </div>
-</section>
-
-</main>
-
-<footer>JARVIS SYSTEMS • DEVELOPMENT BUILD 0.2</footer>
-</div>
-</div>
-
+<div class="toast" id="toast" role="status"></div>
 <script>
-const read = key => {
-  try { return JSON.parse(localStorage.getItem(key) || "[]"); }
-  catch { return []; }
+const $ = id => document.getElementById(id);
+
+const read = (key, fallback) => {
+  try {
+    return JSON.parse(localStorage.getItem(key)) ?? fallback;
+  } catch {
+    return fallback;
+  }
 };
 
-const save = (key,value) =>
-  localStorage.setItem(key,JSON.stringify(value));
+const save = (key, value) =>
+  localStorage.setItem(key, JSON.stringify(value));
 
-function openPage(name) {
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById(name).classList.add("active");
+let tasks = read('jarvisTasks', []);
+let memories = read('jarvisMemories', []);
+let personality = localStorage.getItem('jarvisPersona') || 'JARVIS';
+let voices = [];
+let recognition = null;
 
-  document.querySelectorAll(".nav-button").forEach(b=>
-    b.classList.toggle("active",b.dataset.page===name)
+const profiles = {
+  JARVIS: {
+    sample: 'Good evening. All systems are standing by.',
+    rate: 0.94,
+    pitch: 0.88
+  },
+  EDITH: {
+    sample: 'Security systems are standing by. Awaiting your instruction.',
+    rate: 0.91,
+    pitch: 0.82
+  },
+  FRIDAY: {
+    sample: 'Hey. I’m here whenever you need me.',
+    rate: 1.02,
+    pitch: 1.08
+  }
+};
+
+function toast(message) {
+  $('toast').textContent = message;
+  $('toast').classList.add('show');
+
+  setTimeout(() => {
+    $('toast').classList.remove('show');
+  }, 2200);
+}
+
+function openPanel(name) {
+  document.querySelectorAll('.panel').forEach(panel =>
+    panel.classList.remove('open')
   );
 
-  document.getElementById("pageTitle").textContent =
-    "JARVIS / " + name.toUpperCase();
+  const panel = $('panel-' + name);
 
-  renderAll();
+  if (panel) panel.classList.add('open');
+
+  if (name === 'overview') renderOverview();
+  if (name === 'settings') renderVoiceSettings();
 }
 
-document.querySelectorAll(".nav-button").forEach(button=>{
-  button.addEventListener("click",()=>openPage(button.dataset.page));
+function closePanels() {
+  document.querySelectorAll('.panel').forEach(panel =>
+    panel.classList.remove('open')
+  );
+}
+
+document.querySelectorAll('[data-panel]').forEach(button => {
+  button.addEventListener('click', () =>
+    openPanel(button.dataset.panel)
+  );
 });
 
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g,c=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",
-    '"':"&quot;","'":"&#39;"
-  })[c]);
-}
+document.querySelectorAll('.close').forEach(button => {
+  button.addEventListener('click', closePanels);
+});
 
-function addTask() {
-  const input=document.getElementById("newTask");
-  if(!input.value.trim()) return;
-  const tasks=read("jarvisTasks");
-  tasks.push({text:input.value.trim(),done:false});
-  save("jarvisTasks",tasks);
-  input.value="";
-  renderAll();
-}
-
-function toggleTask(index) {
-  const tasks=read("jarvisTasks");
-  tasks[index].done=!tasks[index].done;
-  save("jarvisTasks",tasks);
-  renderAll();
-}
-
-function deleteTask(index) {
-  const tasks=read("jarvisTasks");
-  tasks.splice(index,1);
-  save("jarvisTasks",tasks);
-  renderAll();
-}
-
-function addMemory() {
-  const input=document.getElementById("newMemory");
-  if(!input.value.trim()) return;
-  const memories=read("jarvisMemories");
-  memories.push(input.value.trim());
-  save("jarvisMemories",memories);
-  input.value="";
-  renderAll();
-}
-
-function deleteMemory(index) {
-  const memories=read("jarvisMemories");
-  memories.splice(index,1);
-  save("jarvisMemories",memories);
-  renderAll();
-}
-
-function renderAll() {
-  const tasks=read("jarvisTasks");
-  const memories=read("jarvisMemories");
-
-  document.getElementById("taskList").innerHTML=tasks.length
-    ? tasks.map((t,i)=>`
-      <div class="item">
-        <span style="${t.done?'text-decoration:line-through;color:#8297ad':''}">
-          ${escapeHTML(t.text)}
-        </span>
-        <button class="button secondary" onclick="deleteTask(${i})">DELETE</button>
-        <button class="button secondary" onclick="toggleTask(${i})">${t.done?'UNDO':'DONE'}</button>
-      </div>`).join("")
-    : '<p class="small">No tasks recorded.</p>';
-
-  document.getElementById("memoryList").innerHTML=memories.length
-    ? memories.map((m,i)=>`
-      <div class="item">
-        ${escapeHTML(m)}
-        <button class="button secondary" onclick="deleteMemory(${i})">DELETE</button>
-      </div>`).join("")
-    : '<p class="small">Memory bank is empty.</p>';
-
-  document.getElementById("taskCount").textContent=tasks.filter(t=>!t.done).length;
-  document.getElementById("memoryCount").textContent=memories.length;
-}
-
-let personality="JARVIS";
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closePanels();
+});
 
 function setPersonality(name) {
-  personality=name;
-  document.getElementById("personalityStatus").textContent=
-    "Active personality: "+name;
-  document.getElementById("greeting").textContent=
-    name+" interface selected.";
-  document.getElementById("pageTitle").textContent=
-    name+" / PERSONALITY ACTIVE";
+  personality = name;
+  localStorage.setItem('jarvisPersona', name);
+
+  document.body.classList.toggle('edith', name === 'EDITH');
+  document.body.classList.toggle('friday', name === 'FRIDAY');
+
+  $('personaTitle').textContent =
+    name === 'JARVIS' ? 'J.A.R.V.I.S.' : name;
+
+  $('coreMessage').textContent = {
+    JARVIS: 'AT YOUR SERVICE',
+    EDITH: 'SECURITY SYSTEM READY',
+    FRIDAY: 'READY WHEN YOU ARE'
+  }[name];
+
+  document.querySelectorAll('[data-persona]').forEach(button => {
+    button.classList.toggle(
+      'active',
+      button.dataset.persona === name
+    );
+  });
 }
 
-function addMessage(text,type) {
-  const box=document.getElementById("messages");
-  const div=document.createElement("div");
-  div.className="message "+type;
-  div.textContent=text;
-  box.appendChild(div);
-  box.scrollTop=box.scrollHeight;
+document.querySelectorAll('[data-persona]').forEach(button => {
+  button.addEventListener('click', () =>
+    setPersonality(button.dataset.persona)
+  );
+});
+
+// TASKS
+
+function renderTasks() {
+  const box = $('taskList');
+  box.innerHTML = '';
+
+  if (!tasks.length) {
+    box.innerHTML = '<div class="empty">No tasks registered.</div>';
+    return;
+  }
+
+  tasks.forEach((task, index) => {
+    const item = document.createElement('div');
+    item.className = 'item';
+
+    const title = document.createElement('strong');
+    title.textContent = task.title;
+
+    const due = document.createElement('small');
+    due.textContent = task.due
+      ? 'Due ' + task.due
+      : 'No due date';
+
+    const actions = document.createElement('div');
+    actions.className = 'item-actions';
+
+    const done = document.createElement('button');
+    done.className = 'mini';
+    done.textContent = task.done ? 'REOPEN' : 'COMPLETE';
+
+    done.onclick = () => {
+      tasks[index].done = !tasks[index].done;
+      save('jarvisTasks', tasks);
+      renderTasks();
+      renderOverview();
+    };
+
+    const del = document.createElement('button');
+    del.className = 'mini';
+    del.textContent = 'DELETE';
+
+    del.onclick = () => {
+      tasks.splice(index, 1);
+      save('jarvisTasks', tasks);
+      renderTasks();
+      renderOverview();
+    };
+
+    actions.append(done, del);
+    item.append(title, due, actions);
+
+    if (task.done) item.style.opacity = '.5';
+
+    box.append(item);
+  });
 }
 
-function sendMessage() {
-  const input=document.getElementById("chatInput");
-  const text=input.value.trim();
-  if(!text) return;
+$('taskForm').addEventListener('submit', event => {
+  event.preventDefault();
 
-  addMessage("YOU: "+text,"user");
-  input.value="";
+  tasks.push({
+    title: $('taskTitle').value.trim(),
+    due: $('taskDue').value,
+    done: false
+  });
 
-  const response=
-    "My interface received your message, but my AI brain is not connected yet. I can currently manage local tasks and memories.";
+  save('jarvisTasks', tasks);
+  $('taskForm').reset();
 
-  addMessage(personality+": "+response,"jarvis");
-  speak(response);
+  renderTasks();
+  renderOverview();
+  toast('Task saved locally.');
+});
+
+// MEMORY
+
+function renderMemories() {
+  const box = $('memoryList');
+  box.innerHTML = '';
+
+  if (!memories.length) {
+    box.innerHTML = '<div class="empty">No saved memories.</div>';
+    return;
+  }
+
+  memories.forEach((memory, index) => {
+    const item = document.createElement('div');
+    item.className = 'item';
+
+    const text = document.createElement('div');
+    text.style.fontSize = '12px';
+    text.style.lineHeight = '1.5';
+    text.textContent = memory;
+
+    const del = document.createElement('button');
+    del.className = 'mini';
+    del.textContent = 'DELETE';
+    del.style.marginTop = '10px';
+
+    del.onclick = () => {
+      memories.splice(index, 1);
+      save('jarvisMemories', memories);
+      renderMemories();
+    };
+
+    item.append(text, del);
+    box.append(item);
+  });
 }
 
-function speak(text) {
-  if(!("speechSynthesis" in window)) {
-    document.getElementById("voiceStatus").textContent=
-      "Speech synthesis is unavailable in this browser.";
+$('memoryForm').addEventListener('submit', event => {
+  event.preventDefault();
+
+  memories.unshift($('memoryText').value.trim());
+
+  save('jarvisMemories', memories);
+  $('memoryForm').reset();
+
+  renderMemories();
+  toast('Memory saved on this device.');
+});
+
+// DAILY OVERVIEW
+
+function renderOverview() {
+  $('overviewDate').textContent =
+    new Date().toLocaleDateString(undefined, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+  const pending = tasks.filter(task => !task.done);
+
+  $('overviewContent').innerHTML = `
+    <div class="item">
+      <strong>${pending.length} open tasks</strong>
+      <small>${tasks.length - pending.length} completed</small>
+    </div>
+    <div class="item">
+      <strong>${memories.length} saved notes</strong>
+      <small>Stored locally on this device</small>
+    </div>
+  `;
+
+  pending.forEach(task => {
+    const item = document.createElement('div');
+    item.className = 'item';
+    item.textContent = task.title;
+
+    const small = document.createElement('small');
+    small.textContent = task.due
+      ? 'Due ' + task.due
+      : 'No due date';
+
+    item.append(small);
+    $('overviewContent').append(item);
+  });
+}
+
+// PERSONALITY VOICES
+
+function loadVoices() {
+  if (!('speechSynthesis' in window)) return;
+
+  voices = speechSynthesis.getVoices();
+
+  if ($('voiceSettings').children.length) {
+    renderVoiceSettings();
+  }
+}
+
+function renderVoiceSettings() {
+  const box = $('voiceSettings');
+  box.innerHTML = '';
+
+  if (!('speechSynthesis' in window)) {
+    box.textContent = 'Speech synthesis is not supported.';
+    return;
+  }
+
+  if (!voices.length) loadVoices();
+
+  ['JARVIS', 'EDITH', 'FRIDAY'].forEach(name => {
+    const wrap = document.createElement('div');
+    wrap.className = 'item';
+
+    const title = document.createElement('strong');
+    title.textContent = name + ' VOICE';
+
+    const select = document.createElement('select');
+    select.style.width = '100%';
+    select.style.marginTop = '10px';
+    select.style.background = '#091827';
+    select.style.color = 'white';
+    select.style.padding = '10px';
+    select.style.border = '1px solid var(--line)';
+    select.style.borderRadius = '10px';
+
+    const available = voices.filter(voice =>
+      voice.lang.toLowerCase().startsWith('en')
+    );
+
+    (available.length ? available : voices).forEach(voice => {
+      const option = document.createElement('option');
+      option.value = voice.voiceURI;
+      option.textContent = voice.name + ' (' + voice.lang + ')';
+      select.append(option);
+    });
+
+    select.value = localStorage.getItem('voice-' + name) || '';
+
+    select.onchange = () => {
+      localStorage.setItem('voice-' + name, select.value);
+    };
+
+    const rateLabel = document.createElement('div');
+    rateLabel.className = 'range-line';
+
+    const rateText = document.createElement('span');
+    rateText.textContent = 'Speaking speed';
+
+    const rateValue = document.createElement('span');
+
+    const rate = document.createElement('input');
+    rate.type = 'range';
+    rate.min = '.7';
+    rate.max = '1.3';
+    rate.step = '.05';
+    rate.value = localStorage.getItem('rate-' + name)
+      || profiles[name].rate;
+
+    rateValue.textContent = Number(rate.value).toFixed(2);
+
+    rate.oninput = () => {
+      localStorage.setItem('rate-' + name, rate.value);
+      rateValue.textContent = Number(rate.value).toFixed(2);
+    };
+
+    rateLabel.append(rateText, rateValue);
+
+    const pitchLabel = document.createElement('div');
+    pitchLabel.className = 'range-line';
+
+    const pitchText = document.createElement('span');
+    pitchText.textContent = 'Pitch';
+
+    const pitchValue = document.createElement('span');
+
+    const pitch = document.createElement('input');
+    pitch.type = 'range';
+    pitch.min = '.6';
+    pitch.max = '1.4';
+    pitch.step = '.05';
+    pitch.value = localStorage.getItem('pitch-' + name)
+      || profiles[name].pitch;
+
+    pitchValue.textContent = Number(pitch.value).toFixed(2);
+
+    pitch.oninput = () => {
+      localStorage.setItem('pitch-' + name, pitch.value);
+      pitchValue.textContent = Number(pitch.value).toFixed(2);
+    };
+
+    pitchLabel.append(pitchText, pitchValue);
+
+    const preview = document.createElement('button');
+    preview.className = 'mini';
+    preview.textContent = 'PREVIEW ' + name;
+    preview.style.marginTop = '10px';
+
+    preview.onclick = () => {
+      speak(profiles[name].sample, name);
+    };
+
+    wrap.append(
+      title,
+      select,
+      rateLabel,
+      rate,
+      pitchLabel,
+      pitch,
+      preview
+    );
+
+    box.append(wrap);
+  });
+}
+
+function speak(text, who = personality) {
+  if (!('speechSynthesis' in window)) {
+    toast('Speech is not supported here.');
     return;
   }
 
   speechSynthesis.cancel();
-  const utterance=new SpeechSynthesisUtterance(text);
-  utterance.rate=0.95;
-  utterance.pitch=0.9;
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  const selected = localStorage.getItem('voice-' + who);
+
+  utterance.voice =
+    voices.find(voice => voice.voiceURI === selected)
+    || voices.find(voice =>
+      voice.lang.toLowerCase().startsWith('en')
+    )
+    || null;
+
+  utterance.rate = Number(
+    localStorage.getItem('rate-' + who) || profiles[who].rate
+  );
+
+  utterance.pitch = Number(
+    localStorage.getItem('pitch-' + who) || profiles[who].pitch
+  );
+
   speechSynthesis.speak(utterance);
 }
 
-function testSpeech() {
-  speak("JARVIS voice system is online. Awaiting your instructions.");
-}
+$('previewCurrent').addEventListener('click', () => {
+  speak(profiles[personality].sample);
+});
 
-function stopVoice() {
-  if("speechSynthesis" in window) speechSynthesis.cancel();
-  if(window.activeRecognition) {
-    window.activeRecognition.stop();
-    window.activeRecognition=null;
+$('clearData').addEventListener('click', () => {
+  if (confirm('Delete all locally saved tasks and memories?')) {
+    tasks = [];
+    memories = [];
+
+    save('jarvisTasks', tasks);
+    save('jarvisMemories', memories);
+
+    renderTasks();
+    renderMemories();
+    renderOverview();
+
+    toast('Local data cleared.');
   }
-  document.getElementById("voiceStatus").textContent="Voice stopped.";
+});
+
+// COMMAND CONSOLE
+
+function addBubble(text, who) {
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble ' + who;
+  bubble.textContent = text;
+
+  $('chatlog').append(bubble);
+  $('chatlog').scrollTop = $('chatlog').scrollHeight;
 }
 
-function startVoice() {
-  const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+$('chatForm').addEventListener('submit', event => {
+  event.preventDefault();
 
-  if(!Recognition) {
-    document.getElementById("voiceStatus").textContent=
-      "Voice recognition is not supported in this browser. Try Chrome or Safari.";
+  const text = $('chatInput').value.trim();
+  if (!text) return;
+
+  addBubble(text, 'user');
+  $('chatInput').value = '';
+
+  const lower = text.toLowerCase();
+
+  let reply =
+    'I can save tasks and notes in this prototype. A real AI connection has not been configured yet.';
+
+  if (lower.includes('show') && lower.includes('task')) {
+    openPanel('tasks');
+    reply = 'Opening your task register.';
+  } else if (lower.includes('memory')) {
+    openPanel('memory');
+    reply = 'Opening your memory archive.';
+  } else if (lower.includes('today') || lower.includes('overview')) {
+    openPanel('overview');
+    reply = 'Here is your daily overview.';
+  } else if (lower.includes('edith') || lower.includes('security')) {
+    openPanel('security');
+    reply = 'Opening the security console.';
+  } else if (lower.includes('hide') || lower.includes('close')) {
+    closePanels();
+    reply = 'Panels closed.';
+  } else if (lower.startsWith('add task ')) {
+    tasks.push({
+      title: text.slice(9),
+      due: '',
+      done: false
+    });
+
+    save('jarvisTasks', tasks);
+    renderTasks();
+
+    reply = 'Task added to your local register.';
+  }
+
+  setTimeout(() => {
+    addBubble(reply, 'assistant');
+    speak(reply);
+  }, 180);
+});
+
+// VOICE INPUT
+
+$('activateBtn').addEventListener('click', () => {
+  const SR =
+    window.SpeechRecognition ||
+    window.webkitSpeechRecognition;
+
+  if (!SR) {
+    toast('Voice recognition is not supported in this browser.');
     return;
   }
 
-  const recognition=new Recognition();
-  recognition.lang="en-US";
-  recognition.interimResults=false;
-  recognition.continuous=false;
+  if (recognition) {
+    recognition.stop();
+    return;
+  }
 
-  window.activeRecognition=recognition;
+  recognition = new SR();
+  recognition.lang = 'en-US';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
 
-  document.getElementById("voiceStatus").textContent="Listening...";
+  $('activateBtn').textContent = 'LISTENING… TAP TO STOP';
 
-  recognition.onresult=event=>{
-    const transcript=event.results[0][0].transcript;
-    document.getElementById("voiceStatus").textContent=
-      "Recognized: "+transcript;
-    document.getElementById("chatInput").value=transcript;
-    openPage("chat");
-    sendMessage();
+  recognition.onresult = event => {
+    $('chatInput').value =
+      event.results[0][0].transcript;
+
+    $('chatForm').requestSubmit();
   };
 
-  recognition.onerror=event=>{
-    document.getElementById("voiceStatus").textContent=
-      "Voice error: "+event.error;
+  recognition.onerror = event => {
+    toast('Voice input: ' + event.error);
   };
 
-  recognition.onend=()=>{
-    window.activeRecognition=null;
+  recognition.onend = () => {
+    $('activateBtn').textContent = '◉  ACTIVATE VOICE';
+    recognition = null;
   };
 
   recognition.start();
+  toast('Listening once. Speak your command.');
+});
+
+// CLOCK
+
+function updateClock() {
+  $('clock').textContent =
+    new Date().toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
 }
 
-function clearLocalData() {
-  if(!confirm("Delete all locally saved JARVIS tasks and memories?"))return;
-  localStorage.removeItem("jarvisTasks");
-  localStorage.removeItem("jarvisMemories");
-  renderAll();
-}
+// STARTUP
 
-renderAll();
+setPersonality(personality);
+renderTasks();
+renderMemories();
+renderOverview();
+updateClock();
+
+setInterval(updateClock, 30000);
+
+if ('speechSynthesis' in window) {
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
 </script>
 </body>
 </html>
