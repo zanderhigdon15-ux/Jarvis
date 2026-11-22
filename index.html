@@ -1,1189 +1,185 @@
-```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#050a12">
-<title>J.A.R.V.I.S.</title>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07111f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>JARVIS</title>
 <style>
-:root {
-  --accent: #48dfff;
-  --accent-soft: rgba(72,223,255,.14);
-  --bg: #050a12;
-  --panel: rgba(9,22,36,.92);
-  --text: #e8f8ff;
-  --muted: #83a5b8;
-  --border: rgba(72,223,255,.22);
-}
-
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  overflow-x: hidden;
-  background:
-    radial-gradient(ellipse at center, #10263b 0%, #07111e 42%, #03070d 100%);
-  color: var(--text);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-body.edith {
-  --accent: #ff526d;
-  --accent-soft: rgba(255,82,109,.14);
-  --border: rgba(255,82,109,.25);
-}
-
-body.friday {
-  --accent: #b78aff;
-  --accent-soft: rgba(183,138,255,.14);
-  --border: rgba(183,138,255,.25);
-}
-
-body.jarvis {
-  --accent: #48dfff;
-  --accent-soft: rgba(72,223,255,.14);
-  --border: rgba(72,223,255,.22);
-}
-
-button, input, select, textarea {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-.ambient {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  opacity: .3;
-  background-image:
-    linear-gradient(rgba(72,223,255,.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(72,223,255,.035) 1px, transparent 1px);
-  background-size: 45px 45px;
-  mask-image: linear-gradient(to bottom, black, transparent 90%);
-}
-
-header {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 22px 26px;
-  z-index: 2;
-}
-
-.brand {
-  letter-spacing: 4px;
-  font-size: 13px;
-  font-weight: bold;
-}
-
-.brand span {
-  color: var(--accent);
-}
-
-.status {
-  color: var(--muted);
-  font-size: 10px;
-  letter-spacing: 2px;
-  text-align: right;
-}
-
-.status-dot {
-  display: inline-block;
-  width: 7px;
-  height: 7px;
-  margin-right: 7px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 12px var(--accent);
-}
-
-main {
-  position: relative;
-  z-index: 1;
-  width: min(900px, 100%);
-  margin: auto;
-  padding: 15px 22px 70px;
-  text-align: center;
-}
-
-.personality {
-  color: var(--accent);
-  font-size: 11px;
-  letter-spacing: 5px;
-  margin-top: 20px;
-}
-
-.greeting {
-  margin: 12px 0 0;
-  font-size: clamp(25px, 6vw, 40px);
-  font-weight: 300;
-  letter-spacing: 3px;
-}
-
-.subtitle {
-  color: var(--muted);
-  font-size: 12px;
-  margin-top: 10px;
-  letter-spacing: 1px;
-}
-
-.core-area {
-  position: relative;
-  width: 290px;
-  height: 290px;
-  margin: 25px auto 10px;
-  display: grid;
-  place-items: center;
-}
-
-.core-button {
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  border: 1px solid var(--accent);
-  background:
-    radial-gradient(circle at 35% 30%, rgba(255,255,255,.35), transparent 15%),
-    radial-gradient(circle, var(--accent-soft), rgba(2,10,20,.96) 72%);
-  box-shadow:
-    0 0 22px var(--accent-soft),
-    inset 0 0 28px var(--accent-soft);
-  color: var(--accent);
-  display: grid;
-  place-items: center;
-  position: relative;
-  z-index: 3;
-  transition: .3s;
-}
-
-.core-button:focus-visible {
-  outline: 3px solid white;
-  outline-offset: 7px;
-}
-
-.core-button:active {
-  transform: scale(.96);
-}
-
-.core-symbol {
-  font-size: 44px;
-  font-weight: 200;
-  text-shadow: 0 0 20px var(--accent);
-}
-
-.orbit {
-  position: absolute;
-  border: 1px solid var(--border);
-  border-radius: 50%;
-  animation: rotate 18s linear infinite;
-}
-
-.orbit.one {
-  width: 205px;
-  height: 205px;
-  border-left-color: transparent;
-  border-right-color: var(--accent);
-}
-
-.orbit.two {
-  width: 255px;
-  height: 255px;
-  border-top-color: transparent;
-  border-bottom-color: var(--accent);
-  animation-direction: reverse;
-  animation-duration: 25s;
-}
-
-.orbit.three {
-  width: 285px;
-  height: 285px;
-  border-style: dashed;
-  opacity: .45;
-  animation-duration: 45s;
-}
-
-@keyframes rotate {
-  to { transform: rotate(360deg); }
-}
-
-body.listening .core-button {
-  box-shadow: 0 0 55px var(--accent), inset 0 0 35px var(--accent-soft);
-  animation: pulse 1.2s ease-in-out infinite alternate;
-}
-
-body.thinking .core-button {
-  box-shadow: 0 0 42px var(--accent);
-  animation: pulse .7s ease-in-out infinite alternate;
-}
-
-body.speaking .core-button {
-  box-shadow: 0 0 35px var(--accent);
-  animation: pulse .45s ease-in-out infinite alternate;
-}
-
-@keyframes pulse {
-  from { transform: scale(1); }
-  to { transform: scale(1.07); }
-}
-
-.core-hint {
-  color: var(--muted);
-  font-size: 10px;
-  letter-spacing: 3px;
-  margin-top: 10px;
-}
-
-.response {
-  width: min(640px, 100%);
-  min-height: 94px;
-  margin: 22px auto;
-  padding: 19px;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  background: linear-gradient(90deg, transparent, rgba(10,28,43,.48), transparent);
-  text-align: left;
-}
-
-.response-label {
-  font-size: 9px;
-  letter-spacing: 3px;
-  color: var(--accent);
-  margin-bottom: 10px;
-}
-
-.response-text {
-  font-size: 14px;
-  line-height: 1.7;
-  color: #d7edf8;
-  overflow-wrap: anywhere;
-}
-
-.panel {
-  width: min(680px, 100%);
-  margin: 25px auto;
-  padding: 22px;
-  border: 1px solid var(--border);
-  background: var(--panel);
-  border-radius: 10px;
-  text-align: left;
-  display: none;
-  animation: appear .25s ease;
-}
-
-.panel.open { display: block; }
-
-@keyframes appear {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.panel h2 {
-  font-size: 14px;
-  letter-spacing: 3px;
-  font-weight: 400;
-  color: var(--accent);
-  margin: 0 0 18px;
-}
-
-.panel h3 {
-  font-size: 12px;
-  color: var(--accent);
-  letter-spacing: 1px;
-  margin-top: 22px;
-}
-
-.field {
-  display: block;
-  width: 100%;
-  margin: 10px 0;
-  padding: 12px;
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  background: rgba(0,0,0,.3);
-  color: var(--text);
-}
-
-.field::placeholder {
-  color: #668397;
-}
-
-.action {
-  border: 1px solid var(--accent);
-  color: var(--accent);
-  background: var(--accent-soft);
-  border-radius: 5px;
-  padding: 11px 15px;
-  margin: 5px 5px 5px 0;
-  font-size: 11px;
-  letter-spacing: 1px;
-}
-
-.action:hover {
-  background: var(--accent);
-  color: #04101a;
-}
-
-.item {
-  padding: 13px 0;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  align-items: center;
-}
-
-.item-main {
-  min-width: 0;
-}
-
-.item-title {
-  font-size: 13px;
-  overflow-wrap: anywhere;
-}
-
-.item-meta {
-  color: var(--muted);
-  font-size: 10px;
-  margin-top: 5px;
-}
-
-.delete {
-  color: #ff8493;
-  border: 0;
-  background: transparent;
-  padding: 8px;
-}
-
-.empty {
-  color: var(--muted);
-  font-size: 12px;
-  padding: 12px 0;
-}
-
-footer {
-  color: #567386;
-  font-size: 9px;
-  letter-spacing: 2px;
-  text-align: center;
-  padding: 20px;
-}
-
-.small-note {
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.6;
-}
-
-.hidden {
-  display: none !important;
-}
-
-@media(max-width:500px) {
-  header { padding: 18px 16px; }
-  main { padding-left: 15px; padding-right: 15px; }
-  .core-area { transform: scale(.92); margin-top: 12px; margin-bottom: 0; }
-  .panel { padding: 17px; }
-}
+:root{color-scheme:dark;--bg:#06101d;--glass:rgba(16,35,57,.48);--line:rgba(157,208,255,.19);--text:#eaf6ff;--muted:#91a9bd;--accent:#68caff;--accent2:#b9e8ff;--shadow:0 24px 80px rgba(0,0,0,.38)}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+body{overflow-x:hidden;background:radial-gradient(ellipse at 50% 42%,#102b45 0,#091827 34%,#050b14 78%);min-height:100svh}
+body:before,body:after{content:"";position:fixed;inset:0;pointer-events:none}
+body:before{opacity:.18;background-image:linear-gradient(rgba(150,210,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(150,210,255,.055) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse at center,#000,transparent 75%)}
+body:after{background:radial-gradient(circle at 15% 15%,rgba(43,136,196,.13),transparent 30%),radial-gradient(circle at 85% 75%,rgba(30,83,138,.13),transparent 34%)}
+button,input,textarea,select{font:inherit}button{cursor:pointer;color:inherit}
+#app{position:relative;z-index:1;min-height:100svh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 22px env(safe-area-inset-bottom)}
+.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;max-width:1100px;width:100%;margin:0 auto}
+.brand{font-size:12px;letter-spacing:.32em;color:#d6efff;font-weight:650}.brand span{color:var(--accent)}
+.status{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.dot{width:7px;height:7px;border-radius:50%;background:#69d9b0;box-shadow:0 0 12px #69d9b0}
+.stage{flex:1;display:flex;align-items:center;justify-content:center;min-height:540px;position:relative}
+.core-wrap{display:flex;flex-direction:column;align-items:center;gap:26px;transform:translateY(-8px)}
+.core{width:min(58vw,260px);aspect-ratio:1;border:1px solid rgba(133,208,255,.35);border-radius:50%;position:relative;display:grid;place-items:center;background:radial-gradient(circle,rgba(61,163,220,.17),rgba(8,28,48,.28) 55%,rgba(8,20,34,.08) 70%);box-shadow:0 0 35px rgba(60,171,230,.13),inset 0 0 45px rgba(95,194,255,.11)}
+.core:before,.core:after{content:"";position:absolute;border-radius:50%;inset:12%;border:1px solid rgba(135,218,255,.38);box-shadow:0 0 24px rgba(91,190,255,.12)}
+.core:before{border-left-color:transparent;border-bottom-color:rgba(135,218,255,.12);animation:spin 18s linear infinite}
+.core:after{inset:22%;border-right-color:transparent;border-top-color:rgba(135,218,255,.12);animation:spin 12s linear infinite reverse}
+.core-inner{width:42%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e8fbff 0,#86d9ff 10%,#2376a7 35%,#0b2944 70%);box-shadow:0 0 22px #6dcaff,0 0 65px rgba(63,177,242,.55),inset 0 0 18px rgba(255,255,255,.45);animation:pulse 4s ease-in-out infinite}
+.core-label{text-align:center}.core-label h1{font-size:14px;letter-spacing:.42em;font-weight:500;margin:0 0 9px}.core-label p{font-size:11px;color:var(--muted);letter-spacing:.14em;margin:0}
+.controls{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.glass-btn{border:1px solid var(--line);background:linear-gradient(145deg,rgba(170,220,255,.12),rgba(25,56,83,.22));backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-radius:999px;padding:12px 19px;font-size:12px;letter-spacing:.06em;box-shadow:inset 0 1px rgba(255,255,255,.09);transition:.2s}
+.glass-btn:hover,.glass-btn:focus-visible{border-color:var(--accent);box-shadow:0 0 24px rgba(91,190,255,.18);outline:none}.glass-btn.primary{background:linear-gradient(135deg,rgba(75,174,230,.32),rgba(23,77,113,.38));border-color:rgba(119,211,255,.45)}
+.quickbar{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:2px}.quickbar button{border:0;background:transparent;color:#829bb1;font-size:11px;padding:8px 10px}.quickbar button:hover{color:var(--accent2)}
+.footer{max-width:1100px;width:100%;margin:0 auto 14px;display:flex;justify-content:space-between;color:#688198;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.panel{position:fixed;z-index:5;top:76px;right:18px;bottom:18px;width:min(440px,calc(100vw - 36px));border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,rgba(18,42,66,.88),rgba(7,19,32,.91));backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);box-shadow:var(--shadow),inset 0 1px rgba(255,255,255,.1);padding:22px;overflow:auto;transform:translateX(calc(100% + 30px));opacity:0;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s}
+.panel.open{transform:translateX(0);opacity:1}.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.panel-head h2{font-size:14px;letter-spacing:.2em;font-weight:550;margin:0}.close{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.05);font-size:18px}
+.field{display:flex;flex-direction:column;gap:7px;margin:13px 0}.field label{font-size:10px;color:var(--muted);letter-spacing:.13em;text-transform:uppercase}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:12px;background:rgba(3,13,23,.6);color:var(--text);padding:12px;outline:none}.field textarea{min-height:90px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent)}
+.row{display:flex;gap:9px;align-items:center}.row>*{flex:1;min-width:0}.section-note{font-size:12px;color:var(--muted);line-height:1.6;margin:0 0 14px}
+.item{padding:13px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.035);margin:9px 0}.item strong{font-size:13px;font-weight:550}.item small{display:block;color:var(--muted);font-size:11px;margin-top:5px}.item-actions{display:flex;gap:8px;margin-top:10px}.mini{font-size:10px;padding:7px 10px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.05)}
+.chatlog{display:flex;flex-direction:column;gap:10px;max-height:48vh;overflow:auto;margin-bottom:14px}.bubble{max-width:88%;padding:11px 13px;border-radius:14px;font-size:12px;line-height:1.5;background:rgba(120,190,235,.1);border:1px solid var(--line)}.bubble.user{align-self:flex-end;background:rgba(63,150,205,.2)}.bubble.assistant{align-self:flex-start}
+.range-line{display:flex;justify-content:space-between;color:var(--muted);font-size:11px}.field input[type=range]{padding:0;accent-color:var(--accent)}
+.personality{display:flex;gap:8px;margin:12px 0 18px}.personality button{flex:1;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.04);padding:10px 5px;font-size:10px;letter-spacing:.1em}.personality button.active{border-color:var(--accent);color:var(--accent2);background:rgba(90,180,235,.12)}
+.empty{color:#7890a5;text-align:center;padding:26px 8px;font-size:12px}
+.toast{position:fixed;z-index:8;bottom:28px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:rgba(13,34,53,.92);border:1px solid var(--line);padding:11px 16px;border-radius:999px;font-size:11px;transition:.25s}.toast.show{opacity:1;transform:translate(-50%,0)}
+.security-status{display:flex;align-items:center;gap:9px;padding:12px;border:1px solid rgba(255,190,100,.25);background:rgba(255,170,70,.07);border-radius:13px;font-size:11px;color:#ffd49a;line-height:1.5}
+.security-status .status-dot{width:8px;height:8px;border-radius:50%;background:#ffbd69;flex-shrink:0}
+.security-section{margin-top:22px}.security-section h3{font-size:10px;letter-spacing:.17em;color:var(--accent2);font-weight:600;margin:0 0 10px}
+.security-card{padding:14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.035);margin:9px 0}
+.security-card strong{font-size:12px;font-weight:550}.security-card p{font-size:11px;color:var(--muted);line-height:1.6;margin:7px 0 0}
+.security-input{display:block;width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;background:rgba(3,13,23,.7);color:var(--text);margin-top:10px}
+.security-action{width:100%;margin-top:10px;opacity:.55;cursor:not-allowed}
+.security-label{font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;display:block;margin-top:12px}
+body.edith{--accent:#ff7185;--accent2:#ffd0d7;--line:rgba(255,130,150,.2)}body.friday{--accent:#c39aff;--accent2:#e5d4ff;--line:rgba(192,150,255,.2)}
+@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{0%,100%{transform:scale(.94);filter:brightness(.9)}50%{transform:scale(1.06);filter:brightness(1.25)}}
+@media(max-width:600px){#app{padding-left:16px;padding-right:16px}.topbar{height:58px}.stage{min-height:calc(100svh - 120px)}.core{width:220px}.panel{top:auto;right:9px;left:9px;bottom:9px;width:auto;max-height:82svh;border-radius:22px}.footer{font-size:9px}.glass-btn{padding:11px 15px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style>
 </head>
+<body>
+<div id="app">
+<header class="topbar"><div class="brand">T<span>.</span> STARK SYSTEMS</div><div class="status"><span class="dot"></span><span id="systemStatus">LOCAL SYSTEM READY</span></div></header>
+<main class="stage"><div class="core-wrap">
+<div class="core" aria-label="Animated JARVIS interface core"><div class="core-inner"></div></div>
+<div class="core-label"><h1 id="personaTitle">J.A.R.V.I.S.</h1><p id="coreMessage">AT YOUR SERVICE</p></div>
+<div class="controls"><button class="glass-btn primary" id="activateBtn">◉ &nbsp; ACTIVATE VOICE</button><button class="glass-btn" data-panel="chat">OPEN CONSOLE</button></div>
+<div class="quickbar">
+<button data-panel="tasks">TASKS</button><button data-panel="memory">MEMORY</button><button data-panel="overview">DAILY OVERVIEW</button><button data-panel="settings">SETTINGS</button><button data-panel="security">SECURITY</button>
+</div>
+<div class="personality" style="width:min(330px,90vw)"><button class="active" data-persona="JARVIS">JARVIS</button><button data-persona="EDITH">EDITH</button><button data-persona="FRIDAY">FRIDAY</button></div>
+</div></main>
+<footer class="footer"><span>PERSONAL ASSISTANT // PROTOTYPE</span><span id="clock">--:--</span></footer>
+</div>
 
-<body class="jarvis">
+<aside class="panel" id="panel-chat">
+<div class="panel-head"><h2>COMMAND CONSOLE</h2><button class="close" aria-label="Close">×</button></div>
+<p class="section-note">The local console is active. A real AI service is not connected yet.</p>
+<div class="chatlog" id="chatlog"><div class="bubble assistant">Systems are ready. I can manage local tasks and notes. AI conversation will be enabled after a secure service is connected.</div></div>
+<form id="chatForm"><div class="field"><label for="chatInput">Message</label><textarea id="chatInput" placeholder="Type a command or message..." required></textarea></div><button class="glass-btn primary" type="submit">SEND MESSAGE</button></form>
+</aside>
 
-<div class="ambient"></div>
+<aside class="panel" id="panel-tasks">
+<div class="panel-head"><h2>TASK REGISTER</h2><button class="close">×</button></div>
+<p class="section-note">Tasks are stored locally in this browser on this device.</p>
+<form id="taskForm"><div class="field"><label for="taskTitle">Task</label><input id="taskTitle" placeholder="e.g. Finish biology notes" required></div><div class="field"><label for="taskDue">Due date</label><input id="taskDue" type="date"></div><button class="glass-btn primary">ADD TASK</button></form>
+<div id="taskList"></div>
+</aside>
 
-<header>
-  <div class="brand">J.A.R.V.I.S. <span>// SYSTEM</span></div>
-  <div class="status">
-    <span class="status-dot"></span>
-    <span id="systemStatus">STANDBY</span>
-  </div>
-</header>
+<aside class="panel" id="panel-memory">
+<div class="panel-head"><h2>MEMORY ARCHIVE</h2><button class="close">×</button></div>
+<p class="section-note">Save notes you want this browser-based prototype to keep. This is local device storage, not cloud memory.</p>
+<form id="memoryForm"><div class="field"><label for="memoryText">Memory / note</label><textarea id="memoryText" placeholder="Save a useful note..." required></textarea></div><button class="glass-btn primary">SAVE MEMORY</button></form>
+<div id="memoryList"></div>
+</aside>
 
-<main>
-  <div class="personality" id="personalityLabel">J.A.R.V.I.S.</div>
-  <h1 class="greeting" id="greeting">Good to see you.</h1>
-  <div class="subtitle">PERSONAL INTELLIGENCE SYSTEM</div>
+<aside class="panel" id="panel-overview">
+<div class="panel-head"><h2>DAILY OVERVIEW</h2><button class="close">×</button></div>
+<p class="section-note" id="overviewDate"></p><div id="overviewContent"></div>
+</aside>
 
-  <div class="core-area">
-    <div class="orbit one"></div>
-    <div class="orbit two"></div>
-    <div class="orbit three"></div>
+<aside class="panel" id="panel-settings">
+<div class="panel-head"><h2>SYSTEM SETTINGS</h2><button class="close">×</button></div>
+<p class="section-note">Choose a separate browser voice and speaking style for each personality. Available voices depend on this device and browser.</p>
+<div id="voiceSettings"></div>
+<div class="field"><label>Voice preview</label><button class="glass-btn" id="previewCurrent">PREVIEW ACTIVE PERSONALITY</button></div>
+<p class="section-note">Voice recognition requires browser support and microphone permission. This page cannot listen continuously in the background on iPhone.</p>
+<button class="glass-btn" id="clearData">CLEAR LOCAL TASKS & MEMORY</button>
+</aside>
 
-    <button class="core-button" id="coreButton" aria-label="Activate voice assistant">
-      <span class="core-symbol">J</span>
-    </button>
-  </div>
+<aside class="panel" id="panel-security">
+<div class="panel-head"><h2>EDITH // SECURITY CENTER</h2><button class="close">×</button></div>
+<p class="section-note">Administrator security and account protection.</p>
 
-  <div class="core-hint" id="coreHint">TAP TO SPEAK</div>
+<div class="security-status"><span class="status-dot"></span><span>SECURITY SETUP INCOMPLETE · Verification backend not connected</span></div>
 
-  <section class="response" aria-live="polite">
-    <div class="response-label" id="responseLabel">JARVIS // READY</div>
-    <div class="response-text" id="responseText">
-      Standing by. How may I assist?
-    </div>
-  </section>
+<section class="security-section">
+<h3>PHONE VERIFICATION</h3>
+<div class="security-card">
+<strong>Administrator phone number</strong>
+<p>Enter the number you intend to use for sign-in verification. It will not be saved by this prototype.</p>
+<label class="security-label" for="securityPhone">Phone number</label>
+<input class="security-input" id="securityPhone" type="tel" autocomplete="tel" placeholder="+1 (555) 555-0123">
+<button class="glass-btn security-action" type="button" disabled>SMS VERIFICATION NOT CONNECTED</button>
+<p>SMS delivery and code verification require a secure backend. No verification message has been sent.</p>
+</div>
+</section>
 
-  <section class="panel" id="panel">
-    <h2 id="panelTitle">SYSTEM PANEL</h2>
-    <div id="panelContent"></div>
-  </section>
-</main>
+<section class="security-section">
+<h3>SIGN-IN PROTECTION</h3>
+<div class="security-card"><strong>One-time verification codes</strong><p>Planned for administrator sign-in and protected actions.</p><small>STATUS: NOT CONFIGURED</small></div>
+<div class="security-card"><strong>Administrator access</strong><p>Planned: require a password and one-time code before changing core settings, permissions, or connected accounts.</p><small>STATUS: NOT CONFIGURED</small></div>
+</section>
 
-<footer>
-  J.A.R.V.I.S. PERSONAL SYSTEM // LOCAL PROTOTYPE
-</footer>
+<section class="security-section">
+<h3>DEVICES & SESSIONS</h3>
+<div class="security-card"><strong>Trusted devices</strong><p>Device authorization will appear here after account sign-in is implemented.</p><small>NO DEVICES REGISTERED</small></div>
+<div class="security-card"><strong>Active sessions</strong><p>Session review and remote sign-out will be available after backend authentication is connected.</p><small>SESSION MANAGEMENT UNAVAILABLE</small></div>
+</section>
+
+<section class="security-section">
+<h3>SECURITY ACTIVITY</h3>
+<div class="security-card"><strong>Security event log</strong><p>There are no verified sign-in events yet. This prototype does not currently authenticate accounts or monitor devices.</p><small>NO EVENTS RECORDED</small></div>
+</section>
+</aside>
+
+<div class="toast" id="toast" role="status"></div>
 
 <script>
-(() => {
-"use strict";
-
-const $ = id => document.getElementById(id);
-
-const STORAGE_KEY = "jarvis_personal_system_v3";
-
-const defaults = {
-  personality: "jarvis",
-  interjections: "balanced",
-  speed: 1,
-  voiceName: "",
-  tasks: [],
-  assignments: [],
-  memories: [],
-  history: []
+const $=id=>document.getElementById(id);
+const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
+const save=(key,value)=>localStorage.setItem(key,JSON.stringify(value));
+let tasks=read('jarvisTasks',[]),memories=read('jarvisMemories',[]),personality=localStorage.getItem('jarvisPersona')||'JARVIS',voices=[];
+const profiles={
+JARVIS:{sample:'Good evening. All systems are standing by.',rate:.94,pitch:.88},
+EDITH:{sample:'Security systems are standing by. Awaiting your instruction.',rate:.91,pitch:.82},
+FRIDAY:{sample:'Hey. I’m here whenever you need me.',rate:1.02,pitch:1.08}
 };
-
-let data = loadData();
-let recognition = null;
-let listening = false;
-let currentPanel = "";
-let availableVoices = [];
-let initialized = false;
-
-function loadData() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-    return { ...defaults, ...saved };
-  } catch {
-    return structuredClone(defaults);
-  }
-}
-
-function saveData() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch {
-    respond("I couldn't save that information. Your browser storage may be full or unavailable.");
-  }
-}
-
-function setState(state) {
-  document.body.classList.remove("listening", "thinking", "speaking");
-  if (state) document.body.classList.add(state);
-
-  const labels = {
-    idle: "STANDBY",
-    listening: "LISTENING",
-    thinking: "PROCESSING",
-    speaking: "RESPONDING"
-  };
-
-  $("systemStatus").textContent = labels[state || "idle"] || "STANDBY";
-
-  $("coreHint").textContent = ({
-    idle: "TAP TO SPEAK",
-    listening: "LISTENING // TAP TO STOP",
-    thinking: "PROCESSING",
-    speaking: "RESPONDING"
-  })[state || "idle"];
-}
-
-function personalityInfo() {
-  return {
-    jarvis: {
-      name: "J.A.R.V.I.S.",
-      symbol: "J",
-      color: "jarvis"
-    },
-    edith: {
-      name: "E.D.I.T.H.",
-      symbol: "E",
-      color: "edith"
-    },
-    friday: {
-      name: "F.R.I.D.A.Y.",
-      symbol: "F",
-      color: "friday"
-    }
-  }[data.personality] || {
-    name: "J.A.R.V.I.S.",
-    symbol: "J",
-    color: "jarvis"
-  };
-}
-
-function updatePersonality() {
-  const p = personalityInfo();
-  document.body.classList.remove("jarvis", "edith", "friday");
-  document.body.classList.add(p.color);
-  $("personalityLabel").textContent = p.name;
-  $("coreButton").querySelector(".core-symbol").textContent = p.symbol;
-  $("responseLabel").textContent = p.name + " // READY";
-}
-
-function speak(text) {
-  if (!("speechSynthesis" in window)) return;
-
-  window.speechSynthesis.cancel();
-
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.rate = Number(data.speed) || 1;
-
-  const voice = availableVoices.find(v => v.name === data.voiceName);
-  if (voice) utterance.voice = voice;
-
-  utterance.onstart = () => setState("speaking");
-  utterance.onend = () => setState("idle");
-  utterance.onerror = () => setState("idle");
-
-  window.speechSynthesis.speak(utterance);
-}
-
-function respond(message, shouldSpeak = true) {
-  $("responseText").textContent = message;
-  $("responseLabel").textContent = personalityInfo().name + " // RESPONSE";
-  setState("idle");
-
-  data.history.push({
-    message,
-    personality: data.personality,
-    timestamp: new Date().toISOString()
-  });
-
-  if (data.history.length > 40) data.history.shift();
-  saveData();
-
-  if (shouldSpeak) speak(message);
-}
-
-function createRecognition() {
-  const SpeechRecognition =
-    window.SpeechRecognition || window.webkitSpeechRecognition;
-
-  if (!SpeechRecognition) return null;
-
-  const r = new SpeechRecognition();
-  r.lang = "en-US";
-  r.continuous = false;
-  r.interimResults = false;
-  r.maxAlternatives = 1;
-
-  r.onstart = () => {
-    listening = true;
-    setState("listening");
-  };
-
-  r.onresult = event => {
-    const transcript = event.results[0][0].transcript;
-    listening = false;
-    setState("thinking");
-    handleCommand(transcript);
-  };
-
-  r.onerror = event => {
-    listening = false;
-    setState("idle");
-
-    if (event.error === "not-allowed") {
-      respond("Microphone permission is blocked. Please allow microphone access in your browser settings.");
-    } else if (event.error !== "no-speech") {
-      respond("I couldn't process that voice input. Please try again.");
-    }
-  };
-
-  r.onend = () => {
-    listening = false;
-    if (!document.body.classList.contains("thinking") &&
-        !document.body.classList.contains("speaking")) {
-      setState("idle");
-    }
-  };
-
-  return r;
-}
-
-function toggleListening() {
-  if (listening && recognition) {
-    recognition.stop();
-    listening = false;
-    setState("idle");
-    return;
-  }
-
-  if (!recognition) {
-    respond("Voice recognition isn't supported in this browser. You can open the typing panel by saying so only when voice recognition is available. Use the browser's supported speech recognition or a compatible device.");
-    return;
-  }
-
-  try {
-    recognition.start();
-  } catch {
-    respond("The microphone is already starting. Give it a moment.");
-  }
-}
-
-function normalize(text) {
-  return text
-    .toLowerCase()
-    .replace(/[^\w\s'-]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function handleCommand(raw) {
-  const text = normalize(raw);
-  if (!text) {
-    respond("I didn't catch that. Try again.");
-    return;
-  }
-
-  if (text.includes("switch to edith") || text === "edith") {
-    switchPersonality("edith");
-    return;
-  }
-
-  if (text.includes("switch to friday") || text === "friday") {
-    switchPersonality("friday");
-    return;
-  }
-
-  if (text.includes("switch to jarvis") || text === "jarvis") {
-    switchPersonality("jarvis");
-    return;
-  }
-
-  if (text.includes("open tasks") || text.includes("show tasks")) {
-    openPanel("tasks");
-    return;
-  }
-
-  if (text.includes("open academics") ||
-      text.includes("open assignments") ||
-      text.includes("show assignments")) {
-    openPanel("academics");
-    return;
-  }
-
-  if (text.includes("open memory") || text.includes("show memory")) {
-    openPanel("memory");
-    return;
-  }
-
-  if (text.includes("open settings") || text.includes("system settings")) {
-    openPanel("settings");
-    return;
-  }
-
-  if (text.includes("open typing") || text.includes("show typing")) {
-    openPanel("typing");
-    return;
-  }
-
-  if (text.includes("close panel") || text.includes("close window")) {
-    closePanel();
-    respond("Panel closed.");
-    return;
-  }
-
-  if (text.includes("what time")) {
-    respond("The current time is " +
-      new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }));
-    return;
-  }
-
-  if (text.includes("what date") || text.includes("today's date")) {
-    respond("Today is " +
-      new Date().toLocaleDateString([], {
-        weekday: "long", month: "long", day: "numeric", year: "numeric"
-      }));
-    return;
-  }
-
-  if (text.includes("how many tasks")) {
-    respond("You currently have " + data.tasks.length + " active tasks.");
-    return;
-  }
-
-  if (text.includes("how many assignments")) {
-    respond("You currently have " + data.assignments.length + " assignments saved.");
-    return;
-  }
-
-  if (text.startsWith("add task ")) {
-    const title = raw.slice(raw.toLowerCase().indexOf("add task") + 9).trim();
-    if (title) addTask(title);
-    return;
-  }
-
-  if (text.startsWith("remember ")) {
-    const note = raw.slice(raw.toLowerCase().indexOf("remember") + 9).trim();
-    if (note) addMemory(note);
-    return;
-  }
-
-  if (text.includes("help")) {
-    respond("You can ask me to open tasks, open academics, open memory, open settings, switch to EDITH, switch to FRIDAY, switch to JARVIS, add a task, or remember something.");
-    return;
-  }
-
-  if (data.personality === "edith") {
-    respond("I can manage your local system functions, but I don't have access to a full AI reasoning engine yet. Give me a supported command.");
-  } else if (data.personality === "friday") {
-    respond("I'd love to help, but my full intelligence engine isn't connected yet. Try one of the available commands.");
-  } else {
-    respond("I understand the request, but my full AI engine isn't connected yet. I can manage tasks, assignments, memory, settings, and supported voice commands.");
-  }
-}
-
-function switchPersonality(name) {
-  data.personality = name;
-  saveData();
-  updatePersonality();
-
-  const messages = {
-    jarvis: "JARVIS online. I'll coordinate your system.",
-    edith: "EDITH online. Security and permissions remain my priority.",
-    friday: "FRIDAY online. Let's make this a little less boring."
-  };
-
-  respond(messages[name]);
-}
-
-function openPanel(name) {
-  currentPanel = name;
-  $("panel").classList.add("open");
-  renderPanel();
-  $("panel").scrollIntoView({ behavior: "smooth", block: "nearest" });
-}
-
-function closePanel() {
-  currentPanel = "";
-  $("panel").classList.remove("open");
-}
-
-function addTask(title) {
-  data.tasks.push({
-    id: crypto.randomUUID(),
-    title,
-    created: new Date().toISOString()
-  });
-
-  saveData();
-  if (currentPanel === "tasks") renderPanel();
-  respond("I've added that to your tasks.");
-}
-
-function addAssignment(title, course, due) {
-  data.assignments.push({
-    id: crypto.randomUUID(),
-    title,
-    course,
-    due
-  });
-
-  saveData();
-  if (currentPanel === "academics") renderPanel();
-  respond("Assignment saved.");
-}
-
-function addMemory(note) {
-  data.memories.push({
-    id: crypto.randomUUID(),
-    note,
-    created: new Date().toISOString()
-  });
-
-  saveData();
-  if (currentPanel === "memory") renderPanel();
-  respond("I've saved that as a local memory note.");
-}
-
-function deleteItem(collection, id) {
-  if (!["tasks", "assignments", "memories"].includes(collection)) return;
-
-  data[collection] = data[collection].filter(item => item.id !== id);
-  saveData();
-  renderPanel();
-}
-
-function element(tag, className, text) {
-  const node = document.createElement(tag);
-  if (className) node.className = className;
-  if (text !== undefined) node.textContent = text;
-  return node;
-}
-
-function createItem(title, meta, collection, id) {
-  const row = element("div", "item");
-  const main = element("div", "item-main");
-  main.appendChild(element("div", "item-title", title));
-  main.appendChild(element("div", "item-meta", meta));
-
-  const remove = element("button", "delete", "REMOVE");
-  remove.type = "button";
-  remove.addEventListener("click", () => deleteItem(collection, id));
-
-  row.append(main, remove);
-  return row;
-}
-
-function addSectionHeading(parent, title) {
-  parent.appendChild(element("h3", "", title));
-}
-
-function addEmpty(parent, message) {
-  parent.appendChild(element("div", "empty", message));
-}
-
-function renderPanel() {
-  const content = $("panelContent");
-  content.replaceChildren();
-
-  const titles = {
-    tasks: "TASK MANAGEMENT",
-    academics: "ACADEMIC SYSTEM",
-    memory: "PERSONAL MEMORY",
-    settings: "SYSTEM CONFIGURATION",
-    typing: "TEXT INPUT"
-  };
-
-  $("panelTitle").textContent = titles[currentPanel] || "SYSTEM PANEL";
-
-  if (currentPanel === "tasks") renderTasks(content);
-  if (currentPanel === "academics") renderAcademics(content);
-  if (currentPanel === "memory") renderMemory(content);
-  if (currentPanel === "settings") renderSettings(content);
-  if (currentPanel === "typing") renderTyping(content);
-}
-
-function renderTasks(parent) {
-  const input = element("input", "field");
-  input.placeholder = "Describe a task...";
-  input.id = "newTask";
-
-  const button = element("button", "action", "ADD TASK");
-  button.type = "button";
-  button.addEventListener("click", () => {
-    const value = input.value.trim();
-    if (value) addTask(value);
-  });
-
-  parent.append(input, button);
-  addSectionHeading(parent, "ACTIVE TASKS");
-
-  if (!data.tasks.length) addEmpty(parent, "No tasks saved.");
-
-  data.tasks.forEach(task => {
-    parent.appendChild(createItem(
-      task.title,
-      "Added " + new Date(task.created).toLocaleDateString(),
-      "tasks",
-      task.id
-    ));
-  });
-}
-
-function renderAcademics(parent) {
-  const title = element("input", "field");
-  title.placeholder = "Assignment name";
-
-  const course = element("input", "field");
-  course.placeholder = "Class";
-
-  const due = element("input", "field");
-  due.type = "date";
-
-  const button = element("button", "action", "SAVE ASSIGNMENT");
-  button.type = "button";
-  button.addEventListener("click", () => {
-    if (!title.value.trim() || !course.value.trim()) {
-      respond("Please enter an assignment name and class.");
-      return;
-    }
-
-    addAssignment(title.value.trim(), course.value.trim(), due.value);
-  });
-
-  parent.append(title, course, due, button);
-  addSectionHeading(parent, "ASSIGNMENTS");
-
-  if (!data.assignments.length) addEmpty(parent, "No assignments saved.");
-
-  data.assignments.forEach(item => {
-    parent.appendChild(createItem(
-      item.title,
-      item.course + (item.due ? " // Due " + item.due : " // No due date"),
-      "assignments",
-      item.id
-    ));
-  });
-}
-
-function renderMemory(parent) {
-  const input = element("textarea", "field");
-  input.placeholder = "Add a personal note or preference...";
-  input.rows = 3;
-
-  const button = element("button", "action", "SAVE NOTE");
-  button.type = "button";
-  button.addEventListener("click", () => {
-    const value = input.value.trim();
-    if (value) addMemory(value);
-  });
-
-  parent.append(input, button);
-
-  parent.appendChild(element(
-    "p",
-    "small-note",
-    "These are local notes saved in this browser. They are not encrypted or synced."
-  ));
-
-  addSectionHeading(parent, "SAVED NOTES");
-
-  if (!data.memories.length) addEmpty(parent, "No notes saved.");
-
-  data.memories.forEach(item => {
-    parent.appendChild(createItem(
-      item.note,
-      "Saved " + new Date(item.created).toLocaleDateString(),
-      "memories",
-      item.id
-    ));
-  });
-}
-
-function renderSettings(parent) {
-  addSectionHeading(parent, "ACTIVE PERSONALITY");
-
-  ["jarvis", "edith", "friday"].forEach(name => {
-    const button = element("button", "action", name.toUpperCase());
-    button.type = "button";
-    button.addEventListener("click", () => switchPersonality(name));
-    parent.appendChild(button);
-  });
-
-  addSectionHeading(parent, "VOICE SPEED");
-
-  const speed = element("input", "field");
-  speed.type = "range";
-  speed.min = ".75";
-  speed.max = "1.25";
-  speed.step = ".05";
-  speed.value = data.speed;
-
-  speed.addEventListener("input", () => {
-    data.speed = Number(speed.value);
-    saveData();
-  });
-
-  parent.appendChild(speed);
-
-  const speedLabel = element("div", "small-note", "Current speed: " + data.speed);
-  speed.addEventListener("change", () => {
-    speedLabel.textContent = "Current speed: " + data.speed;
-  });
-  parent.appendChild(speedLabel);
-
-  addSectionHeading(parent, "VOICE SELECTION");
-
-  const voiceSelect = element("select", "field");
-  voiceSelect.appendChild(new Option("Default device voice", ""));
-
-  availableVoices.forEach(voice => {
-    voiceSelect.appendChild(new Option(voice.name + " (" + voice.lang + ")", voice.name));
-  });
-
-  voiceSelect.value = data.voiceName;
-
-  voiceSelect.addEventListener("change", () => {
-    data.voiceName = voiceSelect.value;
-    saveData();
-  });
-
-  parent.appendChild(voiceSelect);
-
-  const preview = element("button", "action", "TEST VOICE");
-  preview.type = "button";
-  preview.addEventListener("click", () => speak("System voice test. JARVIS is ready."));
-  parent.appendChild(preview);
-
-  addSectionHeading(parent, "INTERJECTIONS");
-
-  const frequency = element("select", "field");
-  ["minimal", "balanced", "frequent"].forEach(value => {
-    frequency.appendChild(new Option(value, value));
-  });
-
-  frequency.value = data.interjections;
-  frequency.addEventListener("change", () => {
-    data.interjections = frequency.value;
-    saveData();
-  });
-
-  parent.appendChild(frequency);
-
-  addSectionHeading(parent, "DATA BACKUP");
-
-  const backup = element("button", "action", "EXPORT BACKUP");
-  backup.type = "button";
-  backup.addEventListener("click", exportBackup);
-
-  const restore = element("button", "action", "RESTORE BACKUP");
-  restore.type = "button";
-
-  const file = element("input", "field");
-  file.type = "file";
-  file.accept = "application/json";
-  file.setAttribute("aria-label", "Choose a JARVIS backup file");
-
-  restore.addEventListener("click", () => file.click());
-
-  file.addEventListener("change", restoreBackup);
-
-  parent.append(backup, restore, file);
-
-  addSectionHeading(parent, "LOCAL DATA");
-
-  const warning = element(
-    "p",
-    "small-note",
-    "Clearing local data permanently removes saved tasks, assignments, and notes from this browser. Export a backup first."
-  );
-
-  const clear = element("button", "action", "CLEAR LOCAL DATA");
-  clear.type = "button";
-  clear.addEventListener("click", () => {
-    if (!confirm("Delete all locally saved JARVIS information? This cannot be undone.")) return;
-
-    data = structuredClone(defaults);
-    saveData();
-    updatePersonality();
-    renderPanel();
-    respond("Local data cleared.");
-  });
-
-  parent.append(warning, clear);
-}
-
-function renderTyping(parent) {
-  const input = element("textarea", "field");
-  input.placeholder = "Type a command...";
-  input.rows = 3;
-
-  const send = element("button", "action", "SEND");
-  send.type = "button";
-  send.addEventListener("click", () => {
-    const text = input.value.trim();
-    if (!text) return;
-    closePanel();
-    setState("thinking");
-    handleCommand(text);
-  });
-
-  parent.append(input, send);
-  input.focus();
-}
-
-function exportBackup() {
-  const blob = new Blob([JSON.stringify(data, null, 2)], {
-    type: "application/json"
-  });
-
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "jarvis-backup.json";
-  a.click();
-  URL.revokeObjectURL(url);
-  respond("Backup exported.");
-}
-
-function restoreBackup(event) {
-  const file = event.target.files && event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-
-  reader.onload = () => {
-    try {
-      const imported = JSON.parse(reader.result);
-
-      if (!imported || typeof imported !== "object" ||
-          !Array.isArray(imported.tasks) ||
-          !Array.isArray(imported.assignments) ||
-          !Array.isArray(imported.memories)) {
-        throw new Error("Invalid backup");
-      }
-
-      if (!confirm("Replace your current local data with this backup?")) return;
-
-      data = { ...defaults, ...imported };
-      saveData();
-      updatePersonality();
-      renderPanel();
-      respond("Backup restored.");
-    } catch {
-      respond("That file doesn't appear to be a valid JARVIS backup.");
-    }
-  };
-
-  reader.readAsText(file);
-}
-
-function initializeVoices() {
-  if (!("speechSynthesis" in window)) return;
-
-  availableVoices = window.speechSynthesis.getVoices();
-
-  if (currentPanel === "settings") renderPanel();
-}
-
-if ("speechSynthesis" in window) {
-  initializeVoices();
-  window.speechSynthesis.onvoiceschanged = initializeVoices;
-}
-
-$("coreButton").addEventListener("click", toggleListening);
-
-updatePersonality();
-recognition = createRecognition();
-
-if (!recognition) {
-  $("coreHint").textContent = "VOICE RECOGNITION UNAVAILABLE";
-}
-
-const hour = new Date().getHours();
-
-$("greeting").textContent =
-  hour < 12 ? "Good morning." :
-  hour < 18 ? "Good afternoon." :
-  "Good evening.";
-
-if (!initialized) {
-  initialized = true;
-  $("responseText").textContent =
-    "Standing by. Tap the central core to begin a voice session. Say 'help' for supported commands.";
-}
-
-})();
+function toast(message){$('toast').textContent=message;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2200)}
+function openPanel(name){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('open'));const p=$('panel-'+name);if(p)p.classList.add('open');if(name==='overview')renderOverview();if(name==='settings')renderVoiceSettings()}
+function closePanels(){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('open'))}
+document.querySelectorAll('[data-panel]').forEach(b=>b.addEventListener('click',()=>openPanel(b.dataset.panel)));
+document.querySelectorAll('.close').forEach(b=>b.addEventListener('click',closePanels));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePanels()});
+function setPersonality(name){personality=name;localStorage.setItem('jarvisPersona',name);document.body.classList.toggle('edith',name==='EDITH');document.body.classList.toggle('friday',name==='FRIDAY');$('personaTitle').textContent=name==='JARVIS'?'J.A.R.V.I.S.':name;$('coreMessage').textContent=name==='JARVIS'?'AT YOUR SERVICE':name==='EDITH'?'SECURITY SYSTEM READY':'READY WHEN YOU ARE';document.querySelectorAll('[data-persona]').forEach(b=>b.classList.toggle('active',b.dataset.persona===name))}
+document.querySelectorAll('[data-persona]').forEach(b=>b.addEventListener('click',()=>setPersonality(b.dataset.persona)));
+function renderTasks(){const box=$('taskList');box.innerHTML='';if(!tasks.length){box.innerHTML='<div class="empty">No tasks registered.</div>';return}tasks.forEach((t,i)=>{const el=document.createElement('div');el.className='item';const title=document.createElement('strong');title.textContent=t.title;const due=document.createElement('small');due.textContent=t.due?'Due '+t.due:'No due date';const actions=document.createElement('div');actions.className='item-actions';const done=document.createElement('button');done.className='mini';done.textContent=t.done?'REOPEN':'COMPLETE';done.onclick=()=>{tasks[i].done=!tasks[i].done;save('jarvisTasks',tasks);renderTasks();renderOverview()};const del=document.createElement('button');del.className='mini';del.textContent='DELETE';del.onclick=()=>{tasks.splice(i,1);save('jarvisTasks',tasks);renderTasks();renderOverview()};actions.append(done,del);el.append(title,due,actions);if(t.done)el.style.opacity='.5';box.append(el)})}
+$('taskForm').addEventListener('submit',e=>{e.preventDefault();tasks.push({title:$('taskTitle').value.trim(),due:$('taskDue').value,done:false});save('jarvisTasks',tasks);$('taskForm').reset();renderTasks();renderOverview();toast('Task saved locally.')});
+function renderMemories(){const box=$('memoryList');box.innerHTML='';if(!memories.length){box.innerHTML='<div class="empty">No saved memories.</div>';return}memories.forEach((m,i)=>{const el=document.createElement('div');el.className='item';const p=document.createElement('div');p.style.fontSize='12px';p.style.lineHeight='1.5';p.textContent=m;const del=document.createElement('button');del.className='mini';del.textContent='DELETE';del.style.marginTop='10px';del.onclick=()=>{memories.splice(i,1);save('jarvisMemories',memories);renderMemories()};el.append(p,del);box.append(el)})}
+$('memoryForm').addEventListener('submit',e=>{e.preventDefault();memories.unshift($('memoryText').value.trim());save('jarvisMemories',memories);$('memoryForm').reset();renderMemories();toast('Memory saved on this device.')});
+function renderOverview(){$('overviewDate').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});const pending=tasks.filter(t=>!t.done);$('overviewContent').innerHTML=`<div class="item"><strong>${pending.length} open task${pending.length===1?'':'s'}</strong><small>${tasks.length-pending.length} completed</small></div><div class="item"><strong>${memories.length} saved note${memories.length===1?'':'s'}</strong><small>Stored locally on this device</small></div>`;pending.forEach(t=>{const el=document.createElement('div');el.className='item';el.textContent=t.title;const small=document.createElement('small');small.textContent=t.due?'Due '+t.due:'No due date';el.append(small);$('overviewContent').append(el)})}
+function loadVoices(){if(!('speechSynthesis'in window))return;voices=speechSynthesis.getVoices();if($('voiceSettings').children.length)renderVoiceSettings()}
+function renderVoiceSettings(){const box=$('voiceSettings');box.innerHTML='';if(!('speechSynthesis'in window)){box.textContent='Speech synthesis is not supported in this browser.';return}if(!voices.length)loadVoices();['JARVIS','EDITH','FRIDAY'].forEach(name=>{const wrap=document.createElement('div');wrap.className='item';const title=document.createElement('strong');title.textContent=name+' VOICE';const select=document.createElement('select');select.className='field';select.style.marginTop='10px';select.style.width='100%';select.style.background='#091827';select.style.color='white';select.style.padding='10px';select.style.border='1px solid var(--line)';select.style.borderRadius='10px';const opts=voices.filter(v=>v.lang.toLowerCase().startsWith('en'));(opts.length?opts:voices).forEach(v=>{const o=document.createElement('option');o.value=v.voiceURI;o.textContent=v.name+' ('+v.lang+')';select.append(o)});select.value=localStorage.getItem('voice-'+name)||'';select.onchange=()=>localStorage.setItem('voice-'+name,select.value);const rlabel=document.createElement('div');rlabel.className='range-line';rlabel.innerHTML='<span>Speaking speed</span><span id="rateVal-'+name+'"></span>';const rate=document.createElement('input');rate.type='range';rate.min='.7';rate.max='1.3';rate.step='.05';rate.value=localStorage.getItem('rate-'+name)||profiles[name].rate;rate.oninput=()=>{localStorage.setItem('rate-'+name,rate.value);$('rateVal-'+name).textContent=Number(rate.value).toFixed(2)};rlabel.lastChild.textContent=Number(rate.value).toFixed(2);const plabel=document.createElement('div');plabel.className='range-line';plabel.innerHTML='<span>Pitch</span><span id="pitchVal-'+name+'"></span>';const pitch=document.createElement('input');pitch.type='range';pitch.min='.6';pitch.max='1.4';pitch.step='.05';pitch.value=localStorage.getItem('pitch-'+name)||profiles[name].pitch;pitch.oninput=()=>{localStorage.setItem('pitch-'+name,pitch.value);$('pitchVal-'+name).textContent=Number(pitch.value).toFixed(2)};plabel.lastChild.textContent=Number(pitch.value).toFixed(2);const preview=document.createElement('button');preview.className='mini';preview.textContent='PREVIEW '+name;preview.style.marginTop='10px';preview.onclick=()=>speak(profiles[name].sample,name);wrap.append(title,select,rlabel,rate,plabel,pitch,preview);box.append(wrap)})}
+function speak(text,who=personality){if(!('speechSynthesis'in window)){toast('Speech is not supported here.');return}speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);const selected=localStorage.getItem('voice-'+who);utterance.voice=voices.find(v=>v.voiceURI===selected)||voices.find(v=>v.lang.toLowerCase().startsWith('en'))||null;utterance.rate=Number(localStorage.getItem('rate-'+who)||profiles[who].rate);utterance.pitch=Number(localStorage.getItem('pitch-'+who)||profiles[who].pitch);speechSynthesis.speak(utterance)}
+$('previewCurrent').addEventListener('click',()=>speak(profiles[personality].sample));
+$('clearData').addEventListener('click',()=>{if(confirm('Delete all locally saved tasks and memories?')){tasks=[];memories=[];save('jarvisTasks',tasks);save('jarvisMemories',memories);renderTasks();renderMemories();renderOverview();toast('Local data cleared.')}});
+function addBubble(text,who){const b=document.createElement('div');b.className='bubble '+who;b.textContent=text;$('chatlog').append(b);$('chatlog').scrollTop=$('chatlog').scrollHeight}
+$('chatForm').addEventListener('submit',e=>{e.preventDefault();const text=$('chatInput').value.trim();if(!text)return;addBubble(text,'user');$('chatInput').value='';const lower=text.toLowerCase();let reply='I can save tasks and notes in this prototype. A real AI connection has not been configured yet.';if(lower.includes('show')&&lower.includes('task')){openPanel('tasks');reply='Opening your task register.'}else if(lower.includes('memory')){openPanel('memory');reply='Opening your memory archive.'}else if(lower.includes('today')||lower.includes('overview')){openPanel('overview');reply='Here is your daily overview.'}else if(lower.includes('edith')||lower.includes('security')){openPanel('security');reply='Opening the security center.'}else if(lower.includes('hide')||lower.includes('close')){closePanels();reply='Panels closed.'}else if(lower.startsWith('add task ')){tasks.push({title:text.slice(9),due:'',done:false});save('jarvisTasks',tasks);renderTasks();reply='Task added to your local register.'}setTimeout(()=>{addBubble(reply,'assistant');speak(reply)},180)});
+let recognition=null;
+$('activateBtn').addEventListener('click',()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast('Voice recognition is not supported in this browser.');return}if(recognition){recognition.stop();return}recognition=new SR();recognition.lang='en-US';recognition.interimResults=false;recognition.maxAlternatives=1;$('activateBtn').textContent='LISTENING… TAP TO STOP';recognition.onresult=e=>{$('chatInput').value=e.results[0][0].transcript;$('chatForm').requestSubmit()};recognition.onerror=e=>toast('Voice input: '+e.error);recognition.onend=()=>{$('activateBtn').textContent='◉  ACTIVATE VOICE';recognition=null};recognition.start();toast('Listening once. Speak your command.')});
+function updateClock(){$('clock').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
+setPersonality(personality);renderTasks();renderMemories();renderOverview();updateClock();setInterval(updateClock,30000);
+if('speechSynthesis'in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
 </script>
-
 </body>
 </html>
-```
