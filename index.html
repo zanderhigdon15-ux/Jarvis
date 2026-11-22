@@ -1,1055 +1,960 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#06101d">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#030b12">
 <title>J.A.R.V.I.S.</title>
 
 <style>
 :root {
-  color-scheme: dark;
-  --accent:#70d3ff;
-  --accent-soft:rgba(70,180,255,.15);
-  --line:rgba(140,210,255,.22);
-  --text:#eaf7ff;
-  --muted:#8da9bd;
+  --accent: #35dfff;
+  --accent-rgb: 53,223,255;
+  --bg: #030b12;
+  --panel: rgba(5,22,34,.88);
+  --text: #e8faff;
+  --muted: #7cabb9;
+  --border: rgba(53,223,255,.23);
 }
-* {box-sizing:border-box}
+
+* { box-sizing:border-box; }
+
 body {
   margin:0;
   min-height:100vh;
-  min-height:100svh;
-  color:var(--text);
-  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  background:radial-gradient(ellipse at center,#102b45 0%,#071522 48%,#030811 100%);
   overflow:hidden;
+  background:
+    radial-gradient(ellipse at center, #092535 0%, #04121d 38%, #02070d 100%);
+  color:var(--text);
+  font-family:Arial, Helvetica, sans-serif;
+  transition:background 1s, color .5s;
 }
-body.edith {--accent:#ff667c;--accent-soft:rgba(255,70,100,.15);--line:rgba(255,110,130,.25)}
-body.friday {--accent:#c39aff;--accent-soft:rgba(180,120,255,.15);--line:rgba(190,150,255,.25)}
-body.locked {--accent:#ff334f;--accent-soft:rgba(255,30,60,.2)}
-button,input,textarea {font:inherit}
-button {color:inherit;cursor:pointer}
-#app {
-  min-height:100svh;
+
+body.edith {
+  --accent:#ff405f;
+  --accent-rgb:255,64,95;
+  --border:rgba(255,64,95,.25);
+}
+
+body.friday {
+  --accent:#b68aff;
+  --accent-rgb:182,138,255;
+  --border:rgba(182,138,255,.25);
+}
+
+body::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.23;
+  background-image:
+    linear-gradient(rgba(var(--accent-rgb),.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--accent-rgb),.08) 1px, transparent 1px);
+  background-size:45px 45px;
+  mask-image:radial-gradient(ellipse at center,black,transparent 80%);
+}
+
+#boot {
+  position:fixed;
+  inset:0;
+  z-index:20;
   display:flex;
   flex-direction:column;
-  padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
-  position:relative;
-}
-header {
-  width:100%;
-  max-width:1100px;
-  margin:auto;
-  height:65px;
-  display:flex;
   align-items:center;
-  justify-content:space-between;
+  justify-content:center;
+  background:#02080e;
+  transition:opacity 1s, visibility 1s;
 }
-.brand {font-size:11px;letter-spacing:.35em}
-.brand span {color:var(--accent)}
+
+#boot.hidden {
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+}
+
+.boot-core {
+  width:min(65vw,280px);
+  aspect-ratio:1;
+  position:relative;
+  display:grid;
+  place-items:center;
+}
+
+.boot-ring {
+  position:absolute;
+  inset:0;
+  border:2px solid rgba(53,223,255,.7);
+  border-radius:50%;
+  box-shadow:0 0 25px rgba(53,223,255,.35),
+             inset 0 0 25px rgba(53,223,255,.2);
+  animation:spin 9s linear infinite;
+}
+
+.boot-ring::before,
+.boot-ring::after {
+  content:"";
+  position:absolute;
+  inset:13px;
+  border:1px dashed var(--accent);
+  border-radius:50%;
+}
+
+.boot-ring::after {
+  inset:30px;
+  border-style:solid;
+  opacity:.4;
+  animation:spin 5s linear infinite reverse;
+}
+
+.boot-sphere {
+  width:54%;
+  aspect-ratio:1;
+  border-radius:50%;
+  border:1px solid var(--accent);
+  background:radial-gradient(circle,rgba(53,223,255,.24),transparent 70%);
+  box-shadow:0 0 50px rgba(53,223,255,.5);
+  animation:pulse 2s ease-in-out infinite;
+}
+
+.boot-title {
+  position:absolute;
+  font-size:clamp(19px,5vw,30px);
+  letter-spacing:.3em;
+  text-shadow:0 0 20px var(--accent);
+}
+
+.boot-status {
+  margin-top:40px;
+  color:var(--accent);
+  letter-spacing:.2em;
+  font-size:11px;
+  text-align:center;
+  text-transform:uppercase;
+}
+
+.progress-track {
+  margin-top:15px;
+  width:min(70vw,260px);
+  height:3px;
+  background:#142a36;
+}
+
+#progress {
+  width:0%;
+  height:100%;
+  background:var(--accent);
+  box-shadow:0 0 15px var(--accent);
+  transition:width .15s;
+}
+
+@keyframes spin { to {transform:rotate(360deg)} }
+@keyframes pulse {
+  0%,100% {transform:scale(.88);opacity:.65}
+  50% {transform:scale(1.08);opacity:1}
+}
+
+header {
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:23px 28px;
+  z-index:2;
+}
+
+.brand {
+  font-size:13px;
+  letter-spacing:.35em;
+  color:var(--accent);
+}
+
 .status {
   font-size:10px;
-  letter-spacing:.13em;
+  letter-spacing:.15em;
   color:var(--muted);
-  display:flex;
-  gap:9px;
-  align-items:center;
 }
-.dot {
-  width:7px;height:7px;border-radius:50%;
-  background:#62d9ac;
-  box-shadow:0 0 12px #62d9ac;
-}
+
 main {
-  flex:1;
+  min-height:100vh;
   display:flex;
   align-items:center;
   justify-content:center;
-}
-.center {
-  display:flex;
   flex-direction:column;
-  align-items:center;
-  gap:25px;
-  text-align:center;
+  padding:90px 20px 100px;
 }
-.core {
-  width:min(64vw,265px);
+
+.core-wrap {
+  position:relative;
+  width:min(68vw,310px);
   aspect-ratio:1;
-  border-radius:50%;
-  border:1px solid var(--line);
   display:grid;
   place-items:center;
-  position:relative;
-  background:radial-gradient(circle,rgba(70,170,230,.18),rgba(5,20,35,.2) 70%);
-  box-shadow:0 0 50px var(--accent-soft),inset 0 0 45px var(--accent-soft);
+  cursor:pointer;
   -webkit-tap-highlight-color:transparent;
-  user-select:none;
 }
-.core:before,.core:after {
-  content:"";
-  position:absolute;
-  inset:10%;
-  border:1px solid var(--line);
+
+.core {
+  width:48%;
+  aspect-ratio:1;
   border-radius:50%;
+  border:1px solid var(--accent);
+  background:radial-gradient(circle,rgba(var(--accent-rgb),.32),rgba(var(--accent-rgb),.03) 70%);
+  box-shadow:0 0 35px rgba(var(--accent-rgb),.3),
+             inset 0 0 30px rgba(var(--accent-rgb),.2);
+  display:grid;
+  place-items:center;
+  transition:all .4s;
 }
-.core:before {
-  border-left-color:transparent;
-  animation:spin 17s linear infinite;
+
+.core-letter {
+  font-size:42px;
+  font-weight:200;
+  color:var(--accent);
+  text-shadow:0 0 25px var(--accent);
 }
-.core:after {
-  inset:22%;
-  border-right-color:transparent;
+
+.orbit {
+  position:absolute;
+  inset:5%;
+  border:1px solid rgba(var(--accent-rgb),.55);
+  border-radius:50%;
+  animation:spin 16s linear infinite;
+}
+
+.orbit.two {
+  inset:16%;
+  border-style:dashed;
   animation:spin 11s linear infinite reverse;
 }
-.core-inner {
-  width:43%;
-  aspect-ratio:1;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  font-size:35px;
-  font-weight:300;
-  color:#f4fcff;
-  background:radial-gradient(circle at 35% 30%,#fff 0%,var(--accent) 12%,#17618b 48%,#071c30 78%);
-  box-shadow:0 0 28px var(--accent),0 0 85px var(--accent-soft);
-  animation:pulse 4s ease-in-out infinite;
+
+.orbit.three {
+  inset:-5%;
+  border-color:rgba(var(--accent-rgb),.15);
+  animation:spin 25s linear infinite;
 }
-.core.listening .core-inner {
-  animation:pulse .7s ease-in-out infinite;
+
+.core-wrap.listening .core {
+  box-shadow:0 0 65px rgba(var(--accent-rgb),.8),
+             inset 0 0 45px rgba(var(--accent-rgb),.4);
+  transform:scale(1.07);
 }
-.core.processing .core-inner {
-  animation:pulse .3s ease-in-out infinite;
+
+.core-wrap.thinking .core {
+  animation:pulse 1s infinite;
 }
-.core.speaking .core-inner {
-  animation:pulse 1.2s ease-in-out infinite;
+
+.core-wrap.speaking .orbit {
+  animation-duration:3s;
 }
-.core-label h1 {
+
+.identity {
+  margin-top:32px;
+  text-align:center;
+  letter-spacing:.35em;
+  color:var(--accent);
+  font-size:13px;
+}
+
+.subtitle {
+  color:var(--muted);
+  font-size:11px;
+  margin-top:12px;
+  letter-spacing:.15em;
+  text-align:center;
+}
+
+.transcript {
+  width:min(90vw,540px);
+  min-height:55px;
+  max-height:125px;
+  overflow:auto;
+  text-align:center;
+  margin-top:30px;
+  color:#d6f7ff;
   font-size:14px;
-  letter-spacing:.42em;
-  font-weight:500;
-  margin:0 0 10px;
+  line-height:1.6;
+  text-shadow:0 0 10px rgba(var(--accent-rgb),.25);
 }
-.core-label p {
+
+.bottom {
+  position:absolute;
+  bottom:24px;
+  left:0;
+  right:0;
+  text-align:center;
   color:var(--muted);
   font-size:10px;
-  letter-spacing:.16em;
-  margin:0;
+  letter-spacing:.17em;
 }
-.instruction {
-  font-size:10px;
-  color:#718ba0;
-  letter-spacing:.12em;
-}
-footer {
-  height:45px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  max-width:1100px;
-  width:100%;
-  margin:auto;
-  font-size:9px;
-  letter-spacing:.12em;
-  color:#688198;
-}
+
 .panel {
   position:fixed;
   z-index:5;
-  top:75px;
-  right:15px;
-  bottom:15px;
-  width:min(430px,calc(100vw - 30px));
-  padding:22px;
-  border:1px solid var(--line);
-  border-radius:22px;
-  background:rgba(7,22,38,.96);
-  backdrop-filter:blur(25px);
-  -webkit-backdrop-filter:blur(25px);
+  inset:12% 5%;
+  max-width:600px;
+  margin:auto;
+  height:max-content;
+  max-height:76vh;
   overflow:auto;
-  transform:translateX(110%);
-  opacity:0;
-  transition:.3s ease;
+  padding:25px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:14px;
+  backdrop-filter:blur(18px);
+  box-shadow:0 0 40px rgba(var(--accent-rgb),.12);
+  display:none;
 }
-.panel.open {transform:translateX(0);opacity:1}
-.panel-head {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:20px;
-}
-.panel-head h2 {
-  font-size:13px;
+
+.panel.open { display:block; }
+
+.panel h2 {
+  color:var(--accent);
+  font-weight:400;
   letter-spacing:.2em;
-  font-weight:500;
+  font-size:15px;
 }
-.close {
-  width:36px;height:36px;
-  border:1px solid var(--line);
-  background:transparent;
-  border-radius:50%;
-  font-size:20px;
-}
-.note {
+
+.panel p,.panel label {
   color:var(--muted);
   font-size:12px;
   line-height:1.6;
 }
-.field {
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  margin:15px 0;
+
+button, input, select, textarea {
+  font:inherit;
 }
-.field label {
-  color:var(--muted);
-  font-size:10px;
-  letter-spacing:.13em;
+
+button {
+  color:var(--accent);
+  background:rgba(var(--accent-rgb),.07);
+  border:1px solid var(--border);
+  padding:12px 15px;
+  border-radius:7px;
+  cursor:pointer;
 }
-.field input,.field textarea,.field select {
+
+button:active { transform:scale(.98); }
+
+input,select,textarea {
   width:100%;
+  margin:8px 0 14px;
   padding:12px;
+  background:#071823;
   color:var(--text);
-  background:#071522;
-  border:1px solid var(--line);
-  border-radius:11px;
-  outline:none;
+  border:1px solid var(--border);
+  border-radius:6px;
 }
-.field textarea {min-height:90px;resize:vertical}
-.action {
-  padding:11px 17px;
-  border:1px solid var(--line);
-  border-radius:30px;
-  background:var(--accent-soft);
-  font-size:11px;
-  letter-spacing:.08em;
-}
-.item {
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.035);
-  padding:13px;
-  border-radius:13px;
-  margin:10px 0;
-  font-size:12px;
-}
-.item small {
-  display:block;
-  color:var(--muted);
-  margin-top:6px;
-}
-.item button {margin:10px 6px 0 0}
-.chatlog {
+
+.row {
   display:flex;
-  flex-direction:column;
   gap:10px;
-  max-height:42vh;
-  overflow:auto;
-  margin-bottom:15px;
+  flex-wrap:wrap;
+  margin-top:12px;
 }
-.bubble {
-  max-width:90%;
-  padding:11px 13px;
-  border:1px solid var(--line);
-  border-radius:13px;
-  font-size:12px;
-  line-height:1.5;
-  overflow-wrap:anywhere;
+
+.row button { flex:1; }
+
+.item {
+  border-bottom:1px solid var(--border);
+  padding:12px 0;
+  font-size:13px;
 }
-.bubble.user {align-self:flex-end;background:var(--accent-soft)}
-.bubble.assistant {align-self:flex-start}
-.personality-list {
+
+.close {
+  float:right;
+}
+
+.warning {
+  color:#ff899b !important;
+  border-left:2px solid #ff405f;
+  padding-left:12px;
+}
+
+#commandForm {
   display:flex;
   gap:8px;
-  margin:12px 0;
 }
-.personality-list button {
-  flex:1;
-  padding:10px 4px;
-  border:1px solid var(--line);
-  border-radius:10px;
-  background:transparent;
-  font-size:10px;
+
+#commandForm input {
+  min-width:0;
+  margin:0;
 }
-.personality-list button.active {
-  background:var(--accent-soft);
-  border-color:var(--accent);
-}
-.toast {
-  position:fixed;
-  z-index:10;
-  bottom:30px;
-  left:50%;
-  transform:translate(-50%,15px);
-  opacity:0;
-  pointer-events:none;
-  padding:12px 17px;
-  border:1px solid var(--line);
-  border-radius:30px;
-  background:#10263a;
-  font-size:11px;
-  transition:.2s;
-  max-width:90vw;
-  text-align:center;
-}
-.toast.show {opacity:1;transform:translate(-50%,0)}
-.lock-banner {
-  display:none;
-  position:fixed;
-  z-index:9;
-  top:0;left:0;right:0;
-  padding:12px;
-  text-align:center;
-  background:#7d1427;
-  color:white;
-  font-size:10px;
-  letter-spacing:.1em;
-}
-body.locked .lock-banner {display:block}
-body.locked .core {border-color:#ff334f}
-@keyframes spin {to{transform:rotate(360deg)}}
-@keyframes pulse {
-  0%,100%{transform:scale(.94);filter:brightness(.9)}
-  50%{transform:scale(1.07);filter:brightness(1.25)}
-}
-@media(max-width:600px) {
-  header {height:55px}
-  .core {width:225px}
-  .panel {top:auto;bottom:8px;left:8px;right:8px;width:auto;max-height:82svh}
-}
-@media(prefers-reduced-motion:reduce) {
-  *,*:before,*:after {animation:none!important;transition:none!important}
+
+@media(max-width:480px) {
+  header {padding:18px}
+  .status {font-size:8px}
+  .core-wrap {width:75vw}
+  .panel {inset:8% 4%;padding:20px}
 }
 </style>
 </head>
 
 <body>
-<div class="lock-banner" id="lockBanner">
-EDITH LOCKDOWN PREVIEW — LOCAL BROWSER ONLY — NOT REAL DEVICE SECURITY
-</div>
 
-<div id="app">
-<header>
-  <div class="brand">T<span>.</span> STARK SYSTEMS</div>
-  <div class="status">
-    <span class="dot"></span>
-    <span id="systemStatus">LOCAL SYSTEM READY</span>
+<section id="boot">
+  <div class="boot-core">
+    <div class="boot-ring"></div>
+    <div class="boot-sphere"></div>
+    <div class="boot-title">J.A.R.V.I.S.</div>
   </div>
+  <div class="boot-status" id="bootStatus">Initializing systems</div>
+  <div class="progress-track"><div id="progress"></div></div>
+</section>
+
+<header>
+  <div class="brand">J.A.R.V.I.S.</div>
+  <div class="status" id="systemStatus">SYSTEM STANDBY</div>
 </header>
 
 <main>
-  <div class="center">
-    <div class="core" id="core" role="button" tabindex="0"
-         aria-label="Tap to speak to JARVIS">
-      <div class="core-inner" id="coreLetter">J</div>
+  <div class="core-wrap" id="coreButton" role="button"
+       tabindex="0" aria-label="Activate voice interaction">
+    <div class="orbit"></div>
+    <div class="orbit two"></div>
+    <div class="orbit three"></div>
+    <div class="core">
+      <div class="core-letter" id="coreLetter">J</div>
     </div>
-    <div class="core-label">
-      <h1 id="personaTitle">J.A.R.V.I.S.</h1>
-      <p id="coreMessage">AT YOUR SERVICE</p>
-    </div>
-    <div class="instruction" id="instruction">TAP THE CORE TO SPEAK</div>
+  </div>
+
+  <div class="identity" id="identity">J.A.R.V.I.S.</div>
+  <div class="subtitle" id="subtitle">PERSONAL ASSISTANT ONLINE</div>
+  <div class="transcript" id="transcript">
+    Tap the core to speak.
   </div>
 </main>
 
-<footer>
-  <span>PERSONAL ASSISTANT // DEVELOPMENT BUILD</span>
-  <span id="clock">--:--</span>
-</footer>
+<div class="bottom">
+  VOICE INTERFACE · TAP CORE TO ACTIVATE
 </div>
 
-<aside class="panel" id="panel-chat">
-  <div class="panel-head">
-    <h2>COMMAND CONSOLE</h2>
-    <button class="close">×</button>
-  </div>
-  <p class="note">The interface is active. The external AI reasoning service is not connected yet.</p>
-  <div class="chatlog" id="chatlog">
-    <div class="bubble assistant">Good to have you back. My local systems are ready. My full reasoning service is still awaiting connection.</div>
-  </div>
-  <form id="chatForm">
-    <div class="field">
-      <label for="chatInput">MESSAGE</label>
-      <textarea id="chatInput" placeholder="Enter a command..." required></textarea>
-    </div>
-    <button class="action">SEND</button>
-  </form>
-</aside>
+<section class="panel" id="settingsPanel">
+  <button class="close" onclick="closePanels()">CLOSE</button>
+  <h2>SYSTEM CONFIGURATION</h2>
 
-<aside class="panel" id="panel-tasks">
-  <div class="panel-head">
-    <h2>TASK REGISTER</h2>
-    <button class="close">×</button>
+  <p>PERSONALITY</p>
+  <div class="row">
+    <button onclick="setPersonality('jarvis')">JARVIS</button>
+    <button onclick="setPersonality('edith')">EDITH</button>
+    <button onclick="setPersonality('friday')">FRIDAY</button>
   </div>
-  <p class="note">Tasks are stored locally in this browser.</p>
+
+  <p>NEURAL VOICE ASSIGNMENTS</p>
+
+  <label>JARVIS · Jasper</label>
+  <p>Intended KittenTTS voice: jasper</p>
+
+  <label>EDITH · Luna</label>
+  <p>Intended KittenTTS voice: luna</p>
+
+  <label>FRIDAY · Rosie</label>
+  <p>Intended KittenTTS voice: rosie</p>
+
+  <p>Fallback browser voice</p>
+  <select id="browserVoice"></select>
+
+  <div class="row">
+    <button onclick="previewVoice()">PREVIEW CURRENT VOICE</button>
+    <button onclick="stopSpeech()">STOP AUDIO</button>
+  </div>
+
+  <p id="voiceStatus">Neural voice engine: awaiting bundled KittenTTS build.</p>
+</section>
+
+<section class="panel" id="tasksPanel">
+  <button class="close" onclick="closePanels()">CLOSE</button>
+  <h2>TASK MANAGEMENT</h2>
   <form id="taskForm">
-    <div class="field">
-      <label for="taskTitle">TASK</label>
-      <input id="taskTitle" required placeholder="Finish biology notes">
-    </div>
-    <div class="field">
-      <label for="taskDue">DUE DATE</label>
-      <input id="taskDue" type="date">
-    </div>
-    <button class="action">ADD TASK</button>
+    <input id="taskInput" placeholder="Enter a task..." required>
+    <button type="submit">ADD TASK</button>
   </form>
   <div id="taskList"></div>
-</aside>
+</section>
 
-<aside class="panel" id="panel-memory">
-  <div class="panel-head">
-    <h2>MEMORY ARCHIVE</h2>
-    <button class="close">×</button>
-  </div>
-  <p class="note">Local notes only. This is not encrypted cloud memory.</p>
+<section class="panel" id="memoryPanel">
+  <button class="close" onclick="closePanels()">CLOSE</button>
+  <h2>PERSONAL MEMORY</h2>
+  <p>Local notes saved in this browser only.</p>
   <form id="memoryForm">
-    <div class="field">
-      <label for="memoryText">NOTE</label>
-      <textarea id="memoryText" required placeholder="Save a useful note..."></textarea>
-    </div>
-    <button class="action">SAVE NOTE</button>
+    <textarea id="memoryInput" placeholder="Enter a note..." required></textarea>
+    <button type="submit">SAVE NOTE</button>
   </form>
   <div id="memoryList"></div>
-</aside>
+</section>
 
-<aside class="panel" id="panel-overview">
-  <div class="panel-head">
-    <h2>DAILY OVERVIEW</h2>
-    <button class="close">×</button>
-  </div>
-  <div id="overviewContent"></div>
-</aside>
-
-<aside class="panel" id="panel-settings">
-  <div class="panel-head">
-    <h2>VOICE & SETTINGS</h2>
-    <button class="close">×</button>
-  </div>
-  <p class="note">
-    Neural voice synthesis uses KittenTTS Web. The first setup downloads the model.
-    Internet access is required for the initial download.
+<section class="panel" id="securityPanel">
+  <button class="close" onclick="closePanels()">CLOSE</button>
+  <h2>EDITH SECURITY</h2>
+  <p class="warning">
+    This is a local interface demonstration. It does not secure your
+    device, accounts, network, or files.
   </p>
-  <div class="item" id="voiceStatus">Neural voice model not loaded.</div>
-  <div class="field">
-    <label for="modelSelect">VOICE MODEL</label>
-    <select id="modelSelect">
-      <option value="nano-int8">Nano INT8 — approximately 25 MB</option>
-      <option value="nano">Nano — approximately 56 MB</option>
-      <option value="micro">Micro — approximately 41 MB</option>
-      <option value="mini">Mini — approximately 80 MB</option>
-    </select>
-  </div>
-  <div id="voiceProfiles"></div>
-  <button class="action" id="loadVoice">LOAD NEURAL VOICES</button>
-  <p class="note">
-    If neural synthesis fails, the browser's built-in speech voice is used as a fallback.
-    iPhone browser microphone access requires an active page and permission.
-  </p>
-  <button class="action" id="clearData">CLEAR LOCAL TASKS & NOTES</button>
-</aside>
+  <p>Real security enforcement and SMS alerts are not configured.</p>
+</section>
 
-<aside class="panel" id="panel-security">
-  <div class="panel-head">
-    <h2>EDITH // SECURITY</h2>
-    <button class="close">×</button>
-  </div>
-  <p class="note">
-    Lockdown is currently a local interface preview. It does not secure the phone,
-    server, accounts, or stored information.
-  </p>
-  <div class="item">
-    <strong>Backend authentication</strong>
-    <small>Not configured</small>
-  </div>
-  <div class="item">
-    <strong>SMS notifications</strong>
-    <small>Not configured — no messages can be sent yet</small>
-  </div>
-  <div class="item">
-    <strong>Server-side lockdown</strong>
-    <small>Not configured</small>
-  </div>
-  <button class="action" id="lockButton">INITIATE LOCKDOWN PREVIEW</button>
-  <button class="action" id="unlockButton">EXIT LOCKDOWN PREVIEW</button>
-</aside>
+<section class="panel" id="commandPanel">
+  <button class="close" onclick="closePanels()">CLOSE</button>
+  <h2>COMMAND INTERFACE</h2>
+  <form id="commandForm">
+    <input id="commandInput" placeholder="Enter a command...">
+    <button type="submit">SEND</button>
+  </form>
+</section>
 
-<div class="toast" id="toast" role="status"></div>
-
-<script type="module">
+<script>
 const $ = id => document.getElementById(id);
 
-const safeRead = (key, fallback) => {
-  try { return JSON.parse(localStorage.getItem(key)) ?? fallback; }
-  catch { return fallback; }
-};
-
-const safeSave = (key, value) => {
-  try { localStorage.setItem(key, JSON.stringify(value)); }
-  catch { toast("Local storage is unavailable."); }
-};
-
-let tasks = safeRead("jarvisTasks", []);
-let memories = safeRead("jarvisMemories", []);
-let personality = localStorage.getItem("jarvisPersona") || "JARVIS";
-let recognition = null;
-let tts = null;
-let ttsLoading = false;
-let lockdown = false;
-let voices = [];
-
-const profiles = {
-  JARVIS: {
+const personalities = {
+  jarvis: {
+    name:"J.A.R.V.I.S.",
+    letter:"J",
     voice:"jasper",
-    sample:"Good evening. All systems are standing by."
+    color:"#35dfff",
+    greeting:"Good day. JARVIS systems are online."
   },
-  EDITH: {
+  edith: {
+    name:"E.D.I.T.H.",
+    letter:"E",
     voice:"luna",
-    sample:"Security systems are standing by. Awaiting your instruction."
+    color:"#ff405f",
+    greeting:"EDITH online. Security systems standing by."
   },
-  FRIDAY: {
+  friday: {
+    name:"F.R.I.D.A.Y.",
+    letter:"F",
     voice:"rosie",
-    sample:"Hey. I'm here whenever you need me."
+    color:"#b68aff",
+    greeting:"Hey. FRIDAY is online and ready."
   }
 };
 
-function toast(message) {
-  $("toast").textContent = message;
-  $("toast").classList.add("show");
-  setTimeout(() => $("toast").classList.remove("show"), 2600);
-}
+let activePersonality = "jarvis";
+let recognition = null;
+let speaking = false;
 
-function setState(state, message) {
-  $("core").className = "core " + state;
-  $("coreMessage").textContent = message;
-}
+function setPersonality(personality) {
+  if (!personalities[personality]) return;
 
-function openPanel(name) {
-  if (lockdown && name !== "security") {
-    toast("EDITH lockdown preview is active.");
-    return;
+  activePersonality = personality;
+  const p = personalities[personality];
+
+  document.body.classList.remove("edith","friday");
+  if (personality !== "jarvis") {
+    document.body.classList.add(personality);
   }
+
+  document.documentElement.style.setProperty("--accent",p.color);
+  $("identity").textContent = p.name;
+  $("coreLetter").textContent = p.letter;
+  $("subtitle").textContent = "PERSONAL ASSISTANT ONLINE";
+  $("transcript").textContent = p.greeting;
+
   closePanels();
-  const panel = $("panel-" + name);
-  if (panel) panel.classList.add("open");
-  if (name === "overview") renderOverview();
-  if (name === "settings") renderVoiceProfiles();
+  speak(p.greeting);
 }
 
-function closePanels() {
-  document.querySelectorAll(".panel").forEach(p => p.classList.remove("open"));
+function setStatus(text) {
+  $("systemStatus").textContent = text;
 }
 
-document.querySelectorAll(".close").forEach(button => {
-  button.addEventListener("click", closePanels);
-});
-
-document.addEventListener("keydown", event => {
-  if (event.key === "Escape") closePanels();
-});
-
-function setPersonality(name) {
-  if (!profiles[name]) return;
-  personality = name;
-  localStorage.setItem("jarvisPersona", name);
-
-  document.body.classList.toggle("edith", name === "EDITH");
-  document.body.classList.toggle("friday", name === "FRIDAY");
-
-  $("personaTitle").textContent =
-    name === "JARVIS" ? "J.A.R.V.I.S." : name;
-
-  $("coreLetter").textContent =
-    name === "JARVIS" ? "J" : name === "EDITH" ? "E" : "F";
-
-  $("coreMessage").textContent = {
-    JARVIS:"AT YOUR SERVICE",
-    EDITH:"SECURITY SYSTEM READY",
-    FRIDAY:"READY WHEN YOU ARE"
-  }[name];
-
-  renderVoiceProfiles();
+function setAnimation(state) {
+  $("coreButton").classList.remove(
+    "listening","thinking","speaking"
+  );
+  if (state) $("coreButton").classList.add(state);
 }
 
-function renderTasks() {
-  const box = $("taskList");
-  box.replaceChildren();
-
-  if (!tasks.length) {
-    box.textContent = "No tasks registered.";
-    return;
-  }
-
-  tasks.forEach((task, index) => {
-    const item = document.createElement("div");
-    item.className = "item";
-
-    const title = document.createElement("strong");
-    title.textContent = task.title;
-
-    const due = document.createElement("small");
-    due.textContent = task.due ? "Due " + task.due : "No due date";
-
-    const done = document.createElement("button");
-    done.className = "action";
-    done.textContent = task.done ? "REOPEN" : "COMPLETE";
-    done.onclick = () => {
-      tasks[index].done = !tasks[index].done;
-      safeSave("jarvisTasks", tasks);
-      renderTasks();
-    };
-
-    const remove = document.createElement("button");
-    remove.className = "action";
-    remove.textContent = "DELETE";
-    remove.onclick = () => {
-      tasks.splice(index, 1);
-      safeSave("jarvisTasks", tasks);
-      renderTasks();
-    };
-
-    item.append(title, due, done, remove);
-    box.append(item);
-  });
-}
-
-$("taskForm").addEventListener("submit", event => {
-  event.preventDefault();
-  tasks.push({
-    title:$("taskTitle").value.trim(),
-    due:$("taskDue").value,
-    done:false
-  });
-  safeSave("jarvisTasks", tasks);
-  $("taskForm").reset();
-  renderTasks();
-  toast("Task saved locally.");
-});
-
-function renderMemories() {
-  const box = $("memoryList");
-  box.replaceChildren();
-
-  if (!memories.length) {
-    box.textContent = "No saved notes.";
-    return;
-  }
-
-  memories.forEach((memory, index) => {
-    const item = document.createElement("div");
-    item.className = "item";
-
-    const text = document.createElement("div");
-    text.textContent = memory;
-
-    const remove = document.createElement("button");
-    remove.className = "action";
-    remove.textContent = "DELETE";
-    remove.onclick = () => {
-      memories.splice(index, 1);
-      safeSave("jarvisMemories", memories);
-      renderMemories();
-    };
-
-    item.append(text, remove);
-    box.append(item);
-  });
-}
-
-$("memoryForm").addEventListener("submit", event => {
-  event.preventDefault();
-  memories.unshift($("memoryText").value.trim());
-  safeSave("jarvisMemories", memories);
-  $("memoryForm").reset();
-  renderMemories();
-  toast("Note saved locally.");
-});
-
-function renderOverview() {
-  const pending = tasks.filter(t => !t.done);
-  const box = $("overviewContent");
-  box.replaceChildren();
-
-  const date = document.createElement("p");
-  date.className = "note";
-  date.textContent = new Date().toLocaleDateString(undefined, {
-    weekday:"long", year:"numeric", month:"long", day:"numeric"
-  });
-
-  const summary = document.createElement("div");
-  summary.className = "item";
-  summary.textContent =
-    pending.length + " open tasks · " +
-    (tasks.length - pending.length) + " completed · " +
-    memories.length + " saved notes";
-
-  box.append(date, summary);
-
-  pending.forEach(task => {
-    const item = document.createElement("div");
-    item.className = "item";
-    item.textContent = task.title;
-    box.append(item);
-  });
-}
-
-$("clearData").addEventListener("click", () => {
-  if (!confirm("Delete all local tasks and notes?")) return;
-  tasks = [];
-  memories = [];
-  safeSave("jarvisTasks", tasks);
-  safeSave("jarvisMemories", memories);
-  renderTasks();
-  renderMemories();
-  renderOverview();
-  toast("Local data cleared.");
-});
-
-/* Neural voice engine */
-
-async function loadNeuralVoices() {
-  if (tts || ttsLoading) return;
-
-  ttsLoading = true;
-  $("voiceStatus").textContent = "Preparing neural voice engine...";
-  $("systemStatus").textContent = "LOADING VOICE MODEL";
-
-  try {
-    const { KittenTTS, createBrowserAudioPlayer } =
-      await import("https://cdn.jsdelivr.net/npm/@kittentts/web/+esm");
-
-    const model = $("modelSelect").value;
-
-    tts = await KittenTTS.create({
-      model,
-      player:createBrowserAudioPlayer(),
-      analytics:false
-    }, progress => {
-      const percent = Math.round(progress * 100);
-      $("voiceStatus").textContent =
-        "Downloading / preparing voice model: " + percent + "%";
-    });
-
-    $("voiceStatus").textContent =
-      "Neural voice engine ready. Model: " + model;
-
-    $("systemStatus").textContent = "NEURAL VOICES READY";
-    toast("Neural voices are ready.");
-  } catch (error) {
-    console.error("KittenTTS error:", error);
-    $("voiceStatus").textContent =
-      "Neural voice setup failed. Browser voice fallback is available.";
-    $("systemStatus").textContent = "BROWSER VOICE FALLBACK";
-    toast("Neural voice setup failed. Check your connection.");
-  } finally {
-    ttsLoading = false;
-  }
-}
-
-async function speak(text, who = personality) {
+function speak(text) {
   if (!text) return;
 
-  setState("speaking", who + " SPEAKING");
+  stopSpeech();
+  speaking = true;
+  setAnimation("speaking");
+  setStatus("VOICE OUTPUT");
 
-  if (tts) {
-    try {
-      await tts.speak(text, {
-        voice:profiles[who].voice
-      });
-      setState("", "AT YOUR SERVICE");
-      return;
-    } catch (error) {
-      console.error("Neural playback failed:", error);
-    }
+  // The intended KittenTTS integration point.
+  // Once the official SDK is bundled, this can use:
+  // jasper for JARVIS, luna for EDITH, rosie for FRIDAY.
+  if (window.JARVIS_TTS &&
+      typeof window.JARVIS_TTS.speak === "function") {
+    window.JARVIS_TTS.speak(
+      text,
+      personalities[activePersonality].voice
+    ).finally(() => {
+      speaking = false;
+      setAnimation("");
+      setStatus("SYSTEM READY");
+    });
+    return;
   }
 
+  // Honest fallback: the device's installed speech voice.
+  if (!("speechSynthesis" in window)) {
+    $("transcript").textContent =
+      "Speech output is not supported by this browser.";
+    setStatus("VOICE UNAVAILABLE");
+    return;
+  }
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  const selected = $("browserVoice").value;
+  const voices = speechSynthesis.getVoices();
+
+  if (selected) {
+    const voice = voices.find(v => v.name === selected);
+    if (voice) utterance.voice = voice;
+  }
+
+  utterance.rate = activePersonality === "edith" ? 0.94 : 1;
+  utterance.pitch = activePersonality === "friday" ? 1.08 : 0.95;
+
+  utterance.onend = () => {
+    speaking = false;
+    setAnimation("");
+    setStatus("SYSTEM READY");
+  };
+
+  utterance.onerror = () => {
+    speaking = false;
+    setAnimation("");
+    setStatus("VOICE ERROR");
+  };
+
+  speechSynthesis.speak(utterance);
+}
+
+function stopSpeech() {
   if ("speechSynthesis" in window) {
     speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    const available = speechSynthesis.getVoices();
-    utterance.voice =
-      available.find(v => v.lang.toLowerCase().startsWith("en")) || null;
-
-    utterance.onend = () => setState("", "AT YOUR SERVICE");
-    utterance.onerror = () => setState("", "AT YOUR SERVICE");
-    speechSynthesis.speak(utterance);
-  } else {
-    setState("", "VOICE OUTPUT UNAVAILABLE");
-    toast("This browser does not support speech output.");
   }
+  speaking = false;
+  setAnimation("");
+  setStatus("SYSTEM READY");
 }
 
-$("loadVoice").addEventListener("click", loadNeuralVoices);
+function loadBrowserVoices() {
+  if (!("speechSynthesis" in window)) return;
 
-function renderVoiceProfiles() {
-  const box = $("voiceProfiles");
-  box.replaceChildren();
+  const select = $("browserVoice");
+  const previous = select.value;
+  select.innerHTML = "";
 
-  Object.entries(profiles).forEach(([name, profile]) => {
-    const item = document.createElement("div");
-    item.className = "item";
-
-    const title = document.createElement("strong");
-    title.textContent = name + " — " + profile.voice.toUpperCase();
-
-    const preview = document.createElement("button");
-    preview.className = "action";
-    preview.textContent = "PREVIEW";
-    preview.onclick = () => speak(profile.sample, name);
-
-    item.append(title, preview);
-    box.append(item);
+  speechSynthesis.getVoices().forEach(voice => {
+    const option = document.createElement("option");
+    option.value = voice.name;
+    option.textContent = voice.name + " (" + voice.lang + ")";
+    select.appendChild(option);
   });
+
+  if (previous) select.value = previous;
 }
 
-/* Local command interpreter */
-
-function addBubble(text, who) {
-  const bubble = document.createElement("div");
-  bubble.className = "bubble " + who;
-  bubble.textContent = text;
-  $("chatlog").append(bubble);
-  $("chatlog").scrollTop = $("chatlog").scrollHeight;
+if ("speechSynthesis" in window) {
+  loadBrowserVoices();
+  speechSynthesis.onvoiceschanged = loadBrowserVoices;
 }
 
-function handleCommand(raw) {
-  const text = raw.trim();
-  const lower = text.toLowerCase();
-
-  if (/initiate lockdown|activate lockdown|edith lockdown/.test(lower)) {
-    initiateLockdown();
-    return "EDITH lockdown preview initiated. This is not real device security.";
-  }
-
-  if (/exit lockdown|cancel lockdown|unlock system/.test(lower)) {
-    exitLockdown();
-    return "Lockdown preview ended.";
-  }
-
-  if (lower.includes("edith") || lower.includes("security")) {
-    openPanel("security");
-    return "Opening the security console.";
-  }
-
-  if (lower.includes("friday")) {
-    setPersonality("FRIDAY");
-    return "FRIDAY is now active.";
-  }
-
-  if (lower.includes("jarvis")) {
-    setPersonality("JARVIS");
-    return "JARVIS is now active.";
-  }
-
-  if (lower.includes("show") && lower.includes("task")) {
-    openPanel("tasks");
-    return "Opening your task register.";
-  }
-
-  if (lower.includes("memory") || lower.includes("notes")) {
-    openPanel("memory");
-    return "Opening your memory archive.";
-  }
-
-  if (lower.includes("overview") || lower.includes("today")) {
-    openPanel("overview");
-    return "Opening your daily overview.";
-  }
-
-  if (lower.includes("settings") || lower.includes("voice")) {
-    openPanel("settings");
-    return "Opening voice settings.";
-  }
-
-  if (lower.includes("close") || lower.includes("hide panels")) {
-    closePanels();
-    return "Panels closed.";
-  }
-
-  if (lower.startsWith("add task ")) {
-    const title = text.slice(9).trim();
-    if (title) {
-      tasks.push({title,due:"",done:false});
-      safeSave("jarvisTasks", tasks);
-      renderTasks();
-      return "Task added to your local register.";
-    }
-  }
-
-  if (lower.startsWith("remember ")) {
-    const note = text.slice(9).trim();
-    if (note) {
-      memories.unshift(note);
-      safeSave("jarvisMemories", memories);
-      renderMemories();
-      return "I've saved that note locally.";
-    }
-  }
-
-  return "I can currently manage local tasks, notes, panels, personalities, and the lockdown preview. The full AI reasoning service is not connected yet.";
+function previewVoice() {
+  speak("Voice systems are ready. This is a preview of the selected personality.");
 }
-
-$("chatForm").addEventListener("submit", async event => {
-  event.preventDefault();
-  const text = $("chatInput").value.trim();
-  if (!text) return;
-
-  addBubble(text, "user");
-  $("chatInput").value = "";
-
-  setState("processing", "PROCESSING COMMAND");
-  const reply = handleCommand(text);
-  addBubble(reply, "assistant");
-  await speak(reply);
-});
-
-/* Voice recognition */
 
 function listen() {
-  if (lockdown) {
-    toast("EDITH lockdown preview is active.");
-    return;
-  }
-
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
 
   if (!SpeechRecognition) {
-    toast("Voice recognition is unavailable in this browser. Try typing in the console.");
-    openPanel("chat");
+    $("transcript").textContent =
+      "Voice recognition is unavailable in this browser. Try the command panel.";
     return;
   }
 
-  if (recognition) {
-    recognition.stop();
-    return;
-  }
+  if (speaking) stopSpeech();
+
+  recognition = new SpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onstart = () => {
+    setAnimation("listening");
+    setStatus("LISTENING");
+    $("transcript").textContent = "Listening...";
+  };
+
+  recognition.onresult = event => {
+    const text = event.results[0][0].transcript;
+    $("transcript").textContent = "You: " + text;
+    setAnimation("thinking");
+    setStatus("PROCESSING");
+    handleCommand(text);
+  };
+
+  recognition.onerror = () => {
+    setAnimation("");
+    setStatus("SYSTEM READY");
+    $("transcript").textContent =
+      "I couldn't hear that. Try again.";
+  };
+
+  recognition.onend = () => {
+    if (!speaking) {
+      setAnimation("");
+      setStatus("SYSTEM READY");
+    }
+  };
 
   try {
-    recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.interimResults = true;
-    recognition.continuous = false;
-    recognition.maxAlternatives = 1;
-
-    let finalText = "";
-
-    recognition.onstart = () => {
-      setState("listening", "LISTENING");
-      $("instruction").textContent = "LISTENING — SPEAK NOW";
-      $("systemStatus").textContent = "MICROPHONE ACTIVE";
-    };
-
-    recognition.onresult = event => {
-      let interim = "";
-
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const transcript = event.results[i][0].transcript;
-
-        if (event.results[i].isFinal) finalText += transcript + " ";
-        else interim += transcript;
-      }
-
-      $("instruction").textContent =
-        (finalText + interim).trim() || "LISTENING...";
-    };
-
-    recognition.onerror = event => {
-      toast("Microphone: " + event.error);
-    };
-
-    recognition.onend = async () => {
-      recognition = null;
-      $("instruction").textContent = "TAP THE CORE TO SPEAK";
-      $("systemStatus").textContent = "LOCAL SYSTEM READY";
-      setState("processing", "PROCESSING");
-
-      const transcript = finalText.trim();
-
-      if (transcript) {
-        addBubble(transcript, "user");
-        const reply = handleCommand(transcript);
-        addBubble(reply, "assistant");
-        await speak(reply);
-      } else {
-        setState("", "AT YOUR SERVICE");
-        toast("I didn't catch that. Try again.");
-      }
-    };
-
     recognition.start();
   } catch (error) {
-    recognition = null;
-    setState("", "AT YOUR SERVICE");
-    toast("Unable to start microphone.");
+    $("transcript").textContent =
+      "Voice recognition is already active.";
   }
 }
 
-$("core").addEventListener("click", listen);
-$("core").addEventListener("keydown", event => {
+$("coreButton").addEventListener("click",listen);
+$("coreButton").addEventListener("keydown",event => {
   if (event.key === "Enter" || event.key === " ") {
     event.preventDefault();
     listen();
   }
 });
 
-/* EDITH lockdown preview */
+function handleCommand(raw) {
+  const command = raw.toLowerCase().trim();
 
-function initiateLockdown() {
-  if (lockdown) return;
+  if (command.includes("switch to jarvis")) {
+    setPersonality("jarvis");
+    return;
+  }
 
-  lockdown = true;
-  document.body.classList.add("locked");
+  if (command.includes("switch to edith")) {
+    setPersonality("edith");
+    return;
+  }
+
+  if (command.includes("switch to friday")) {
+    setPersonality("friday");
+    return;
+  }
+
+  if (command.includes("open settings")) {
+    openPanel("settingsPanel");
+    respond("Configuration panel opened.");
+    return;
+  }
+
+  if (command.includes("open tasks")) {
+    openPanel("tasksPanel");
+    respond("Task manager opened.");
+    return;
+  }
+
+  if (command.includes("open memory")) {
+    openPanel("memoryPanel");
+    respond("Memory panel opened.");
+    return;
+  }
+
+  if (command.includes("open security")) {
+    openPanel("securityPanel");
+    respond("Security information opened.");
+    return;
+  }
+
+  if (command.includes("open commands")) {
+    openPanel("commandPanel");
+    respond("Command interface opened.");
+    return;
+  }
+
+  if (command.includes("close panel") ||
+      command.includes("close window")) {
+    closePanels();
+    respond("Panel closed.");
+    return;
+  }
+
+  if (command.includes("lockdown")) {
+    openPanel("securityPanel");
+    respond("EDITH security preview activated. This is not real device protection.");
+    return;
+  }
+
+  if (command.includes("what time")) {
+    respond("The current time is " +
+      new Date().toLocaleTimeString([], {
+        hour:"numeric",minute:"2-digit"
+      }));
+    return;
+  }
+
+  if (command.includes("hello") ||
+      command.includes("hey jarvis")) {
+    respond("Hello. I'm here and ready.");
+    return;
+  }
+
+  respond("I heard you say: " + raw +
+    ". I don't have an AI reasoning service connected yet.");
+}
+
+function respond(text) {
+  $("transcript").textContent = text;
+  speak(text);
+}
+
+function openPanel(id) {
   closePanels();
-  $("systemStatus").textContent = "EDITH LOCKDOWN PREVIEW";
-  $("coreMessage").textContent = "LOCKDOWN PREVIEW ACTIVE";
-  $("instruction").textContent = "LOCAL INTERFACE RESTRICTED";
-  $("coreLetter").textContent = "E";
-  document.body.classList.add("edith");
-
-  toast("EDITH lockdown preview active. Browser-only.");
+  $(id).classList.add("open");
 }
 
-function exitLockdown() {
-  if (!lockdown) return;
-
-  if (!confirm("Exit the local lockdown preview?")) return;
-
-  lockdown = false;
-  document.body.classList.remove("locked");
-  $("systemStatus").textContent = "LOCAL SYSTEM READY";
-  $("instruction").textContent = "TAP THE CORE TO SPEAK";
-  setPersonality("JARVIS");
-  toast("Lockdown preview ended.");
+function closePanels() {
+  document.querySelectorAll(".panel").forEach(panel => {
+    panel.classList.remove("open");
+  });
 }
 
-$("lockButton").addEventListener("click", initiateLockdown);
-$("unlockButton").addEventListener("click", exitLockdown);
+$("taskForm").addEventListener("submit",event => {
+  event.preventDefault();
+  const value = $("taskInput").value.trim();
+  if (!value) return;
 
-/* Clock and startup */
+  const tasks = JSON.parse(localStorage.getItem("jarvisTasks") || "[]");
+  tasks.push(value);
+  localStorage.setItem("jarvisTasks",JSON.stringify(tasks));
+  $("taskInput").value = "";
+  renderTasks();
+});
 
-function updateClock() {
-  $("clock").textContent =
-    new Date().toLocaleTimeString([], {
-      hour:"2-digit",
-      minute:"2-digit"
+function renderTasks() {
+  const tasks = JSON.parse(localStorage.getItem("jarvisTasks") || "[]");
+  $("taskList").innerHTML = "";
+
+  tasks.forEach((task,index) => {
+    const item = document.createElement("div");
+    item.className = "item";
+
+    const text = document.createElement("span");
+    text.textContent = task + " ";
+
+    const remove = document.createElement("button");
+    remove.textContent = "DONE";
+    remove.addEventListener("click",() => {
+      const updated = JSON.parse(localStorage.getItem("jarvisTasks") || "[]");
+      updated.splice(index,1);
+      localStorage.setItem("jarvisTasks",JSON.stringify(updated));
+      renderTasks();
     });
+
+    item.append(text,remove);
+    $("taskList").appendChild(item);
+  });
 }
 
-setPersonality(personality);
+$("memoryForm").addEventListener("submit",event => {
+  event.preventDefault();
+  const value = $("memoryInput").value.trim();
+  if (!value) return;
+
+  const notes = JSON.parse(localStorage.getItem("jarvisNotes") || "[]");
+  notes.push(value);
+  localStorage.setItem("jarvisNotes",JSON.stringify(notes));
+  $("memoryInput").value = "";
+  renderMemory();
+});
+
+function renderMemory() {
+  const notes = JSON.parse(localStorage.getItem("jarvisNotes") || "[]");
+  $("memoryList").innerHTML = "";
+
+  notes.forEach((note,index) => {
+    const item = document.createElement("div");
+    item.className = "item";
+
+    const text = document.createElement("span");
+    text.textContent = note + " ";
+
+    const remove = document.createElement("button");
+    remove.textContent = "DELETE";
+    remove.addEventListener("click",() => {
+      const updated = JSON.parse(localStorage.getItem("jarvisNotes") || "[]");
+      updated.splice(index,1);
+      localStorage.setItem("jarvisNotes",JSON.stringify(updated));
+      renderMemory();
+    });
+
+    item.append(text,remove);
+    $("memoryList").appendChild(item);
+  });
+}
+
+$("commandForm").addEventListener("submit",event => {
+  event.preventDefault();
+  const input = $("commandInput");
+  const value = input.value.trim();
+  if (!value) return;
+  input.value = "";
+  closePanels();
+  handleCommand(value);
+});
+
+function boot() {
+  const firstLaunch = !localStorage.getItem("jarvisBooted");
+  const bootScreen = $("boot");
+  const status = $("bootStatus");
+  const progress = $("progress");
+
+  const messages = firstLaunch
+    ? [
+        "Initializing systems",
+        "Establishing core interface",
+        "Loading personality systems",
+        "Checking voice interface",
+        "Systems operational"
+      ]
+    : [
+        "Waking systems",
+        "Checking core",
+        "Interface ready"
+      ];
+
+  let step = 0;
+  const duration = firstLaunch ? 750 : 300;
+  const interval = firstLaunch ? 550 : 350;
+
+  function advance() {
+    status.textContent = messages[step];
+    progress.style.width =
+      ((step + 1) / messages.length * 100) + "%";
+
+    step++;
+
+    if (step < messages.length) {
+      setTimeout(advance,interval);
+    } else {
+      setTimeout(() => {
+        bootScreen.classList.add("hidden");
+        localStorage.setItem("jarvisBooted","true");
+        setStatus("SYSTEM READY");
+
+        if (firstLaunch) {
+          respond(personalities.jarvis.greeting);
+        }
+      },duration);
+    }
+  }
+
+  advance();
+}
+
 renderTasks();
-renderMemories();
-renderOverview();
-renderVoiceProfiles();
-updateClock();
-setInterval(updateClock, 30000);
-
-if ("speechSynthesis" in window) {
-  speechSynthesis.getVoices();
-}
-
+renderMemory();
+boot();
 </script>
+
 </body>
 </html>
-```
