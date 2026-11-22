@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080d18">
+  <title>JARVIS</title>
+  <style>
+    :root {
+      --bg: #080d18;
+      --panel: #101a2b;
+      --blue: #35cfff;
+      --green: #45e69a;
+      --amber: #ffc45c;
+      --red: #ff5268;
+      --purple: #b78aff;
+      --text: #e8f5ff;
+      --muted: #8295aa;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(ellipse at top, #12243b, var(--bg) 65%);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 24px 20px;
+      border-bottom: 1px solid #20334a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      color: var(--blue);
+      letter-spacing: 5px;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .status {
+      color: var(--green);
+      font-size: 12px;
+      letter-spacing: 2px;
+    }
+
+    main {
+      width: min(900px, 92%);
+      margin: 30px auto;
+    }
+
+    .welcome {
+      text-align: center;
+      padding: 35px 10px;
+    }
+
+    .core {
+      width: 115px;
+      height: 115px;
+      border: 2px solid var(--blue);
+      border-radius: 50%;
+      margin: 0 auto 22px;
+      display: grid;
+      place-items: center;
+      color: var(--blue);
+      font-size: 35px;
+      box-shadow: 0 0 25px #35cfff44, inset 0 0 25px #35cfff22;
+    }
+
+    h1 { margin: 0 0 10px; letter-spacing: 3px; }
+    .muted { color: var(--muted); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+    }
+
+    .panel {
+      background: #101a2be8;
+      border: 1px solid #243951;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .panel h2 {
+      font-size: 14px;
+      letter-spacing: 2px;
+      margin-top: 0;
+      color: var(--blue);
+    }
+
+    .green { color: var(--green); }
+    .amber { color: var(--amber); }
+    .purple { color: var(--purple); }
+
+    input, textarea, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 9px;
+      border-radius: 7px;
+      font: inherit;
+    }
+
+    input, textarea {
+      background: #080f1c;
+      border: 1px solid #30445c;
+      color: var(--text);
+    }
+
+    button {
+      background: #12344b;
+      color: var(--blue);
+      border: 1px solid var(--blue);
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover { background: #1a4964; }
+
+    .item {
+      padding: 10px 0;
+      border-bottom: 1px solid #243951;
+      overflow-wrap: anywhere;
+    }
+
+    .item:last-child { border-bottom: none; }
+
+    .delete {
+      width: auto;
+      padding: 5px 10px;
+      margin-left: 8px;
+      color: var(--red);
+      border-color: var(--red);
+      font-size: 12px;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 25px;
+      font-size: 11px;
+      letter-spacing: 2px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="logo">J.A.R.V.I.S.</div>
+    <div class="status">● LOCAL SYSTEM ONLINE</div>
+  </header>
+
+  <main>
+    <section class="welcome">
+      <div class="core">J</div>
+      <h1>GOOD TO SEE YOU</h1>
+      <p class="muted">Just A Rather Very Intelligent System</p>
+      <p class="green">Dashboard initialized.</p>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <h2>SYSTEM STATUS</h2>
+        <p class="green">● Interface operational</p>
+        <p class="green">● Local storage available</p>
+        <p class="amber">● AI connection not configured</p>
+      </div>
+
+      <div class="panel">
+        <h2>TASK MANAGER</h2>
+        <div id="tasks"></div>
+        <input id="taskInput" placeholder="Enter a task...">
+        <button onclick="addTask()">ADD TASK</button>
+      </div>
+
+      <div class="panel">
+        <h2>MEMORY BANK</h2>
+        <div id="memories"></div>
+        <input id="memoryInput" placeholder="Something to remember...">
+        <button onclick="addMemory()">SAVE MEMORY</button>
+      </div>
+
+      <div class="panel">
+        <h2>JARVIS CONSOLE</h2>
+        <p class="muted" id="response">
+          Good day. My interface is operational. My AI connection is still awaiting configuration.
+        </p>
+        <input id="commandInput" placeholder="Enter a command...">
+        <button onclick="runCommand()">SEND</button>
+      </div>
+    </section>
+  </main>
+
+  <footer>JARVIS SYSTEMS • VERSION 0.1 • DEVELOPMENT BUILD</footer>
+
+  <script>
+    const getData = key => JSON.parse(localStorage.getItem(key) || "[]");
+    const saveData = (key, data) =>
+      localStorage.setItem(key, JSON.stringify(data));
+
+    function renderTasks() {
+      const tasks = getData("jarvisTasks");
+      document.getElementById("tasks").innerHTML = tasks.length
+        ? tasks.map((task, i) =>
+            `<div class="item">${escapeHTML(task)}
+            <button class="delete" onclick="deleteTask(${i})">DONE</button></div>`
+          ).join("")
+        : '<p class="muted">No tasks currently recorded.</p>';
+    }
+
+    function addTask() {
+      const input = document.getElementById("taskInput");
+      if (!input.value.trim()) return;
+      const tasks = getData("jarvisTasks");
+      tasks.push(input.value.trim());
+      saveData("jarvisTasks", tasks);
+      input.value = "";
+      renderTasks();
+    }
+
+    function deleteTask(index) {
+      const tasks = getData("jarvisTasks");
+      tasks.splice(index, 1);
+      saveData("jarvisTasks", tasks);
+      renderTasks();
+    }
+
+    function renderMemories() {
+      const memories = getData("jarvisMemories");
+      document.getElementById("memories").innerHTML = memories.length
+        ? memories.map((memory, i) =>
+            `<div class="item">${escapeHTML(memory)}
+            <button class="delete" onclick="deleteMemory(${i})">DELETE</button></div>`
+          ).join("")
+        : '<p class="muted">Memory bank is empty.</p>';
+    }
+
+    function addMemory() {
+      const input = document.getElementById("memoryInput");
+      if (!input.value.trim()) return;
+      const memories = getData("jarvisMemories");
+      memories.push(input.value.trim());
+      saveData("jarvisMemories", memories);
+      input.value = "";
+      renderMemories();
+    }
+
+    function deleteMemory(index) {
+      const memories = getData("jarvisMemories");
+      memories.splice(index, 1);
+      saveData("jarvisMemories", memories);
+      renderMemories();
+    }
+
+    function escapeHTML(value) {
+      return value.replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;",
+        '"': "&quot;", "'": "&#39;"
+      })[char]);
+    }
+
+    function runCommand() {
+      const input = document.getElementById("commandInput");
+      const response = document.getElementById("response");
+      const command = input.value.trim();
+      if (!command) return;
+
+      response.textContent =
+        `Command received: "${command}". AI connection is not configured yet.`;
+      input.value = "";
+    }
+
+    renderTasks();
+    renderMemories();
+  </script>
+</body>
+</html>
