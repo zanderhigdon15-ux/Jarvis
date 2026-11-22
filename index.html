@@ -3,180 +3,351 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#07111f">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#06101d">
 <title>JARVIS</title>
 <style>
-:root{color-scheme:dark;--bg:#06101d;--glass:rgba(16,35,57,.48);--line:rgba(157,208,255,.19);--text:#eaf6ff;--muted:#91a9bd;--accent:#68caff;--accent2:#b9e8ff;--shadow:0 24px 80px rgba(0,0,0,.38)}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
-body{overflow-x:hidden;background:radial-gradient(ellipse at 50% 42%,#102b45 0,#091827 34%,#050b14 78%);min-height:100svh}
-body:before,body:after{content:"";position:fixed;inset:0;pointer-events:none}
-body:before{opacity:.18;background-image:linear-gradient(rgba(150,210,255,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(150,210,255,.055) 1px,transparent 1px);background-size:48px 48px;mask-image:radial-gradient(ellipse at center,#000,transparent 75%)}
-body:after{background:radial-gradient(circle at 15% 15%,rgba(43,136,196,.13),transparent 30%),radial-gradient(circle at 85% 75%,rgba(30,83,138,.13),transparent 34%)}
-button,input,textarea,select{font:inherit}button{cursor:pointer;color:inherit}
+:root{
+  color-scheme:dark;
+  --bg:#050b14;
+  --accent:#68caff;
+  --accent2:#b9e8ff;
+  --glow:rgba(70,180,255,.4);
+  --line:rgba(140,205,255,.2);
+  --text:#eaf6ff;
+  --muted:#91a9bd;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+body{
+  min-height:100svh;overflow:hidden;
+  background:radial-gradient(ellipse at center,#102b45 0,#091827 40%,#050b14 85%);
+}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.16;
+  background-image:linear-gradient(rgba(150,210,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(150,210,255,.06) 1px,transparent 1px);
+  background-size:48px 48px;
+  mask-image:radial-gradient(ellipse at center,#000,transparent 75%);
+}
+body.edith{--accent:#ff526f;--accent2:#ffc0cb;--glow:rgba(255,65,100,.42);--line:rgba(255,100,130,.22)}
+body.friday{--accent:#bd91ff;--accent2:#e4d1ff;--glow:rgba(175,120,255,.42);--line:rgba(190,145,255,.22)}
 #app{position:relative;z-index:1;min-height:100svh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 22px env(safe-area-inset-bottom)}
-.topbar{height:64px;display:flex;align-items:center;justify-content:space-between;max-width:1100px;width:100%;margin:0 auto}
-.brand{font-size:12px;letter-spacing:.32em;color:#d6efff;font-weight:650}.brand span{color:var(--accent)}
-.status{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.topbar{height:65px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-size:11px;letter-spacing:.32em;color:#d6efff}
+.brand span{color:var(--accent)}
+.status{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:10px;letter-spacing:.12em}
 .dot{width:7px;height:7px;border-radius:50%;background:#69d9b0;box-shadow:0 0 12px #69d9b0}
-.stage{flex:1;display:flex;align-items:center;justify-content:center;min-height:540px;position:relative}
-.core-wrap{display:flex;flex-direction:column;align-items:center;gap:26px;transform:translateY(-8px)}
-.core{width:min(58vw,260px);aspect-ratio:1;border:1px solid rgba(133,208,255,.35);border-radius:50%;position:relative;display:grid;place-items:center;background:radial-gradient(circle,rgba(61,163,220,.17),rgba(8,28,48,.28) 55%,rgba(8,20,34,.08) 70%);box-shadow:0 0 35px rgba(60,171,230,.13),inset 0 0 45px rgba(95,194,255,.11)}
-.core:before,.core:after{content:"";position:absolute;border-radius:50%;inset:12%;border:1px solid rgba(135,218,255,.38);box-shadow:0 0 24px rgba(91,190,255,.12)}
-.core:before{border-left-color:transparent;border-bottom-color:rgba(135,218,255,.12);animation:spin 18s linear infinite}
-.core:after{inset:22%;border-right-color:transparent;border-top-color:rgba(135,218,255,.12);animation:spin 12s linear infinite reverse}
-.core-inner{width:42%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e8fbff 0,#86d9ff 10%,#2376a7 35%,#0b2944 70%);box-shadow:0 0 22px #6dcaff,0 0 65px rgba(63,177,242,.55),inset 0 0 18px rgba(255,255,255,.45);animation:pulse 4s ease-in-out infinite}
-.core-label{text-align:center}.core-label h1{font-size:14px;letter-spacing:.42em;font-weight:500;margin:0 0 9px}.core-label p{font-size:11px;color:var(--muted);letter-spacing:.14em;margin:0}
-.controls{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
-.glass-btn{border:1px solid var(--line);background:linear-gradient(145deg,rgba(170,220,255,.12),rgba(25,56,83,.22));backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-radius:999px;padding:12px 19px;font-size:12px;letter-spacing:.06em;box-shadow:inset 0 1px rgba(255,255,255,.09);transition:.2s}
-.glass-btn:hover,.glass-btn:focus-visible{border-color:var(--accent);box-shadow:0 0 24px rgba(91,190,255,.18);outline:none}.glass-btn.primary{background:linear-gradient(135deg,rgba(75,174,230,.32),rgba(23,77,113,.38));border-color:rgba(119,211,255,.45)}
-.quickbar{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:2px}.quickbar button{border:0;background:transparent;color:#829bb1;font-size:11px;padding:8px 10px}.quickbar button:hover{color:var(--accent2)}
-.footer{max-width:1100px;width:100%;margin:0 auto 14px;display:flex;justify-content:space-between;color:#688198;font-size:10px;letter-spacing:.12em;text-transform:uppercase}
-.panel{position:fixed;z-index:5;top:76px;right:18px;bottom:18px;width:min(440px,calc(100vw - 36px));border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,rgba(18,42,66,.88),rgba(7,19,32,.91));backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);box-shadow:var(--shadow),inset 0 1px rgba(255,255,255,.1);padding:22px;overflow:auto;transform:translateX(calc(100% + 30px));opacity:0;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .25s}
-.panel.open{transform:translateX(0);opacity:1}.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}.panel-head h2{font-size:14px;letter-spacing:.2em;font-weight:550;margin:0}.close{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.05);font-size:18px}
-.field{display:flex;flex-direction:column;gap:7px;margin:13px 0}.field label{font-size:10px;color:var(--muted);letter-spacing:.13em;text-transform:uppercase}.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:12px;background:rgba(3,13,23,.6);color:var(--text);padding:12px;outline:none}.field textarea{min-height:90px;resize:vertical}.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--accent)}
-.row{display:flex;gap:9px;align-items:center}.row>*{flex:1;min-width:0}.section-note{font-size:12px;color:var(--muted);line-height:1.6;margin:0 0 14px}
-.item{padding:13px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.035);margin:9px 0}.item strong{font-size:13px;font-weight:550}.item small{display:block;color:var(--muted);font-size:11px;margin-top:5px}.item-actions{display:flex;gap:8px;margin-top:10px}.mini{font-size:10px;padding:7px 10px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.05)}
-.chatlog{display:flex;flex-direction:column;gap:10px;max-height:48vh;overflow:auto;margin-bottom:14px}.bubble{max-width:88%;padding:11px 13px;border-radius:14px;font-size:12px;line-height:1.5;background:rgba(120,190,235,.1);border:1px solid var(--line)}.bubble.user{align-self:flex-end;background:rgba(63,150,205,.2)}.bubble.assistant{align-self:flex-start}
-.range-line{display:flex;justify-content:space-between;color:var(--muted);font-size:11px}.field input[type=range]{padding:0;accent-color:var(--accent)}
-.personality{display:flex;gap:8px;margin:12px 0 18px}.personality button{flex:1;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.04);padding:10px 5px;font-size:10px;letter-spacing:.1em}.personality button.active{border-color:var(--accent);color:var(--accent2);background:rgba(90,180,235,.12)}
-.empty{color:#7890a5;text-align:center;padding:26px 8px;font-size:12px}
-.toast{position:fixed;z-index:8;bottom:28px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:rgba(13,34,53,.92);border:1px solid var(--line);padding:11px 16px;border-radius:999px;font-size:11px;transition:.25s}.toast.show{opacity:1;transform:translate(-50%,0)}
-.security-status{display:flex;align-items:center;gap:9px;padding:12px;border:1px solid rgba(255,190,100,.25);background:rgba(255,170,70,.07);border-radius:13px;font-size:11px;color:#ffd49a;line-height:1.5}
-.security-status .status-dot{width:8px;height:8px;border-radius:50%;background:#ffbd69;flex-shrink:0}
-.security-section{margin-top:22px}.security-section h3{font-size:10px;letter-spacing:.17em;color:var(--accent2);font-weight:600;margin:0 0 10px}
-.security-card{padding:14px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.035);margin:9px 0}
-.security-card strong{font-size:12px;font-weight:550}.security-card p{font-size:11px;color:var(--muted);line-height:1.6;margin:7px 0 0}
-.security-input{display:block;width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;background:rgba(3,13,23,.7);color:var(--text);margin-top:10px}
-.security-action{width:100%;margin-top:10px;opacity:.55;cursor:not-allowed}
-.security-label{font-size:10px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;display:block;margin-top:12px}
-body.edith{--accent:#ff7185;--accent2:#ffd0d7;--line:rgba(255,130,150,.2)}body.friday{--accent:#c39aff;--accent2:#e5d4ff;--line:rgba(192,150,255,.2)}
-@keyframes spin{to{transform:rotate(360deg)}}@keyframes pulse{0%,100%{transform:scale(.94);filter:brightness(.9)}50%{transform:scale(1.06);filter:brightness(1.25)}}
-@media(max-width:600px){#app{padding-left:16px;padding-right:16px}.topbar{height:58px}.stage{min-height:calc(100svh - 120px)}.core{width:220px}.panel{top:auto;right:9px;left:9px;bottom:9px;width:auto;max-height:82svh;border-radius:22px}.footer{font-size:9px}.glass-btn{padding:11px 15px}}
+.stage{flex:1;display:grid;place-items:center;min-height:0}
+.core-wrap{display:flex;flex-direction:column;align-items:center;gap:24px;transform:translateY(-12px)}
+.core{
+  width:min(65vw,290px);aspect-ratio:1;
+  position:relative;display:grid;place-items:center;
+  border:1px solid var(--line);border-radius:46% 54% 51% 49% / 48% 45% 55% 52%;
+  background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--accent) 19%,transparent),rgba(8,28,48,.35) 58%,rgba(8,20,34,.1) 75%);
+  box-shadow:0 0 45px var(--glow),inset 0 0 55px color-mix(in srgb,var(--accent) 18%,transparent);
+  cursor:pointer;outline:none;
+  animation:float 7s ease-in-out infinite;
+  -webkit-tap-highlight-color:transparent;
+}
+.core:before,.core:after{
+  content:"";position:absolute;inset:8%;border-radius:48% 52% 50% 50%;
+  border:1px solid color-mix(in srgb,var(--accent) 65%,transparent);
+  pointer-events:none;
+}
+.core:before{border-left-color:transparent;border-bottom-color:transparent;animation:spin 16s linear infinite}
+.core:after{inset:19%;border-right-color:transparent;border-top-color:transparent;animation:spin 11s linear infinite reverse}
+.core-inner{
+  width:47%;aspect-ratio:1;border-radius:50%;
+  display:grid;place-items:center;
+  background:radial-gradient(circle at 35% 28%,#fff 0,color-mix(in srgb,var(--accent) 85%,white) 13%,color-mix(in srgb,var(--accent) 60%,#09223b) 48%,#071827 80%);
+  box-shadow:0 0 28px var(--accent),0 0 75px var(--glow),inset 0 0 22px rgba(255,255,255,.35);
+  animation:pulse 4s ease-in-out infinite;
+}
+.core-letter{
+  color:#fff;font-size:clamp(38px,12vw,62px);font-weight:300;
+  letter-spacing:.04em;text-shadow:0 0 18px var(--accent),0 0 35px var(--accent);
+  user-select:none;
+}
+.core.listening{filter:brightness(1.45);box-shadow:0 0 65px var(--accent),0 0 130px var(--glow)}
+.core-label{text-align:center}
+.core-label h1{font-size:14px;letter-spacing:.42em;font-weight:500;margin:0 0 9px}
+.core-label p{font-size:10px;color:var(--muted);letter-spacing:.18em;margin:0}
+.hint{font-size:10px;color:#718ba2;letter-spacing:.16em;text-align:center}
+.footer{display:flex;justify-content:space-between;margin:0 0 14px;color:#688198;font-size:9px;letter-spacing:.12em}
+.panel{
+  position:fixed;z-index:5;top:75px;right:16px;bottom:16px;
+  width:min(440px,calc(100vw - 32px));
+  border:1px solid var(--line);border-radius:24px;
+  background:linear-gradient(145deg,rgba(18,42,66,.94),rgba(7,19,32,.96));
+  backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
+  padding:22px;overflow:auto;
+  transform:translateX(calc(100% + 30px));opacity:0;
+  transition:transform .35s ease,opacity .25s;
+}
+.panel.open{transform:translateX(0);opacity:1}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.panel-head h2{font-size:13px;letter-spacing:.2em;font-weight:550;margin:0}
+.close{width:35px;height:35px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.05);font-size:19px}
+.field{display:flex;flex-direction:column;gap:7px;margin:13px 0}
+.field label{font-size:10px;color:var(--muted);letter-spacing:.13em}
+.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:12px;background:rgba(3,13,23,.7);color:var(--text);padding:12px}
+.field textarea{min-height:85px}
+.note{font-size:12px;color:var(--muted);line-height:1.6}
+.btn{border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:999px;padding:11px 17px;color:var(--text);font-size:11px}
+.btn.primary{border-color:var(--accent);color:var(--accent2)}
+.item{padding:13px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.035);margin:9px 0}
+.item strong{font-size:13px;font-weight:550}
+.item small{display:block;color:var(--muted);font-size:11px;margin-top:5px}
+.mini{font-size:10px;padding:7px 10px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.05);margin:8px 5px 0 0}
+.chatlog{display:flex;flex-direction:column;gap:10px;max-height:48vh;overflow:auto;margin-bottom:14px}
+.bubble{max-width:88%;padding:11px 13px;border-radius:14px;font-size:12px;line-height:1.5;background:rgba(120,190,235,.1);border:1px solid var(--line)}
+.bubble.user{align-self:flex-end}.bubble.assistant{align-self:flex-start}
+.toast{position:fixed;z-index:9;bottom:55px;left:50%;transform:translate(-50%,15px);opacity:0;pointer-events:none;background:rgba(13,34,53,.95);border:1px solid var(--line);padding:11px 16px;border-radius:999px;font-size:11px;transition:.2s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{transform:scale(.94);filter:brightness(.9)}50%{transform:scale(1.07);filter:brightness(1.3)}}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
+@media(max-width:600px){.core{width:245px}.panel{top:auto;right:8px;left:8px;bottom:8px;width:auto;max-height:82svh}.topbar{height:55px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div id="app">
-<header class="topbar"><div class="brand">T<span>.</span> STARK SYSTEMS</div><div class="status"><span class="dot"></span><span id="systemStatus">LOCAL SYSTEM READY</span></div></header>
-<main class="stage"><div class="core-wrap">
-<div class="core" aria-label="Animated JARVIS interface core"><div class="core-inner"></div></div>
-<div class="core-label"><h1 id="personaTitle">J.A.R.V.I.S.</h1><p id="coreMessage">AT YOUR SERVICE</p></div>
-<div class="controls"><button class="glass-btn primary" id="activateBtn">◉ &nbsp; ACTIVATE VOICE</button><button class="glass-btn" data-panel="chat">OPEN CONSOLE</button></div>
-<div class="quickbar">
-<button data-panel="tasks">TASKS</button><button data-panel="memory">MEMORY</button><button data-panel="overview">DAILY OVERVIEW</button><button data-panel="settings">SETTINGS</button><button data-panel="security">SECURITY</button>
-</div>
-<div class="personality" style="width:min(330px,90vw)"><button class="active" data-persona="JARVIS">JARVIS</button><button data-persona="EDITH">EDITH</button><button data-persona="FRIDAY">FRIDAY</button></div>
-</div></main>
-<footer class="footer"><span>PERSONAL ASSISTANT // PROTOTYPE</span><span id="clock">--:--</span></footer>
+  <header class="topbar">
+    <div class="brand">T<span>.</span> STARK SYSTEMS</div>
+    <div class="status"><span class="dot"></span><span id="systemStatus">STANDBY</span></div>
+  </header>
+
+  <main class="stage">
+    <div class="core-wrap">
+      <button class="core" id="core" aria-label="Tap to speak">
+        <span class="core-inner"><span class="core-letter" id="coreLetter">J</span></span>
+      </button>
+      <div class="core-label">
+        <h1 id="personaTitle">J.A.R.V.I.S.</h1>
+        <p id="coreMessage">AT YOUR SERVICE</p>
+      </div>
+      <div class="hint" id="hint">TAP THE CORE TO SPEAK</div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>PERSONAL ASSISTANT</span><span id="clock"></span>
+  </footer>
 </div>
 
 <aside class="panel" id="panel-chat">
-<div class="panel-head"><h2>COMMAND CONSOLE</h2><button class="close" aria-label="Close">×</button></div>
-<p class="section-note">The local console is active. A real AI service is not connected yet.</p>
-<div class="chatlog" id="chatlog"><div class="bubble assistant">Systems are ready. I can manage local tasks and notes. AI conversation will be enabled after a secure service is connected.</div></div>
-<form id="chatForm"><div class="field"><label for="chatInput">Message</label><textarea id="chatInput" placeholder="Type a command or message..." required></textarea></div><button class="glass-btn primary" type="submit">SEND MESSAGE</button></form>
+  <div class="panel-head"><h2>COMMAND CONSOLE</h2><button class="close">×</button></div>
+  <div class="chatlog" id="chatlog"><div class="bubble assistant">Standing by. A live AI service has not been connected yet.</div></div>
+  <form id="chatForm">
+    <div class="field"><label for="chatInput">MESSAGE</label><textarea id="chatInput" required></textarea></div>
+    <button class="btn primary">SEND</button>
+  </form>
 </aside>
 
 <aside class="panel" id="panel-tasks">
-<div class="panel-head"><h2>TASK REGISTER</h2><button class="close">×</button></div>
-<p class="section-note">Tasks are stored locally in this browser on this device.</p>
-<form id="taskForm"><div class="field"><label for="taskTitle">Task</label><input id="taskTitle" placeholder="e.g. Finish biology notes" required></div><div class="field"><label for="taskDue">Due date</label><input id="taskDue" type="date"></div><button class="glass-btn primary">ADD TASK</button></form>
-<div id="taskList"></div>
+  <div class="panel-head"><h2>TASK REGISTER</h2><button class="close">×</button></div>
+  <p class="note">Tasks are stored in this browser on this device.</p>
+  <form id="taskForm">
+    <div class="field"><label for="taskTitle">TASK</label><input id="taskTitle" required></div>
+    <div class="field"><label for="taskDue">DUE DATE</label><input id="taskDue" type="date"></div>
+    <button class="btn primary">ADD TASK</button>
+  </form>
+  <div id="taskList"></div>
 </aside>
 
 <aside class="panel" id="panel-memory">
-<div class="panel-head"><h2>MEMORY ARCHIVE</h2><button class="close">×</button></div>
-<p class="section-note">Save notes you want this browser-based prototype to keep. This is local device storage, not cloud memory.</p>
-<form id="memoryForm"><div class="field"><label for="memoryText">Memory / note</label><textarea id="memoryText" placeholder="Save a useful note..." required></textarea></div><button class="glass-btn primary">SAVE MEMORY</button></form>
-<div id="memoryList"></div>
+  <div class="panel-head"><h2>MEMORY ARCHIVE</h2><button class="close">×</button></div>
+  <p class="note">Notes are stored locally, not synced to an account.</p>
+  <form id="memoryForm">
+    <div class="field"><label for="memoryText">NOTE</label><textarea id="memoryText" required></textarea></div>
+    <button class="btn primary">SAVE NOTE</button>
+  </form>
+  <div id="memoryList"></div>
 </aside>
 
 <aside class="panel" id="panel-overview">
-<div class="panel-head"><h2>DAILY OVERVIEW</h2><button class="close">×</button></div>
-<p class="section-note" id="overviewDate"></p><div id="overviewContent"></div>
+  <div class="panel-head"><h2>DAILY OVERVIEW</h2><button class="close">×</button></div>
+  <p class="note" id="overviewDate"></p><div id="overviewContent"></div>
 </aside>
 
 <aside class="panel" id="panel-settings">
-<div class="panel-head"><h2>SYSTEM SETTINGS</h2><button class="close">×</button></div>
-<p class="section-note">Choose a separate browser voice and speaking style for each personality. Available voices depend on this device and browser.</p>
-<div id="voiceSettings"></div>
-<div class="field"><label>Voice preview</label><button class="glass-btn" id="previewCurrent">PREVIEW ACTIVE PERSONALITY</button></div>
-<p class="section-note">Voice recognition requires browser support and microphone permission. This page cannot listen continuously in the background on iPhone.</p>
-<button class="glass-btn" id="clearData">CLEAR LOCAL TASKS & MEMORY</button>
+  <div class="panel-head"><h2>SYSTEM SETTINGS</h2><button class="close">×</button></div>
+  <p class="note">Available voices depend on your device and browser.</p>
+  <div id="voiceSettings"></div>
+  <button class="btn" id="previewCurrent">PREVIEW VOICE</button>
+  <p class="note">iPhone browsers cannot reliably listen continuously in the background.</p>
+  <button class="btn" id="clearData">CLEAR LOCAL TASKS & MEMORY</button>
 </aside>
 
 <aside class="panel" id="panel-security">
-<div class="panel-head"><h2>EDITH // SECURITY CENTER</h2><button class="close">×</button></div>
-<p class="section-note">Administrator security and account protection.</p>
-
-<div class="security-status"><span class="status-dot"></span><span>SECURITY SETUP INCOMPLETE · Verification backend not connected</span></div>
-
-<section class="security-section">
-<h3>PHONE VERIFICATION</h3>
-<div class="security-card">
-<strong>Administrator phone number</strong>
-<p>Enter the number you intend to use for sign-in verification. It will not be saved by this prototype.</p>
-<label class="security-label" for="securityPhone">Phone number</label>
-<input class="security-input" id="securityPhone" type="tel" autocomplete="tel" placeholder="+1 (555) 555-0123">
-<button class="glass-btn security-action" type="button" disabled>SMS VERIFICATION NOT CONNECTED</button>
-<p>SMS delivery and code verification require a secure backend. No verification message has been sent.</p>
-</div>
-</section>
-
-<section class="security-section">
-<h3>SIGN-IN PROTECTION</h3>
-<div class="security-card"><strong>One-time verification codes</strong><p>Planned for administrator sign-in and protected actions.</p><small>STATUS: NOT CONFIGURED</small></div>
-<div class="security-card"><strong>Administrator access</strong><p>Planned: require a password and one-time code before changing core settings, permissions, or connected accounts.</p><small>STATUS: NOT CONFIGURED</small></div>
-</section>
-
-<section class="security-section">
-<h3>DEVICES & SESSIONS</h3>
-<div class="security-card"><strong>Trusted devices</strong><p>Device authorization will appear here after account sign-in is implemented.</p><small>NO DEVICES REGISTERED</small></div>
-<div class="security-card"><strong>Active sessions</strong><p>Session review and remote sign-out will be available after backend authentication is connected.</p><small>SESSION MANAGEMENT UNAVAILABLE</small></div>
-</section>
-
-<section class="security-section">
-<h3>SECURITY ACTIVITY</h3>
-<div class="security-card"><strong>Security event log</strong><p>There are no verified sign-in events yet. This prototype does not currently authenticate accounts or monitor devices.</p><small>NO EVENTS RECORDED</small></div>
-</section>
+  <div class="panel-head"><h2>EDITH // SECURITY</h2><button class="close">×</button></div>
+  <p class="note">Security interface only. Authentication and SMS verification are not connected.</p>
+  <div class="item"><strong>Local storage</strong><small>Available on this browser</small></div>
+  <div class="item"><strong>External integrations</strong><small>Not connected</small></div>
+  <div class="item"><strong>Authentication</strong><small>Backend required</small></div>
 </aside>
 
 <div class="toast" id="toast" role="status"></div>
 
 <script>
 const $=id=>document.getElementById(id);
-const read=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
-const save=(key,value)=>localStorage.setItem(key,JSON.stringify(value));
-let tasks=read('jarvisTasks',[]),memories=read('jarvisMemories',[]),personality=localStorage.getItem('jarvisPersona')||'JARVIS',voices=[];
+const read=(k,f)=>{try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}};
+const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+let tasks=read('jarvisTasks',[]),memories=read('jarvisMemories',[]);
+let personality=localStorage.getItem('jarvisPersona')||'JARVIS';
+let voices=[],recognition=null;
+
 const profiles={
-JARVIS:{sample:'Good evening. All systems are standing by.',rate:.94,pitch:.88},
-EDITH:{sample:'Security systems are standing by. Awaiting your instruction.',rate:.91,pitch:.82},
-FRIDAY:{sample:'Hey. I’m here whenever you need me.',rate:1.02,pitch:1.08}
+ JARVIS:{letter:'J',title:'J.A.R.V.I.S.',message:'AT YOUR SERVICE',sample:'Good evening. All systems are standing by.',rate:.94,pitch:.88},
+ EDITH:{letter:'E',title:'E.D.I.T.H.',message:'SECURITY SYSTEM READY',sample:'Security systems are standing by.',rate:.91,pitch:.82},
+ FRIDAY:{letter:'F',title:'F.R.I.D.A.Y.',message:'READY WHEN YOU ARE',sample:'Hey. I’m here whenever you need me.',rate:1.02,pitch:1.08}
 };
-function toast(message){$('toast').textContent=message;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2200)}
-function openPanel(name){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('open'));const p=$('panel-'+name);if(p)p.classList.add('open');if(name==='overview')renderOverview();if(name==='settings')renderVoiceSettings()}
+
+function toast(s){$('toast').textContent=s;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2200)}
+function setPersonality(name){
+ if(!profiles[name])return;
+ personality=name;localStorage.setItem('jarvisPersona',name);
+ document.body.classList.toggle('edith',name==='EDITH');
+ document.body.classList.toggle('friday',name==='FRIDAY');
+ $('coreLetter').textContent=profiles[name].letter;
+ $('personaTitle').textContent=profiles[name].title;
+ $('coreMessage').textContent=profiles[name].message;
+}
+function openPanel(name){
+ document.querySelectorAll('.panel').forEach(p=>p.classList.remove('open'));
+ const p=$('panel-'+name);if(p)p.classList.add('open');
+ if(name==='overview')renderOverview();
+ if(name==='settings')renderVoiceSettings();
+}
 function closePanels(){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('open'))}
-document.querySelectorAll('[data-panel]').forEach(b=>b.addEventListener('click',()=>openPanel(b.dataset.panel)));
 document.querySelectorAll('.close').forEach(b=>b.addEventListener('click',closePanels));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closePanels()});
-function setPersonality(name){personality=name;localStorage.setItem('jarvisPersona',name);document.body.classList.toggle('edith',name==='EDITH');document.body.classList.toggle('friday',name==='FRIDAY');$('personaTitle').textContent=name==='JARVIS'?'J.A.R.V.I.S.':name;$('coreMessage').textContent=name==='JARVIS'?'AT YOUR SERVICE':name==='EDITH'?'SECURITY SYSTEM READY':'READY WHEN YOU ARE';document.querySelectorAll('[data-persona]').forEach(b=>b.classList.toggle('active',b.dataset.persona===name))}
-document.querySelectorAll('[data-persona]').forEach(b=>b.addEventListener('click',()=>setPersonality(b.dataset.persona)));
-function renderTasks(){const box=$('taskList');box.innerHTML='';if(!tasks.length){box.innerHTML='<div class="empty">No tasks registered.</div>';return}tasks.forEach((t,i)=>{const el=document.createElement('div');el.className='item';const title=document.createElement('strong');title.textContent=t.title;const due=document.createElement('small');due.textContent=t.due?'Due '+t.due:'No due date';const actions=document.createElement('div');actions.className='item-actions';const done=document.createElement('button');done.className='mini';done.textContent=t.done?'REOPEN':'COMPLETE';done.onclick=()=>{tasks[i].done=!tasks[i].done;save('jarvisTasks',tasks);renderTasks();renderOverview()};const del=document.createElement('button');del.className='mini';del.textContent='DELETE';del.onclick=()=>{tasks.splice(i,1);save('jarvisTasks',tasks);renderTasks();renderOverview()};actions.append(done,del);el.append(title,due,actions);if(t.done)el.style.opacity='.5';box.append(el)})}
-$('taskForm').addEventListener('submit',e=>{e.preventDefault();tasks.push({title:$('taskTitle').value.trim(),due:$('taskDue').value,done:false});save('jarvisTasks',tasks);$('taskForm').reset();renderTasks();renderOverview();toast('Task saved locally.')});
-function renderMemories(){const box=$('memoryList');box.innerHTML='';if(!memories.length){box.innerHTML='<div class="empty">No saved memories.</div>';return}memories.forEach((m,i)=>{const el=document.createElement('div');el.className='item';const p=document.createElement('div');p.style.fontSize='12px';p.style.lineHeight='1.5';p.textContent=m;const del=document.createElement('button');del.className='mini';del.textContent='DELETE';del.style.marginTop='10px';del.onclick=()=>{memories.splice(i,1);save('jarvisMemories',memories);renderMemories()};el.append(p,del);box.append(el)})}
-$('memoryForm').addEventListener('submit',e=>{e.preventDefault();memories.unshift($('memoryText').value.trim());save('jarvisMemories',memories);$('memoryForm').reset();renderMemories();toast('Memory saved on this device.')});
-function renderOverview(){$('overviewDate').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});const pending=tasks.filter(t=>!t.done);$('overviewContent').innerHTML=`<div class="item"><strong>${pending.length} open task${pending.length===1?'':'s'}</strong><small>${tasks.length-pending.length} completed</small></div><div class="item"><strong>${memories.length} saved note${memories.length===1?'':'s'}</strong><small>Stored locally on this device</small></div>`;pending.forEach(t=>{const el=document.createElement('div');el.className='item';el.textContent=t.title;const small=document.createElement('small');small.textContent=t.due?'Due '+t.due:'No due date';el.append(small);$('overviewContent').append(el)})}
-function loadVoices(){if(!('speechSynthesis'in window))return;voices=speechSynthesis.getVoices();if($('voiceSettings').children.length)renderVoiceSettings()}
-function renderVoiceSettings(){const box=$('voiceSettings');box.innerHTML='';if(!('speechSynthesis'in window)){box.textContent='Speech synthesis is not supported in this browser.';return}if(!voices.length)loadVoices();['JARVIS','EDITH','FRIDAY'].forEach(name=>{const wrap=document.createElement('div');wrap.className='item';const title=document.createElement('strong');title.textContent=name+' VOICE';const select=document.createElement('select');select.className='field';select.style.marginTop='10px';select.style.width='100%';select.style.background='#091827';select.style.color='white';select.style.padding='10px';select.style.border='1px solid var(--line)';select.style.borderRadius='10px';const opts=voices.filter(v=>v.lang.toLowerCase().startsWith('en'));(opts.length?opts:voices).forEach(v=>{const o=document.createElement('option');o.value=v.voiceURI;o.textContent=v.name+' ('+v.lang+')';select.append(o)});select.value=localStorage.getItem('voice-'+name)||'';select.onchange=()=>localStorage.setItem('voice-'+name,select.value);const rlabel=document.createElement('div');rlabel.className='range-line';rlabel.innerHTML='<span>Speaking speed</span><span id="rateVal-'+name+'"></span>';const rate=document.createElement('input');rate.type='range';rate.min='.7';rate.max='1.3';rate.step='.05';rate.value=localStorage.getItem('rate-'+name)||profiles[name].rate;rate.oninput=()=>{localStorage.setItem('rate-'+name,rate.value);$('rateVal-'+name).textContent=Number(rate.value).toFixed(2)};rlabel.lastChild.textContent=Number(rate.value).toFixed(2);const plabel=document.createElement('div');plabel.className='range-line';plabel.innerHTML='<span>Pitch</span><span id="pitchVal-'+name+'"></span>';const pitch=document.createElement('input');pitch.type='range';pitch.min='.6';pitch.max='1.4';pitch.step='.05';pitch.value=localStorage.getItem('pitch-'+name)||profiles[name].pitch;pitch.oninput=()=>{localStorage.setItem('pitch-'+name,pitch.value);$('pitchVal-'+name).textContent=Number(pitch.value).toFixed(2)};plabel.lastChild.textContent=Number(pitch.value).toFixed(2);const preview=document.createElement('button');preview.className='mini';preview.textContent='PREVIEW '+name;preview.style.marginTop='10px';preview.onclick=()=>speak(profiles[name].sample,name);wrap.append(title,select,rlabel,rate,plabel,pitch,preview);box.append(wrap)})}
-function speak(text,who=personality){if(!('speechSynthesis'in window)){toast('Speech is not supported here.');return}speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);const selected=localStorage.getItem('voice-'+who);utterance.voice=voices.find(v=>v.voiceURI===selected)||voices.find(v=>v.lang.toLowerCase().startsWith('en'))||null;utterance.rate=Number(localStorage.getItem('rate-'+who)||profiles[who].rate);utterance.pitch=Number(localStorage.getItem('pitch-'+who)||profiles[who].pitch);speechSynthesis.speak(utterance)}
-$('previewCurrent').addEventListener('click',()=>speak(profiles[personality].sample));
-$('clearData').addEventListener('click',()=>{if(confirm('Delete all locally saved tasks and memories?')){tasks=[];memories=[];save('jarvisTasks',tasks);save('jarvisMemories',memories);renderTasks();renderMemories();renderOverview();toast('Local data cleared.')}});
-function addBubble(text,who){const b=document.createElement('div');b.className='bubble '+who;b.textContent=text;$('chatlog').append(b);$('chatlog').scrollTop=$('chatlog').scrollHeight}
-$('chatForm').addEventListener('submit',e=>{e.preventDefault();const text=$('chatInput').value.trim();if(!text)return;addBubble(text,'user');$('chatInput').value='';const lower=text.toLowerCase();let reply='I can save tasks and notes in this prototype. A real AI connection has not been configured yet.';if(lower.includes('show')&&lower.includes('task')){openPanel('tasks');reply='Opening your task register.'}else if(lower.includes('memory')){openPanel('memory');reply='Opening your memory archive.'}else if(lower.includes('today')||lower.includes('overview')){openPanel('overview');reply='Here is your daily overview.'}else if(lower.includes('edith')||lower.includes('security')){openPanel('security');reply='Opening the security center.'}else if(lower.includes('hide')||lower.includes('close')){closePanels();reply='Panels closed.'}else if(lower.startsWith('add task ')){tasks.push({title:text.slice(9),due:'',done:false});save('jarvisTasks',tasks);renderTasks();reply='Task added to your local register.'}setTimeout(()=>{addBubble(reply,'assistant');speak(reply)},180)});
-let recognition=null;
-$('activateBtn').addEventListener('click',()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast('Voice recognition is not supported in this browser.');return}if(recognition){recognition.stop();return}recognition=new SR();recognition.lang='en-US';recognition.interimResults=false;recognition.maxAlternatives=1;$('activateBtn').textContent='LISTENING… TAP TO STOP';recognition.onresult=e=>{$('chatInput').value=e.results[0][0].transcript;$('chatForm').requestSubmit()};recognition.onerror=e=>toast('Voice input: '+e.error);recognition.onend=()=>{$('activateBtn').textContent='◉  ACTIVATE VOICE';recognition=null};recognition.start();toast('Listening once. Speak your command.')});
+
+function renderTasks(){
+ const box=$('taskList');box.innerHTML='';
+ if(!tasks.length){box.textContent='No tasks registered.';return}
+ tasks.forEach((t,i)=>{
+  const el=document.createElement('div');el.className='item';
+  const title=document.createElement('strong');title.textContent=t.title;
+  const due=document.createElement('small');due.textContent=t.due?'Due '+t.due:'No due date';
+  const done=document.createElement('button');done.className='mini';done.textContent=t.done?'REOPEN':'COMPLETE';
+  done.onclick=()=>{tasks[i].done=!tasks[i].done;save('jarvisTasks',tasks);renderTasks();renderOverview()};
+  const del=document.createElement('button');del.className='mini';del.textContent='DELETE';
+  del.onclick=()=>{tasks.splice(i,1);save('jarvisTasks',tasks);renderTasks();renderOverview()};
+  el.append(title,due,done,del);box.append(el);
+ });
+}
+$('taskForm').addEventListener('submit',e=>{
+ e.preventDefault();tasks.push({title:$('taskTitle').value.trim(),due:$('taskDue').value,done:false});
+ save('jarvisTasks',tasks);$('taskForm').reset();renderTasks();renderOverview();toast('Task saved.');
+});
+
+function renderMemories(){
+ const box=$('memoryList');box.innerHTML='';
+ if(!memories.length){box.textContent='No saved notes.';return}
+ memories.forEach((m,i)=>{
+  const el=document.createElement('div');el.className='item';
+  const p=document.createElement('p');p.textContent=m;
+  const del=document.createElement('button');del.className='mini';del.textContent='DELETE';
+  del.onclick=()=>{memories.splice(i,1);save('jarvisMemories',memories);renderMemories()};
+  el.append(p,del);box.append(el);
+ });
+}
+$('memoryForm').addEventListener('submit',e=>{
+ e.preventDefault();memories.unshift($('memoryText').value.trim());
+ save('jarvisMemories',memories);$('memoryForm').reset();renderMemories();toast('Note saved.');
+});
+
+function renderOverview(){
+ $('overviewDate').textContent=new Date().toLocaleDateString(undefined,{dateStyle:'full'});
+ const pending=tasks.filter(t=>!t.done);
+ $('overviewContent').innerHTML=`<div class="item"><strong>${pending.length} open tasks</strong><small>${tasks.length-pending.length} completed</small></div><div class="item"><strong>${memories.length} saved notes</strong></div>`;
+ pending.forEach(t=>{const el=document.createElement('div');el.className='item';el.textContent=t.title;$('overviewContent').append(el)});
+}
+
+function loadVoices(){if('speechSynthesis'in window){voices=speechSynthesis.getVoices();if($('voiceSettings').children.length)renderVoiceSettings()}}
+function renderVoiceSettings(){
+ const box=$('voiceSettings');box.innerHTML='';
+ if(!voices.length)loadVoices();
+ Object.keys(profiles).forEach(name=>{
+  const wrap=document.createElement('div');wrap.className='item';
+  const label=document.createElement('strong');label.textContent=name+' VOICE';
+  const select=document.createElement('select');select.className='field';
+  voices.filter(v=>v.lang.toLowerCase().startsWith('en')).forEach(v=>{
+   const o=document.createElement('option');o.value=v.voiceURI;o.textContent=v.name+' ('+v.lang+')';select.append(o);
+  });
+  select.value=localStorage.getItem('voice-'+name)||'';
+  select.onchange=()=>localStorage.setItem('voice-'+name,select.value);
+  wrap.append(label,select);box.append(wrap);
+ });
+}
+function speak(text,who=personality){
+ if(!('speechSynthesis'in window))return;
+ speechSynthesis.cancel();
+ const u=new SpeechSynthesisUtterance(text);
+ u.voice=voices.find(v=>v.voiceURI===localStorage.getItem('voice-'+who))||null;
+ u.rate=profiles[who].rate;u.pitch=profiles[who].pitch;
+ speechSynthesis.speak(u);
+}
+$('previewCurrent').onclick=()=>speak(profiles[personality].sample);
+
+$('clearData').onclick=()=>{
+ if(confirm('Delete all locally saved tasks and memories?')){
+  tasks=[];memories=[];save('jarvisTasks',tasks);save('jarvisMemories',memories);
+  renderTasks();renderMemories();renderOverview();toast('Local data cleared.');
+ }
+};
+
+function addBubble(text,who){
+ const b=document.createElement('div');b.className='bubble '+who;b.textContent=text;
+ $('chatlog').append(b);$('chatlog').scrollTop=$('chatlog').scrollHeight;
+}
+function handleCommand(text){
+ const lower=text.toLowerCase();let reply='';
+ if(lower.includes('edith')){setPersonality('EDITH');reply='EDITH online.'}
+ else if(lower.includes('friday')){setPersonality('FRIDAY');reply='FRIDAY online.'}
+ else if(lower.includes('jarvis')){setPersonality('JARVIS');reply='JARVIS online.'}
+ else if(lower.includes('security')){openPanel('security');reply='Opening security.'}
+ else if(lower.includes('task')){openPanel('tasks');reply='Opening your task register.'}
+ else if(lower.includes('memory')){openPanel('memory');reply='Opening your memory archive.'}
+ else if(lower.includes('overview')||lower.includes('today')){openPanel('overview');reply='Here is your overview.'}
+ else if(lower.includes('setting')){openPanel('settings');reply='Opening settings.'}
+ else if(lower.includes('console')||lower.includes('type')){openPanel('chat');reply='Opening the console.'}
+ else if(lower.includes('close')||lower.includes('hide')){closePanels();reply='Closing panels.'}
+ else if(lower.startsWith('add task ')){
+  tasks.push({title:text.slice(9),due:'',done:false});save('jarvisTasks',tasks);renderTasks();reply='Task added.';
+ }
+ else if(lower.startsWith('remember ')){
+  memories.unshift(text.slice(9));save('jarvisMemories',memories);renderMemories();reply='I saved that note locally.';
+ }
+ else{reply='I heard you. A live AI connection has not been configured yet.'}
+ addBubble(reply,'assistant');speak(reply);
+}
+
+$('chatForm').addEventListener('submit',e=>{
+ e.preventDefault();const text=$('chatInput').value.trim();if(!text)return;
+ addBubble(text,'user');$('chatInput').value='';handleCommand(text);
+});
+
+function activateVoice(){
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){toast('Voice recognition is not supported in this browser.');return}
+ if(recognition){recognition.stop();return}
+ recognition=new SR();recognition.lang='en-US';recognition.interimResults=false;recognition.maxAlternatives=1;
+ $('core').classList.add('listening');$('systemStatus').textContent='LISTENING';$('hint').textContent='LISTENING // TAP TO STOP';
+ recognition.onresult=e=>{
+  const text=e.results[0][0].transcript;
+  addBubble(text,'user');handleCommand(text);
+ };
+ recognition.onerror=e=>toast('Voice input: '+e.error);
+ recognition.onend=()=>{
+  recognition=null;$('core').classList.remove('listening');
+  $('systemStatus').textContent='STANDBY';$('hint').textContent='TAP THE CORE TO SPEAK';
+ };
+ recognition.start();
+}
+$('core').addEventListener('click',activateVoice);
+
 function updateClock(){$('clock').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
 setPersonality(personality);renderTasks();renderMemories();renderOverview();updateClock();setInterval(updateClock,30000);
 if('speechSynthesis'in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
