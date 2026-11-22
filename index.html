@@ -1,356 +1,1055 @@
-<!doctype html>
+```html
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#06101d">
-<title>JARVIS</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>J.A.R.V.I.S.</title>
+
 <style>
-:root{
-  color-scheme:dark;
-  --bg:#050b14;
-  --accent:#68caff;
-  --accent2:#b9e8ff;
-  --glow:rgba(70,180,255,.4);
-  --line:rgba(140,205,255,.2);
-  --text:#eaf6ff;
-  --muted:#91a9bd;
+:root {
+  color-scheme: dark;
+  --accent:#70d3ff;
+  --accent-soft:rgba(70,180,255,.15);
+  --line:rgba(140,210,255,.22);
+  --text:#eaf7ff;
+  --muted:#8da9bd;
 }
-*{box-sizing:border-box}
-html,body{margin:0;min-height:100%;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
-body{
-  min-height:100svh;overflow:hidden;
-  background:radial-gradient(ellipse at center,#102b45 0,#091827 40%,#050b14 85%);
+* {box-sizing:border-box}
+body {
+  margin:0;
+  min-height:100vh;
+  min-height:100svh;
+  color:var(--text);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:radial-gradient(ellipse at center,#102b45 0%,#071522 48%,#030811 100%);
+  overflow:hidden;
 }
-body:before{
-  content:"";position:fixed;inset:0;pointer-events:none;opacity:.16;
-  background-image:linear-gradient(rgba(150,210,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(150,210,255,.06) 1px,transparent 1px);
-  background-size:48px 48px;
-  mask-image:radial-gradient(ellipse at center,#000,transparent 75%);
+body.edith {--accent:#ff667c;--accent-soft:rgba(255,70,100,.15);--line:rgba(255,110,130,.25)}
+body.friday {--accent:#c39aff;--accent-soft:rgba(180,120,255,.15);--line:rgba(190,150,255,.25)}
+body.locked {--accent:#ff334f;--accent-soft:rgba(255,30,60,.2)}
+button,input,textarea {font:inherit}
+button {color:inherit;cursor:pointer}
+#app {
+  min-height:100svh;
+  display:flex;
+  flex-direction:column;
+  padding:env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
+  position:relative;
 }
-body.edith{--accent:#ff526f;--accent2:#ffc0cb;--glow:rgba(255,65,100,.42);--line:rgba(255,100,130,.22)}
-body.friday{--accent:#bd91ff;--accent2:#e4d1ff;--glow:rgba(175,120,255,.42);--line:rgba(190,145,255,.22)}
-#app{position:relative;z-index:1;min-height:100svh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 22px env(safe-area-inset-bottom)}
-.topbar{height:65px;display:flex;align-items:center;justify-content:space-between}
-.brand{font-size:11px;letter-spacing:.32em;color:#d6efff}
-.brand span{color:var(--accent)}
-.status{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:10px;letter-spacing:.12em}
-.dot{width:7px;height:7px;border-radius:50%;background:#69d9b0;box-shadow:0 0 12px #69d9b0}
-.stage{flex:1;display:grid;place-items:center;min-height:0}
-.core-wrap{display:flex;flex-direction:column;align-items:center;gap:24px;transform:translateY(-12px)}
-.core{
-  width:min(65vw,290px);aspect-ratio:1;
-  position:relative;display:grid;place-items:center;
-  border:1px solid var(--line);border-radius:46% 54% 51% 49% / 48% 45% 55% 52%;
-  background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--accent) 19%,transparent),rgba(8,28,48,.35) 58%,rgba(8,20,34,.1) 75%);
-  box-shadow:0 0 45px var(--glow),inset 0 0 55px color-mix(in srgb,var(--accent) 18%,transparent);
-  cursor:pointer;outline:none;
-  animation:float 7s ease-in-out infinite;
+header {
+  width:100%;
+  max-width:1100px;
+  margin:auto;
+  height:65px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.brand {font-size:11px;letter-spacing:.35em}
+.brand span {color:var(--accent)}
+.status {
+  font-size:10px;
+  letter-spacing:.13em;
+  color:var(--muted);
+  display:flex;
+  gap:9px;
+  align-items:center;
+}
+.dot {
+  width:7px;height:7px;border-radius:50%;
+  background:#62d9ac;
+  box-shadow:0 0 12px #62d9ac;
+}
+main {
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.center {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:25px;
+  text-align:center;
+}
+.core {
+  width:min(64vw,265px);
+  aspect-ratio:1;
+  border-radius:50%;
+  border:1px solid var(--line);
+  display:grid;
+  place-items:center;
+  position:relative;
+  background:radial-gradient(circle,rgba(70,170,230,.18),rgba(5,20,35,.2) 70%);
+  box-shadow:0 0 50px var(--accent-soft),inset 0 0 45px var(--accent-soft);
   -webkit-tap-highlight-color:transparent;
-}
-.core:before,.core:after{
-  content:"";position:absolute;inset:8%;border-radius:48% 52% 50% 50%;
-  border:1px solid color-mix(in srgb,var(--accent) 65%,transparent);
-  pointer-events:none;
-}
-.core:before{border-left-color:transparent;border-bottom-color:transparent;animation:spin 16s linear infinite}
-.core:after{inset:19%;border-right-color:transparent;border-top-color:transparent;animation:spin 11s linear infinite reverse}
-.core-inner{
-  width:47%;aspect-ratio:1;border-radius:50%;
-  display:grid;place-items:center;
-  background:radial-gradient(circle at 35% 28%,#fff 0,color-mix(in srgb,var(--accent) 85%,white) 13%,color-mix(in srgb,var(--accent) 60%,#09223b) 48%,#071827 80%);
-  box-shadow:0 0 28px var(--accent),0 0 75px var(--glow),inset 0 0 22px rgba(255,255,255,.35);
-  animation:pulse 4s ease-in-out infinite;
-}
-.core-letter{
-  color:#fff;font-size:clamp(38px,12vw,62px);font-weight:300;
-  letter-spacing:.04em;text-shadow:0 0 18px var(--accent),0 0 35px var(--accent);
   user-select:none;
 }
-.core.listening{filter:brightness(1.45);box-shadow:0 0 65px var(--accent),0 0 130px var(--glow)}
-.core-label{text-align:center}
-.core-label h1{font-size:14px;letter-spacing:.42em;font-weight:500;margin:0 0 9px}
-.core-label p{font-size:10px;color:var(--muted);letter-spacing:.18em;margin:0}
-.hint{font-size:10px;color:#718ba2;letter-spacing:.16em;text-align:center}
-.footer{display:flex;justify-content:space-between;margin:0 0 14px;color:#688198;font-size:9px;letter-spacing:.12em}
-.panel{
-  position:fixed;z-index:5;top:75px;right:16px;bottom:16px;
-  width:min(440px,calc(100vw - 32px));
-  border:1px solid var(--line);border-radius:24px;
-  background:linear-gradient(145deg,rgba(18,42,66,.94),rgba(7,19,32,.96));
-  backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);
-  padding:22px;overflow:auto;
-  transform:translateX(calc(100% + 30px));opacity:0;
-  transition:transform .35s ease,opacity .25s;
+.core:before,.core:after {
+  content:"";
+  position:absolute;
+  inset:10%;
+  border:1px solid var(--line);
+  border-radius:50%;
 }
-.panel.open{transform:translateX(0);opacity:1}
-.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.panel-head h2{font-size:13px;letter-spacing:.2em;font-weight:550;margin:0}
-.close{width:35px;height:35px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.05);font-size:19px}
-.field{display:flex;flex-direction:column;gap:7px;margin:13px 0}
-.field label{font-size:10px;color:var(--muted);letter-spacing:.13em}
-.field input,.field textarea,.field select{width:100%;border:1px solid var(--line);border-radius:12px;background:rgba(3,13,23,.7);color:var(--text);padding:12px}
-.field textarea{min-height:85px}
-.note{font-size:12px;color:var(--muted);line-height:1.6}
-.btn{border:1px solid var(--line);background:rgba(255,255,255,.06);border-radius:999px;padding:11px 17px;color:var(--text);font-size:11px}
-.btn.primary{border-color:var(--accent);color:var(--accent2)}
-.item{padding:13px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.035);margin:9px 0}
-.item strong{font-size:13px;font-weight:550}
-.item small{display:block;color:var(--muted);font-size:11px;margin-top:5px}
-.mini{font-size:10px;padding:7px 10px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.05);margin:8px 5px 0 0}
-.chatlog{display:flex;flex-direction:column;gap:10px;max-height:48vh;overflow:auto;margin-bottom:14px}
-.bubble{max-width:88%;padding:11px 13px;border-radius:14px;font-size:12px;line-height:1.5;background:rgba(120,190,235,.1);border:1px solid var(--line)}
-.bubble.user{align-self:flex-end}.bubble.assistant{align-self:flex-start}
-.toast{position:fixed;z-index:9;bottom:55px;left:50%;transform:translate(-50%,15px);opacity:0;pointer-events:none;background:rgba(13,34,53,.95);border:1px solid var(--line);padding:11px 16px;border-radius:999px;font-size:11px;transition:.2s}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulse{0%,100%{transform:scale(.94);filter:brightness(.9)}50%{transform:scale(1.07);filter:brightness(1.3)}}
-@keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-8px) rotate(2deg)}}
-@media(max-width:600px){.core{width:245px}.panel{top:auto;right:8px;left:8px;bottom:8px;width:auto;max-height:82svh}.topbar{height:55px}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+.core:before {
+  border-left-color:transparent;
+  animation:spin 17s linear infinite;
+}
+.core:after {
+  inset:22%;
+  border-right-color:transparent;
+  animation:spin 11s linear infinite reverse;
+}
+.core-inner {
+  width:43%;
+  aspect-ratio:1;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-size:35px;
+  font-weight:300;
+  color:#f4fcff;
+  background:radial-gradient(circle at 35% 30%,#fff 0%,var(--accent) 12%,#17618b 48%,#071c30 78%);
+  box-shadow:0 0 28px var(--accent),0 0 85px var(--accent-soft);
+  animation:pulse 4s ease-in-out infinite;
+}
+.core.listening .core-inner {
+  animation:pulse .7s ease-in-out infinite;
+}
+.core.processing .core-inner {
+  animation:pulse .3s ease-in-out infinite;
+}
+.core.speaking .core-inner {
+  animation:pulse 1.2s ease-in-out infinite;
+}
+.core-label h1 {
+  font-size:14px;
+  letter-spacing:.42em;
+  font-weight:500;
+  margin:0 0 10px;
+}
+.core-label p {
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:.16em;
+  margin:0;
+}
+.instruction {
+  font-size:10px;
+  color:#718ba0;
+  letter-spacing:.12em;
+}
+footer {
+  height:45px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  max-width:1100px;
+  width:100%;
+  margin:auto;
+  font-size:9px;
+  letter-spacing:.12em;
+  color:#688198;
+}
+.panel {
+  position:fixed;
+  z-index:5;
+  top:75px;
+  right:15px;
+  bottom:15px;
+  width:min(430px,calc(100vw - 30px));
+  padding:22px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:rgba(7,22,38,.96);
+  backdrop-filter:blur(25px);
+  -webkit-backdrop-filter:blur(25px);
+  overflow:auto;
+  transform:translateX(110%);
+  opacity:0;
+  transition:.3s ease;
+}
+.panel.open {transform:translateX(0);opacity:1}
+.panel-head {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:20px;
+}
+.panel-head h2 {
+  font-size:13px;
+  letter-spacing:.2em;
+  font-weight:500;
+}
+.close {
+  width:36px;height:36px;
+  border:1px solid var(--line);
+  background:transparent;
+  border-radius:50%;
+  font-size:20px;
+}
+.note {
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.6;
+}
+.field {
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  margin:15px 0;
+}
+.field label {
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:.13em;
+}
+.field input,.field textarea,.field select {
+  width:100%;
+  padding:12px;
+  color:var(--text);
+  background:#071522;
+  border:1px solid var(--line);
+  border-radius:11px;
+  outline:none;
+}
+.field textarea {min-height:90px;resize:vertical}
+.action {
+  padding:11px 17px;
+  border:1px solid var(--line);
+  border-radius:30px;
+  background:var(--accent-soft);
+  font-size:11px;
+  letter-spacing:.08em;
+}
+.item {
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.035);
+  padding:13px;
+  border-radius:13px;
+  margin:10px 0;
+  font-size:12px;
+}
+.item small {
+  display:block;
+  color:var(--muted);
+  margin-top:6px;
+}
+.item button {margin:10px 6px 0 0}
+.chatlog {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  max-height:42vh;
+  overflow:auto;
+  margin-bottom:15px;
+}
+.bubble {
+  max-width:90%;
+  padding:11px 13px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  font-size:12px;
+  line-height:1.5;
+  overflow-wrap:anywhere;
+}
+.bubble.user {align-self:flex-end;background:var(--accent-soft)}
+.bubble.assistant {align-self:flex-start}
+.personality-list {
+  display:flex;
+  gap:8px;
+  margin:12px 0;
+}
+.personality-list button {
+  flex:1;
+  padding:10px 4px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:transparent;
+  font-size:10px;
+}
+.personality-list button.active {
+  background:var(--accent-soft);
+  border-color:var(--accent);
+}
+.toast {
+  position:fixed;
+  z-index:10;
+  bottom:30px;
+  left:50%;
+  transform:translate(-50%,15px);
+  opacity:0;
+  pointer-events:none;
+  padding:12px 17px;
+  border:1px solid var(--line);
+  border-radius:30px;
+  background:#10263a;
+  font-size:11px;
+  transition:.2s;
+  max-width:90vw;
+  text-align:center;
+}
+.toast.show {opacity:1;transform:translate(-50%,0)}
+.lock-banner {
+  display:none;
+  position:fixed;
+  z-index:9;
+  top:0;left:0;right:0;
+  padding:12px;
+  text-align:center;
+  background:#7d1427;
+  color:white;
+  font-size:10px;
+  letter-spacing:.1em;
+}
+body.locked .lock-banner {display:block}
+body.locked .core {border-color:#ff334f}
+@keyframes spin {to{transform:rotate(360deg)}}
+@keyframes pulse {
+  0%,100%{transform:scale(.94);filter:brightness(.9)}
+  50%{transform:scale(1.07);filter:brightness(1.25)}
+}
+@media(max-width:600px) {
+  header {height:55px}
+  .core {width:225px}
+  .panel {top:auto;bottom:8px;left:8px;right:8px;width:auto;max-height:82svh}
+}
+@media(prefers-reduced-motion:reduce) {
+  *,*:before,*:after {animation:none!important;transition:none!important}
+}
 </style>
 </head>
+
 <body>
+<div class="lock-banner" id="lockBanner">
+EDITH LOCKDOWN PREVIEW — LOCAL BROWSER ONLY — NOT REAL DEVICE SECURITY
+</div>
+
 <div id="app">
-  <header class="topbar">
-    <div class="brand">T<span>.</span> STARK SYSTEMS</div>
-    <div class="status"><span class="dot"></span><span id="systemStatus">STANDBY</span></div>
-  </header>
+<header>
+  <div class="brand">T<span>.</span> STARK SYSTEMS</div>
+  <div class="status">
+    <span class="dot"></span>
+    <span id="systemStatus">LOCAL SYSTEM READY</span>
+  </div>
+</header>
 
-  <main class="stage">
-    <div class="core-wrap">
-      <button class="core" id="core" aria-label="Tap to speak">
-        <span class="core-inner"><span class="core-letter" id="coreLetter">J</span></span>
-      </button>
-      <div class="core-label">
-        <h1 id="personaTitle">J.A.R.V.I.S.</h1>
-        <p id="coreMessage">AT YOUR SERVICE</p>
-      </div>
-      <div class="hint" id="hint">TAP THE CORE TO SPEAK</div>
+<main>
+  <div class="center">
+    <div class="core" id="core" role="button" tabindex="0"
+         aria-label="Tap to speak to JARVIS">
+      <div class="core-inner" id="coreLetter">J</div>
     </div>
-  </main>
+    <div class="core-label">
+      <h1 id="personaTitle">J.A.R.V.I.S.</h1>
+      <p id="coreMessage">AT YOUR SERVICE</p>
+    </div>
+    <div class="instruction" id="instruction">TAP THE CORE TO SPEAK</div>
+  </div>
+</main>
 
-  <footer class="footer">
-    <span>PERSONAL ASSISTANT</span><span id="clock"></span>
-  </footer>
+<footer>
+  <span>PERSONAL ASSISTANT // DEVELOPMENT BUILD</span>
+  <span id="clock">--:--</span>
+</footer>
 </div>
 
 <aside class="panel" id="panel-chat">
-  <div class="panel-head"><h2>COMMAND CONSOLE</h2><button class="close">×</button></div>
-  <div class="chatlog" id="chatlog"><div class="bubble assistant">Standing by. A live AI service has not been connected yet.</div></div>
+  <div class="panel-head">
+    <h2>COMMAND CONSOLE</h2>
+    <button class="close">×</button>
+  </div>
+  <p class="note">The interface is active. The external AI reasoning service is not connected yet.</p>
+  <div class="chatlog" id="chatlog">
+    <div class="bubble assistant">Good to have you back. My local systems are ready. My full reasoning service is still awaiting connection.</div>
+  </div>
   <form id="chatForm">
-    <div class="field"><label for="chatInput">MESSAGE</label><textarea id="chatInput" required></textarea></div>
-    <button class="btn primary">SEND</button>
+    <div class="field">
+      <label for="chatInput">MESSAGE</label>
+      <textarea id="chatInput" placeholder="Enter a command..." required></textarea>
+    </div>
+    <button class="action">SEND</button>
   </form>
 </aside>
 
 <aside class="panel" id="panel-tasks">
-  <div class="panel-head"><h2>TASK REGISTER</h2><button class="close">×</button></div>
-  <p class="note">Tasks are stored in this browser on this device.</p>
+  <div class="panel-head">
+    <h2>TASK REGISTER</h2>
+    <button class="close">×</button>
+  </div>
+  <p class="note">Tasks are stored locally in this browser.</p>
   <form id="taskForm">
-    <div class="field"><label for="taskTitle">TASK</label><input id="taskTitle" required></div>
-    <div class="field"><label for="taskDue">DUE DATE</label><input id="taskDue" type="date"></div>
-    <button class="btn primary">ADD TASK</button>
+    <div class="field">
+      <label for="taskTitle">TASK</label>
+      <input id="taskTitle" required placeholder="Finish biology notes">
+    </div>
+    <div class="field">
+      <label for="taskDue">DUE DATE</label>
+      <input id="taskDue" type="date">
+    </div>
+    <button class="action">ADD TASK</button>
   </form>
   <div id="taskList"></div>
 </aside>
 
 <aside class="panel" id="panel-memory">
-  <div class="panel-head"><h2>MEMORY ARCHIVE</h2><button class="close">×</button></div>
-  <p class="note">Notes are stored locally, not synced to an account.</p>
+  <div class="panel-head">
+    <h2>MEMORY ARCHIVE</h2>
+    <button class="close">×</button>
+  </div>
+  <p class="note">Local notes only. This is not encrypted cloud memory.</p>
   <form id="memoryForm">
-    <div class="field"><label for="memoryText">NOTE</label><textarea id="memoryText" required></textarea></div>
-    <button class="btn primary">SAVE NOTE</button>
+    <div class="field">
+      <label for="memoryText">NOTE</label>
+      <textarea id="memoryText" required placeholder="Save a useful note..."></textarea>
+    </div>
+    <button class="action">SAVE NOTE</button>
   </form>
   <div id="memoryList"></div>
 </aside>
 
 <aside class="panel" id="panel-overview">
-  <div class="panel-head"><h2>DAILY OVERVIEW</h2><button class="close">×</button></div>
-  <p class="note" id="overviewDate"></p><div id="overviewContent"></div>
+  <div class="panel-head">
+    <h2>DAILY OVERVIEW</h2>
+    <button class="close">×</button>
+  </div>
+  <div id="overviewContent"></div>
 </aside>
 
 <aside class="panel" id="panel-settings">
-  <div class="panel-head"><h2>SYSTEM SETTINGS</h2><button class="close">×</button></div>
-  <p class="note">Available voices depend on your device and browser.</p>
-  <div id="voiceSettings"></div>
-  <button class="btn" id="previewCurrent">PREVIEW VOICE</button>
-  <p class="note">iPhone browsers cannot reliably listen continuously in the background.</p>
-  <button class="btn" id="clearData">CLEAR LOCAL TASKS & MEMORY</button>
+  <div class="panel-head">
+    <h2>VOICE & SETTINGS</h2>
+    <button class="close">×</button>
+  </div>
+  <p class="note">
+    Neural voice synthesis uses KittenTTS Web. The first setup downloads the model.
+    Internet access is required for the initial download.
+  </p>
+  <div class="item" id="voiceStatus">Neural voice model not loaded.</div>
+  <div class="field">
+    <label for="modelSelect">VOICE MODEL</label>
+    <select id="modelSelect">
+      <option value="nano-int8">Nano INT8 — approximately 25 MB</option>
+      <option value="nano">Nano — approximately 56 MB</option>
+      <option value="micro">Micro — approximately 41 MB</option>
+      <option value="mini">Mini — approximately 80 MB</option>
+    </select>
+  </div>
+  <div id="voiceProfiles"></div>
+  <button class="action" id="loadVoice">LOAD NEURAL VOICES</button>
+  <p class="note">
+    If neural synthesis fails, the browser's built-in speech voice is used as a fallback.
+    iPhone browser microphone access requires an active page and permission.
+  </p>
+  <button class="action" id="clearData">CLEAR LOCAL TASKS & NOTES</button>
 </aside>
 
 <aside class="panel" id="panel-security">
-  <div class="panel-head"><h2>EDITH // SECURITY</h2><button class="close">×</button></div>
-  <p class="note">Security interface only. Authentication and SMS verification are not connected.</p>
-  <div class="item"><strong>Local storage</strong><small>Available on this browser</small></div>
-  <div class="item"><strong>External integrations</strong><small>Not connected</small></div>
-  <div class="item"><strong>Authentication</strong><small>Backend required</small></div>
+  <div class="panel-head">
+    <h2>EDITH // SECURITY</h2>
+    <button class="close">×</button>
+  </div>
+  <p class="note">
+    Lockdown is currently a local interface preview. It does not secure the phone,
+    server, accounts, or stored information.
+  </p>
+  <div class="item">
+    <strong>Backend authentication</strong>
+    <small>Not configured</small>
+  </div>
+  <div class="item">
+    <strong>SMS notifications</strong>
+    <small>Not configured — no messages can be sent yet</small>
+  </div>
+  <div class="item">
+    <strong>Server-side lockdown</strong>
+    <small>Not configured</small>
+  </div>
+  <button class="action" id="lockButton">INITIATE LOCKDOWN PREVIEW</button>
+  <button class="action" id="unlockButton">EXIT LOCKDOWN PREVIEW</button>
 </aside>
 
 <div class="toast" id="toast" role="status"></div>
 
-<script>
-const $=id=>document.getElementById(id);
-const read=(k,f)=>{try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}};
-const save=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
-let tasks=read('jarvisTasks',[]),memories=read('jarvisMemories',[]);
-let personality=localStorage.getItem('jarvisPersona')||'JARVIS';
-let voices=[],recognition=null;
+<script type="module">
+const $ = id => document.getElementById(id);
 
-const profiles={
- JARVIS:{letter:'J',title:'J.A.R.V.I.S.',message:'AT YOUR SERVICE',sample:'Good evening. All systems are standing by.',rate:.94,pitch:.88},
- EDITH:{letter:'E',title:'E.D.I.T.H.',message:'SECURITY SYSTEM READY',sample:'Security systems are standing by.',rate:.91,pitch:.82},
- FRIDAY:{letter:'F',title:'F.R.I.D.A.Y.',message:'READY WHEN YOU ARE',sample:'Hey. I’m here whenever you need me.',rate:1.02,pitch:1.08}
+const safeRead = (key, fallback) => {
+  try { return JSON.parse(localStorage.getItem(key)) ?? fallback; }
+  catch { return fallback; }
 };
 
-function toast(s){$('toast').textContent=s;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2200)}
-function setPersonality(name){
- if(!profiles[name])return;
- personality=name;localStorage.setItem('jarvisPersona',name);
- document.body.classList.toggle('edith',name==='EDITH');
- document.body.classList.toggle('friday',name==='FRIDAY');
- $('coreLetter').textContent=profiles[name].letter;
- $('personaTitle').textContent=profiles[name].title;
- $('coreMessage').textContent=profiles[name].message;
-}
-function openPanel(name){
- document.querySelectorAll('.panel').forEach(p=>p.classList.remove('open'));
- const p=$('panel-'+name);if(p)p.classList.add('open');
- if(name==='overview')renderOverview();
- if(name==='settings')renderVoiceSettings();
-}
-function closePanels(){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('open'))}
-document.querySelectorAll('.close').forEach(b=>b.addEventListener('click',closePanels));
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closePanels()});
+const safeSave = (key, value) => {
+  try { localStorage.setItem(key, JSON.stringify(value)); }
+  catch { toast("Local storage is unavailable."); }
+};
 
-function renderTasks(){
- const box=$('taskList');box.innerHTML='';
- if(!tasks.length){box.textContent='No tasks registered.';return}
- tasks.forEach((t,i)=>{
-  const el=document.createElement('div');el.className='item';
-  const title=document.createElement('strong');title.textContent=t.title;
-  const due=document.createElement('small');due.textContent=t.due?'Due '+t.due:'No due date';
-  const done=document.createElement('button');done.className='mini';done.textContent=t.done?'REOPEN':'COMPLETE';
-  done.onclick=()=>{tasks[i].done=!tasks[i].done;save('jarvisTasks',tasks);renderTasks();renderOverview()};
-  const del=document.createElement('button');del.className='mini';del.textContent='DELETE';
-  del.onclick=()=>{tasks.splice(i,1);save('jarvisTasks',tasks);renderTasks();renderOverview()};
-  el.append(title,due,done,del);box.append(el);
- });
+let tasks = safeRead("jarvisTasks", []);
+let memories = safeRead("jarvisMemories", []);
+let personality = localStorage.getItem("jarvisPersona") || "JARVIS";
+let recognition = null;
+let tts = null;
+let ttsLoading = false;
+let lockdown = false;
+let voices = [];
+
+const profiles = {
+  JARVIS: {
+    voice:"jasper",
+    sample:"Good evening. All systems are standing by."
+  },
+  EDITH: {
+    voice:"luna",
+    sample:"Security systems are standing by. Awaiting your instruction."
+  },
+  FRIDAY: {
+    voice:"rosie",
+    sample:"Hey. I'm here whenever you need me."
+  }
+};
+
+function toast(message) {
+  $("toast").textContent = message;
+  $("toast").classList.add("show");
+  setTimeout(() => $("toast").classList.remove("show"), 2600);
 }
-$('taskForm').addEventListener('submit',e=>{
- e.preventDefault();tasks.push({title:$('taskTitle').value.trim(),due:$('taskDue').value,done:false});
- save('jarvisTasks',tasks);$('taskForm').reset();renderTasks();renderOverview();toast('Task saved.');
+
+function setState(state, message) {
+  $("core").className = "core " + state;
+  $("coreMessage").textContent = message;
+}
+
+function openPanel(name) {
+  if (lockdown && name !== "security") {
+    toast("EDITH lockdown preview is active.");
+    return;
+  }
+  closePanels();
+  const panel = $("panel-" + name);
+  if (panel) panel.classList.add("open");
+  if (name === "overview") renderOverview();
+  if (name === "settings") renderVoiceProfiles();
+}
+
+function closePanels() {
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("open"));
+}
+
+document.querySelectorAll(".close").forEach(button => {
+  button.addEventListener("click", closePanels);
 });
 
-function renderMemories(){
- const box=$('memoryList');box.innerHTML='';
- if(!memories.length){box.textContent='No saved notes.';return}
- memories.forEach((m,i)=>{
-  const el=document.createElement('div');el.className='item';
-  const p=document.createElement('p');p.textContent=m;
-  const del=document.createElement('button');del.className='mini';del.textContent='DELETE';
-  del.onclick=()=>{memories.splice(i,1);save('jarvisMemories',memories);renderMemories()};
-  el.append(p,del);box.append(el);
- });
-}
-$('memoryForm').addEventListener('submit',e=>{
- e.preventDefault();memories.unshift($('memoryText').value.trim());
- save('jarvisMemories',memories);$('memoryForm').reset();renderMemories();toast('Note saved.');
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") closePanels();
 });
 
-function renderOverview(){
- $('overviewDate').textContent=new Date().toLocaleDateString(undefined,{dateStyle:'full'});
- const pending=tasks.filter(t=>!t.done);
- $('overviewContent').innerHTML=`<div class="item"><strong>${pending.length} open tasks</strong><small>${tasks.length-pending.length} completed</small></div><div class="item"><strong>${memories.length} saved notes</strong></div>`;
- pending.forEach(t=>{const el=document.createElement('div');el.className='item';el.textContent=t.title;$('overviewContent').append(el)});
+function setPersonality(name) {
+  if (!profiles[name]) return;
+  personality = name;
+  localStorage.setItem("jarvisPersona", name);
+
+  document.body.classList.toggle("edith", name === "EDITH");
+  document.body.classList.toggle("friday", name === "FRIDAY");
+
+  $("personaTitle").textContent =
+    name === "JARVIS" ? "J.A.R.V.I.S." : name;
+
+  $("coreLetter").textContent =
+    name === "JARVIS" ? "J" : name === "EDITH" ? "E" : "F";
+
+  $("coreMessage").textContent = {
+    JARVIS:"AT YOUR SERVICE",
+    EDITH:"SECURITY SYSTEM READY",
+    FRIDAY:"READY WHEN YOU ARE"
+  }[name];
+
+  renderVoiceProfiles();
 }
 
-function loadVoices(){if('speechSynthesis'in window){voices=speechSynthesis.getVoices();if($('voiceSettings').children.length)renderVoiceSettings()}}
-function renderVoiceSettings(){
- const box=$('voiceSettings');box.innerHTML='';
- if(!voices.length)loadVoices();
- Object.keys(profiles).forEach(name=>{
-  const wrap=document.createElement('div');wrap.className='item';
-  const label=document.createElement('strong');label.textContent=name+' VOICE';
-  const select=document.createElement('select');select.className='field';
-  voices.filter(v=>v.lang.toLowerCase().startsWith('en')).forEach(v=>{
-   const o=document.createElement('option');o.value=v.voiceURI;o.textContent=v.name+' ('+v.lang+')';select.append(o);
+function renderTasks() {
+  const box = $("taskList");
+  box.replaceChildren();
+
+  if (!tasks.length) {
+    box.textContent = "No tasks registered.";
+    return;
+  }
+
+  tasks.forEach((task, index) => {
+    const item = document.createElement("div");
+    item.className = "item";
+
+    const title = document.createElement("strong");
+    title.textContent = task.title;
+
+    const due = document.createElement("small");
+    due.textContent = task.due ? "Due " + task.due : "No due date";
+
+    const done = document.createElement("button");
+    done.className = "action";
+    done.textContent = task.done ? "REOPEN" : "COMPLETE";
+    done.onclick = () => {
+      tasks[index].done = !tasks[index].done;
+      safeSave("jarvisTasks", tasks);
+      renderTasks();
+    };
+
+    const remove = document.createElement("button");
+    remove.className = "action";
+    remove.textContent = "DELETE";
+    remove.onclick = () => {
+      tasks.splice(index, 1);
+      safeSave("jarvisTasks", tasks);
+      renderTasks();
+    };
+
+    item.append(title, due, done, remove);
+    box.append(item);
   });
-  select.value=localStorage.getItem('voice-'+name)||'';
-  select.onchange=()=>localStorage.setItem('voice-'+name,select.value);
-  wrap.append(label,select);box.append(wrap);
- });
-}
-function speak(text,who=personality){
- if(!('speechSynthesis'in window))return;
- speechSynthesis.cancel();
- const u=new SpeechSynthesisUtterance(text);
- u.voice=voices.find(v=>v.voiceURI===localStorage.getItem('voice-'+who))||null;
- u.rate=profiles[who].rate;u.pitch=profiles[who].pitch;
- speechSynthesis.speak(u);
-}
-$('previewCurrent').onclick=()=>speak(profiles[personality].sample);
-
-$('clearData').onclick=()=>{
- if(confirm('Delete all locally saved tasks and memories?')){
-  tasks=[];memories=[];save('jarvisTasks',tasks);save('jarvisMemories',memories);
-  renderTasks();renderMemories();renderOverview();toast('Local data cleared.');
- }
-};
-
-function addBubble(text,who){
- const b=document.createElement('div');b.className='bubble '+who;b.textContent=text;
- $('chatlog').append(b);$('chatlog').scrollTop=$('chatlog').scrollHeight;
-}
-function handleCommand(text){
- const lower=text.toLowerCase();let reply='';
- if(lower.includes('edith')){setPersonality('EDITH');reply='EDITH online.'}
- else if(lower.includes('friday')){setPersonality('FRIDAY');reply='FRIDAY online.'}
- else if(lower.includes('jarvis')){setPersonality('JARVIS');reply='JARVIS online.'}
- else if(lower.includes('security')){openPanel('security');reply='Opening security.'}
- else if(lower.includes('task')){openPanel('tasks');reply='Opening your task register.'}
- else if(lower.includes('memory')){openPanel('memory');reply='Opening your memory archive.'}
- else if(lower.includes('overview')||lower.includes('today')){openPanel('overview');reply='Here is your overview.'}
- else if(lower.includes('setting')){openPanel('settings');reply='Opening settings.'}
- else if(lower.includes('console')||lower.includes('type')){openPanel('chat');reply='Opening the console.'}
- else if(lower.includes('close')||lower.includes('hide')){closePanels();reply='Closing panels.'}
- else if(lower.startsWith('add task ')){
-  tasks.push({title:text.slice(9),due:'',done:false});save('jarvisTasks',tasks);renderTasks();reply='Task added.';
- }
- else if(lower.startsWith('remember ')){
-  memories.unshift(text.slice(9));save('jarvisMemories',memories);renderMemories();reply='I saved that note locally.';
- }
- else{reply='I heard you. A live AI connection has not been configured yet.'}
- addBubble(reply,'assistant');speak(reply);
 }
 
-$('chatForm').addEventListener('submit',e=>{
- e.preventDefault();const text=$('chatInput').value.trim();if(!text)return;
- addBubble(text,'user');$('chatInput').value='';handleCommand(text);
+$("taskForm").addEventListener("submit", event => {
+  event.preventDefault();
+  tasks.push({
+    title:$("taskTitle").value.trim(),
+    due:$("taskDue").value,
+    done:false
+  });
+  safeSave("jarvisTasks", tasks);
+  $("taskForm").reset();
+  renderTasks();
+  toast("Task saved locally.");
 });
 
-function activateVoice(){
- const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SR){toast('Voice recognition is not supported in this browser.');return}
- if(recognition){recognition.stop();return}
- recognition=new SR();recognition.lang='en-US';recognition.interimResults=false;recognition.maxAlternatives=1;
- $('core').classList.add('listening');$('systemStatus').textContent='LISTENING';$('hint').textContent='LISTENING // TAP TO STOP';
- recognition.onresult=e=>{
-  const text=e.results[0][0].transcript;
-  addBubble(text,'user');handleCommand(text);
- };
- recognition.onerror=e=>toast('Voice input: '+e.error);
- recognition.onend=()=>{
-  recognition=null;$('core').classList.remove('listening');
-  $('systemStatus').textContent='STANDBY';$('hint').textContent='TAP THE CORE TO SPEAK';
- };
- recognition.start();
-}
-$('core').addEventListener('click',activateVoice);
+function renderMemories() {
+  const box = $("memoryList");
+  box.replaceChildren();
 
-function updateClock(){$('clock').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
-setPersonality(personality);renderTasks();renderMemories();renderOverview();updateClock();setInterval(updateClock,30000);
-if('speechSynthesis'in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
+  if (!memories.length) {
+    box.textContent = "No saved notes.";
+    return;
+  }
+
+  memories.forEach((memory, index) => {
+    const item = document.createElement("div");
+    item.className = "item";
+
+    const text = document.createElement("div");
+    text.textContent = memory;
+
+    const remove = document.createElement("button");
+    remove.className = "action";
+    remove.textContent = "DELETE";
+    remove.onclick = () => {
+      memories.splice(index, 1);
+      safeSave("jarvisMemories", memories);
+      renderMemories();
+    };
+
+    item.append(text, remove);
+    box.append(item);
+  });
+}
+
+$("memoryForm").addEventListener("submit", event => {
+  event.preventDefault();
+  memories.unshift($("memoryText").value.trim());
+  safeSave("jarvisMemories", memories);
+  $("memoryForm").reset();
+  renderMemories();
+  toast("Note saved locally.");
+});
+
+function renderOverview() {
+  const pending = tasks.filter(t => !t.done);
+  const box = $("overviewContent");
+  box.replaceChildren();
+
+  const date = document.createElement("p");
+  date.className = "note";
+  date.textContent = new Date().toLocaleDateString(undefined, {
+    weekday:"long", year:"numeric", month:"long", day:"numeric"
+  });
+
+  const summary = document.createElement("div");
+  summary.className = "item";
+  summary.textContent =
+    pending.length + " open tasks · " +
+    (tasks.length - pending.length) + " completed · " +
+    memories.length + " saved notes";
+
+  box.append(date, summary);
+
+  pending.forEach(task => {
+    const item = document.createElement("div");
+    item.className = "item";
+    item.textContent = task.title;
+    box.append(item);
+  });
+}
+
+$("clearData").addEventListener("click", () => {
+  if (!confirm("Delete all local tasks and notes?")) return;
+  tasks = [];
+  memories = [];
+  safeSave("jarvisTasks", tasks);
+  safeSave("jarvisMemories", memories);
+  renderTasks();
+  renderMemories();
+  renderOverview();
+  toast("Local data cleared.");
+});
+
+/* Neural voice engine */
+
+async function loadNeuralVoices() {
+  if (tts || ttsLoading) return;
+
+  ttsLoading = true;
+  $("voiceStatus").textContent = "Preparing neural voice engine...";
+  $("systemStatus").textContent = "LOADING VOICE MODEL";
+
+  try {
+    const { KittenTTS, createBrowserAudioPlayer } =
+      await import("https://cdn.jsdelivr.net/npm/@kittentts/web/+esm");
+
+    const model = $("modelSelect").value;
+
+    tts = await KittenTTS.create({
+      model,
+      player:createBrowserAudioPlayer(),
+      analytics:false
+    }, progress => {
+      const percent = Math.round(progress * 100);
+      $("voiceStatus").textContent =
+        "Downloading / preparing voice model: " + percent + "%";
+    });
+
+    $("voiceStatus").textContent =
+      "Neural voice engine ready. Model: " + model;
+
+    $("systemStatus").textContent = "NEURAL VOICES READY";
+    toast("Neural voices are ready.");
+  } catch (error) {
+    console.error("KittenTTS error:", error);
+    $("voiceStatus").textContent =
+      "Neural voice setup failed. Browser voice fallback is available.";
+    $("systemStatus").textContent = "BROWSER VOICE FALLBACK";
+    toast("Neural voice setup failed. Check your connection.");
+  } finally {
+    ttsLoading = false;
+  }
+}
+
+async function speak(text, who = personality) {
+  if (!text) return;
+
+  setState("speaking", who + " SPEAKING");
+
+  if (tts) {
+    try {
+      await tts.speak(text, {
+        voice:profiles[who].voice
+      });
+      setState("", "AT YOUR SERVICE");
+      return;
+    } catch (error) {
+      console.error("Neural playback failed:", error);
+    }
+  }
+
+  if ("speechSynthesis" in window) {
+    speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    const available = speechSynthesis.getVoices();
+    utterance.voice =
+      available.find(v => v.lang.toLowerCase().startsWith("en")) || null;
+
+    utterance.onend = () => setState("", "AT YOUR SERVICE");
+    utterance.onerror = () => setState("", "AT YOUR SERVICE");
+    speechSynthesis.speak(utterance);
+  } else {
+    setState("", "VOICE OUTPUT UNAVAILABLE");
+    toast("This browser does not support speech output.");
+  }
+}
+
+$("loadVoice").addEventListener("click", loadNeuralVoices);
+
+function renderVoiceProfiles() {
+  const box = $("voiceProfiles");
+  box.replaceChildren();
+
+  Object.entries(profiles).forEach(([name, profile]) => {
+    const item = document.createElement("div");
+    item.className = "item";
+
+    const title = document.createElement("strong");
+    title.textContent = name + " — " + profile.voice.toUpperCase();
+
+    const preview = document.createElement("button");
+    preview.className = "action";
+    preview.textContent = "PREVIEW";
+    preview.onclick = () => speak(profile.sample, name);
+
+    item.append(title, preview);
+    box.append(item);
+  });
+}
+
+/* Local command interpreter */
+
+function addBubble(text, who) {
+  const bubble = document.createElement("div");
+  bubble.className = "bubble " + who;
+  bubble.textContent = text;
+  $("chatlog").append(bubble);
+  $("chatlog").scrollTop = $("chatlog").scrollHeight;
+}
+
+function handleCommand(raw) {
+  const text = raw.trim();
+  const lower = text.toLowerCase();
+
+  if (/initiate lockdown|activate lockdown|edith lockdown/.test(lower)) {
+    initiateLockdown();
+    return "EDITH lockdown preview initiated. This is not real device security.";
+  }
+
+  if (/exit lockdown|cancel lockdown|unlock system/.test(lower)) {
+    exitLockdown();
+    return "Lockdown preview ended.";
+  }
+
+  if (lower.includes("edith") || lower.includes("security")) {
+    openPanel("security");
+    return "Opening the security console.";
+  }
+
+  if (lower.includes("friday")) {
+    setPersonality("FRIDAY");
+    return "FRIDAY is now active.";
+  }
+
+  if (lower.includes("jarvis")) {
+    setPersonality("JARVIS");
+    return "JARVIS is now active.";
+  }
+
+  if (lower.includes("show") && lower.includes("task")) {
+    openPanel("tasks");
+    return "Opening your task register.";
+  }
+
+  if (lower.includes("memory") || lower.includes("notes")) {
+    openPanel("memory");
+    return "Opening your memory archive.";
+  }
+
+  if (lower.includes("overview") || lower.includes("today")) {
+    openPanel("overview");
+    return "Opening your daily overview.";
+  }
+
+  if (lower.includes("settings") || lower.includes("voice")) {
+    openPanel("settings");
+    return "Opening voice settings.";
+  }
+
+  if (lower.includes("close") || lower.includes("hide panels")) {
+    closePanels();
+    return "Panels closed.";
+  }
+
+  if (lower.startsWith("add task ")) {
+    const title = text.slice(9).trim();
+    if (title) {
+      tasks.push({title,due:"",done:false});
+      safeSave("jarvisTasks", tasks);
+      renderTasks();
+      return "Task added to your local register.";
+    }
+  }
+
+  if (lower.startsWith("remember ")) {
+    const note = text.slice(9).trim();
+    if (note) {
+      memories.unshift(note);
+      safeSave("jarvisMemories", memories);
+      renderMemories();
+      return "I've saved that note locally.";
+    }
+  }
+
+  return "I can currently manage local tasks, notes, panels, personalities, and the lockdown preview. The full AI reasoning service is not connected yet.";
+}
+
+$("chatForm").addEventListener("submit", async event => {
+  event.preventDefault();
+  const text = $("chatInput").value.trim();
+  if (!text) return;
+
+  addBubble(text, "user");
+  $("chatInput").value = "";
+
+  setState("processing", "PROCESSING COMMAND");
+  const reply = handleCommand(text);
+  addBubble(reply, "assistant");
+  await speak(reply);
+});
+
+/* Voice recognition */
+
+function listen() {
+  if (lockdown) {
+    toast("EDITH lockdown preview is active.");
+    return;
+  }
+
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    toast("Voice recognition is unavailable in this browser. Try typing in the console.");
+    openPanel("chat");
+    return;
+  }
+
+  if (recognition) {
+    recognition.stop();
+    return;
+  }
+
+  try {
+    recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = true;
+    recognition.continuous = false;
+    recognition.maxAlternatives = 1;
+
+    let finalText = "";
+
+    recognition.onstart = () => {
+      setState("listening", "LISTENING");
+      $("instruction").textContent = "LISTENING — SPEAK NOW";
+      $("systemStatus").textContent = "MICROPHONE ACTIVE";
+    };
+
+    recognition.onresult = event => {
+      let interim = "";
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+
+        if (event.results[i].isFinal) finalText += transcript + " ";
+        else interim += transcript;
+      }
+
+      $("instruction").textContent =
+        (finalText + interim).trim() || "LISTENING...";
+    };
+
+    recognition.onerror = event => {
+      toast("Microphone: " + event.error);
+    };
+
+    recognition.onend = async () => {
+      recognition = null;
+      $("instruction").textContent = "TAP THE CORE TO SPEAK";
+      $("systemStatus").textContent = "LOCAL SYSTEM READY";
+      setState("processing", "PROCESSING");
+
+      const transcript = finalText.trim();
+
+      if (transcript) {
+        addBubble(transcript, "user");
+        const reply = handleCommand(transcript);
+        addBubble(reply, "assistant");
+        await speak(reply);
+      } else {
+        setState("", "AT YOUR SERVICE");
+        toast("I didn't catch that. Try again.");
+      }
+    };
+
+    recognition.start();
+  } catch (error) {
+    recognition = null;
+    setState("", "AT YOUR SERVICE");
+    toast("Unable to start microphone.");
+  }
+}
+
+$("core").addEventListener("click", listen);
+$("core").addEventListener("keydown", event => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    listen();
+  }
+});
+
+/* EDITH lockdown preview */
+
+function initiateLockdown() {
+  if (lockdown) return;
+
+  lockdown = true;
+  document.body.classList.add("locked");
+  closePanels();
+  $("systemStatus").textContent = "EDITH LOCKDOWN PREVIEW";
+  $("coreMessage").textContent = "LOCKDOWN PREVIEW ACTIVE";
+  $("instruction").textContent = "LOCAL INTERFACE RESTRICTED";
+  $("coreLetter").textContent = "E";
+  document.body.classList.add("edith");
+
+  toast("EDITH lockdown preview active. Browser-only.");
+}
+
+function exitLockdown() {
+  if (!lockdown) return;
+
+  if (!confirm("Exit the local lockdown preview?")) return;
+
+  lockdown = false;
+  document.body.classList.remove("locked");
+  $("systemStatus").textContent = "LOCAL SYSTEM READY";
+  $("instruction").textContent = "TAP THE CORE TO SPEAK";
+  setPersonality("JARVIS");
+  toast("Lockdown preview ended.");
+}
+
+$("lockButton").addEventListener("click", initiateLockdown);
+$("unlockButton").addEventListener("click", exitLockdown);
+
+/* Clock and startup */
+
+function updateClock() {
+  $("clock").textContent =
+    new Date().toLocaleTimeString([], {
+      hour:"2-digit",
+      minute:"2-digit"
+    });
+}
+
+setPersonality(personality);
+renderTasks();
+renderMemories();
+renderOverview();
+renderVoiceProfiles();
+updateClock();
+setInterval(updateClock, 30000);
+
+if ("speechSynthesis" in window) {
+  speechSynthesis.getVoices();
+}
+
 </script>
 </body>
 </html>
+```
