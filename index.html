@@ -163,6 +163,19 @@ button { color: inherit; cursor: pointer; }
     0 0 70px var(--glow),
     inset 0 0 65px rgba(70,210,255,.2);
   animation: corePulse 4s ease-in-out infinite;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.core:focus-visible {
+  outline: 2px solid var(--accent2);
+  outline-offset: 8px;
+}
+
+.core.listening {
+  box-shadow:
+    0 0 90px var(--glow),
+    0 0 150px var(--glow),
+    inset 0 0 80px var(--accent);
 }
 
 .core::before,
@@ -390,37 +403,6 @@ button { color: inherit; cursor: pointer; }
   letter-spacing: .25em;
 }
 
-/* VOICE CONTROL */
-
-.controls {
-  position: absolute;
-  z-index: 8;
-  bottom: 1%;
-}
-
-.glass-btn {
-  padding: 11px 19px;
-  border: 1px solid var(--line);
-  border-radius: 30px;
-  background: rgba(40,170,220,.09);
-  backdrop-filter: blur(15px);
-  font-size: 9px;
-  letter-spacing: .16em;
-  transition: .25s;
-}
-
-.glass-btn:hover,
-.glass-btn:focus-visible {
-  border-color: var(--accent);
-  box-shadow: 0 0 25px var(--glow);
-  outline: none;
-}
-
-.primary {
-  border-color: var(--accent);
-  color: var(--accent2);
-}
-
 /* NO NAVIGATION BAR OR TAB BUTTONS */
 
 /* FLOATING PANELS */
@@ -640,7 +622,6 @@ button { color: inherit; cursor: pointer; }
 
   .core-label { bottom: 5%; }
   .core-label h1 { font-size: 14px; }
-  .controls { bottom: 0; }
 
   .panel {
     top: auto;
@@ -687,13 +668,20 @@ button { color: inherit; cursor: pointer; }
       <div class="sphere-equator"></div>
     </div>
 
-    <div class="core" id="coreInteraction" aria-label="Activate JARVIS">
+    <div
+      class="core"
+      id="coreInteraction"
+      role="button"
+      tabindex="0"
+      aria-label="Tap to activate voice"
+      title="Tap to speak"
+    >
       <div class="core-inner"></div>
     </div>
 
     <div class="hud hud-clock">
       LOCAL TIME
-      <strong id="holoClock">--:--</strong>
+      <strong id="holoClock">--:--:--</strong>
     </div>
 
     <div class="hud hud-system">
@@ -703,7 +691,7 @@ button { color: inherit; cursor: pointer; }
 
     <div class="hud hud-date">
       DATE
-      <strong id="holoDate">-- --- ----</strong>
+      <strong id="holoDate">---</strong>
     </div>
 
     <div class="hud hud-audio">
@@ -717,12 +705,6 @@ button { color: inherit; cursor: pointer; }
     <div class="core-label">
       <h1 id="personaTitle">J.A.R.V.I.S.</h1>
       <p id="coreMessage">AT YOUR SERVICE</p>
-    </div>
-
-    <div class="controls">
-      <button class="glass-btn primary" id="activateBtn">
-        ◉ ACTIVATE VOICE
-      </button>
     </div>
 
   </div>
@@ -982,7 +964,7 @@ function toast(message) {
   setTimeout(() => $("toast").classList.remove("show"), 2400);
 }
 
-/* PANELS ARE OPENED BY COMMAND, NOT NAVIGATION TABS */
+/* PANELS */
 
 function openPanel(name) {
   document.querySelectorAll(".panel").forEach(p => p.classList.remove("open"));
@@ -1432,7 +1414,7 @@ $("chatForm").addEventListener("submit", event => {
 
 /* VOICE RECOGNITION */
 
-$("activateBtn").addEventListener("click", () => {
+function activateVoice() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
   if (!SR) {
@@ -1450,7 +1432,7 @@ $("activateBtn").addEventListener("click", () => {
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
 
-  $("activateBtn").textContent = "LISTENING...";
+  $("coreInteraction").classList.add("listening");
   $("holoStatus").textContent = "LISTENING";
   $("coreMessage").textContent = "AWAITING INPUT";
 
@@ -1469,21 +1451,39 @@ $("activateBtn").addEventListener("click", () => {
   };
 
   recognition.onend = () => {
-    $("activateBtn").textContent = "◉ ACTIVATE VOICE";
     recognition = null;
+    $("coreInteraction").classList.remove("listening");
+
     if (!speechSynthesis.speaking) {
       $("holoStatus").textContent = "ONLINE";
+      $("coreMessage").textContent = {
+        JARVIS: "AT YOUR SERVICE",
+        EDITH: "SECURITY SYSTEM READY",
+        FRIDAY: "READY WHEN YOU ARE"
+      }[personality];
     }
   };
 
-  recognition.start();
-  toast("Listening. Speak your command.");
-});
+  try {
+    recognition.start();
+    toast("Listening. Speak your command.");
+  } catch (error) {
+    recognition = null;
+    $("coreInteraction").classList.remove("listening");
+    $("holoStatus").textContent = "ONLINE";
+    toast("Unable to start voice recognition.");
+  }
+}
 
-/* CLICK CORE TO ACTIVATE VOICE */
+/* CENTRAL CORE IS THE VOICE CONTROL */
 
-$("coreInteraction").addEventListener("click", () => {
-  $("activateBtn").click();
+$("coreInteraction").addEventListener("click", activateVoice);
+
+$("coreInteraction").addEventListener("keydown", event => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    activateVoice();
+  }
 });
 
 /* HOLOGRAPHIC PARALLAX */
@@ -1518,11 +1518,6 @@ function createParticles() {
   }
 }
 
-/* AI CONNECTION SAFETY */
-
-$("providerStatus").textContent =
-  "No backend configured. No API credentials are being stored.";
-
 /* SETTINGS */
 
 $("interjectionFrequency").value =
@@ -1553,24 +1548,27 @@ $("clearData").addEventListener("click", () => {
   toast("Local data cleared.");
 });
 
-/* CLOCK AND INITIALIZATION */
+/* LIVE CLOCK AND DATE */
 
 function updateClock() {
   const now = new Date();
 
-  $("holoClock").textContent = now.toLocaleTimeString([], {
+  $("holoClock").textContent = now.toLocaleTimeString("en-US", {
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true
   });
 
-  $("holoDate").textContent = now.toLocaleDateString([], {
+  $("holoDate").textContent = now.toLocaleDateString("en-US", {
+    weekday: "short",
     month: "short",
     day: "numeric",
     year: "numeric"
   });
-
-  $("clock").textContent = $("holoClock").textContent;
 }
+
+/* INITIALIZATION */
 
 setPersonality(personality);
 createParticles();
